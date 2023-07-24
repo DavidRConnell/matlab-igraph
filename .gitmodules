@@ -1,0 +1,3 @@
+[submodule "igraph-core"]
+	path = igraph-core
+	url = https://github.com/igraph/igraph.git

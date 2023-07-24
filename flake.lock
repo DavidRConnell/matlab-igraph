@@ -1,0 +1,61 @@
+{
+  "nodes": {
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1673956053,
+        "narHash": "sha256-4gtG9iQuiKITOjNQQeQIpoIB6b16fm+504Ch3sNKLd8=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
+    "nix-matlab": {
+      "inputs": {
+        "flake-compat": "flake-compat",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1685977267,
+        "narHash": "sha256-OIlHWZ2oIQ4LBPnddqln1bEXVnqHdAy5CASOw/2IPSU=",
+        "type": "git",
+        "url": "file:///home/voidee/clones/nix-matlab"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/voidee/clones/nix-matlab"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1689649226,
+        "narHash": "sha256-SrQ8vfy+KbmOwJM42gLrFuWCwhSTNqw60gFR2EUf8V4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6f93c775d6e429cf0a22a3ca11262169ff3c923a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nix-matlab": "nix-matlab",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
