@@ -22,10 +22,24 @@ build:
 .PHONY: igraph
 igraph: build $(LIB)/libigraph.so
 
+$(LIB)/libigraph.so: soname := libigraph.so
+$(LIB)/libigraph.so: version := \
+  $(shell sed -n 's/set_target_properties(.* VERSION "\([0-9\.]*\)")/\1/p' <\
+  igraph-core/src/CMakeLists.txt)
+$(LIB)/libigraph.so: soversion := \
+  $(shell sed -n 's/set_target_properties(.* SOVERSION \([0-9\.]*\))/\1/p' <\
+  igraph-core/src/CMakeLists.txt)
 $(LIB)/libigraph.so: $(BUILD)/igraph/Makefile
 	@cd $(BUILD)/igraph; $(MAKE) all
-	@cp $(BUILD)/igraph/src/libigraph.so $@
+	cp $(BUILD)/igraph/src/$(soname).$(version) $(LIB)
+	@cd $(LIB); \
+        [ -L $(soname).$(soversion) ] || \
+          ln -s $(soname).$(version) $(soname).$(soversion); \
+        [ -L $(soname) ] || \
+	  ln -s $(soname).$(soversion) $(soname)
 
+# CHANGELOG.md dependency is a fragile hack. Need a better method to determine
+# if igraph-core has been changed.
 $(BUILD)/igraph/Makefile: igraph-core/CHANGELOG.md
 	@[ -d $(BUILD)/igraph ] || mkdir $(BUILD)/igraph
 	cd $(BUILD)/igraph; \
@@ -43,8 +57,9 @@ check-igraph: igraph
 	@cd $(BUILD)/igraph; $(MAKE) test
 
 .PHONY: check
-check: toolbox
-	matlab -nodesktop -nosplash -r "buildtool tests";
+check: mxIgraph
+	@cd tests; $(MAKE) all
+	matlab -nodesktop -nosplash -r "buildtool test; exit"
 
 .PHONY: dist
 dist: clean-dist matlab-igraph.tar.gz
@@ -54,8 +69,8 @@ matlab-igraph.tar.gz: toolbox
 
 .PHONY: clean-dist
 clean-dist: clean
-	@rm -rf build
-	@rm *.tar.gz
+	-[ -d build ] && rm -rf build
+	-[ -f *.tar.gz ] && rm *.tar.gz
 
 .PHONY: clean
 clean:

@@ -1,9 +1,12 @@
 function plan = buildfile
     plan = buildplan(localfunctions);
     plan.DefaultTasks = "test";
-    % plan("test").Dependencies = [ ];
+    plan("test").Dependencies = "testMxIgraph";
 end
 
 function testTask(~)
-    results = runtests(BaseDirectory="tests", OutputDetail="terse");
+end
+
+function testMxIgraphTask(~)
+    results = runtests("tests/mxIgraph");
 end

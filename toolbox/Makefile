@@ -18,4 +18,4 @@ $(outdir)/*.$(mexext): mex/%.c -ligraph -lmxIgraph
 
 .PHONY: clean
 clean:
-	-rm -r $(outdir)/*.(mexext)
+	-rm -r $(outdir)/*.$(mexext)

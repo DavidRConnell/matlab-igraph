@@ -102,6 +102,9 @@ When the function returns a matrix, the representation, full or sparse, using th
 mxIgraph C library
 * TODO Development
 See CONTRIBUTING for more information on branching and version releases as well as how to make merge requests and open issues.
+* Possible future changes
+** Prefer returning error codes to directly calling an error function.
+Specifically in the ~mxIgraph~ lib, it may be better to pass up error codes that can be interpreted by providing something like ~errno~ and ~errstr~ so the higher level functions in the toolbox can provide more information about why the error occurred to the user.
 * See also
 - [[https://igraph.org/][igraph homepage]]
 - [[https://r.igraph.org][igraph R package]]
