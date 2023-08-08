@@ -1,7 +1,9 @@
-export BUILD := build
+export BUILD := $(PWD)/build
 export LIB := $(BUILD)/lib
+export INCLUDE := -I$(PWD)/mxIgraph/include -I$(PWD)/igraph-core/include -I$(BUILD)/igraph/include
 
-vpath %.a $(LIB)
+# TODO: Test for OS
+export mexext := mexa64
 
 .PHONY: all
 all: toolbox
@@ -11,16 +13,15 @@ toolbox: mxIgraph igraph
 	@cd toolbox; $(MAKE) all
 
 .PHONY: mxIgraph
-mxIgraph: build igraph
+mxIgraph: igraph | $(BUILD)
 	@cd mxIgraph; $(MAKE) all
 
-.PHONY: build
-build:
-	@[ -d $(BUILD) ] || mkdir $(BUILD)
-	@[ -d $(LIB) ] || mkdir $(LIB)
+$(BUILD):
+	mkdir $(BUILD)
+	mkdir $(LIB)
 
 .PHONY: igraph
-igraph: build $(LIB)/libigraph.so
+igraph: $(LIB)/libigraph.so | $(BUILD)
 
 $(LIB)/libigraph.so: soname := libigraph.so
 $(LIB)/libigraph.so: version := \
@@ -57,7 +58,7 @@ check-igraph: igraph
 	@cd $(BUILD)/igraph; $(MAKE) test
 
 .PHONY: check
-check: mxIgraph
+check: toolbox
 	@cd tests; $(MAKE) all
 	matlab -nodesktop -nosplash -r "buildtool test; exit"
 
@@ -69,10 +70,11 @@ matlab-igraph.tar.gz: toolbox
 
 .PHONY: clean-dist
 clean-dist: clean
-	-[ -d build ] && rm -rf build
+	-[ -d $(BUILD) ] && rm -rf $(BUILD)
 	-[ -f *.tar.gz ] && rm *.tar.gz
 
 .PHONY: clean
 clean:
 	@cd toolbox; $(MAKE) clean
 	@cd mxIgraph; $(MAKE) clean
+	@cd tests; $(MAKE) clean

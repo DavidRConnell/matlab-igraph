@@ -1,24 +1,39 @@
 CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
-CPPFLAGS += -I../mxIgraph/include -I../igraph-core/include -I../$(BUILD)/igraph/include
-LDFLAGS += -L$(LIB) -lmxIgraph -ligraph -Wl,-rpath=$(PWD)/$(LIB)
-MEXFLAGS = -R2018a
-LIB := ../$(LIB)
+CPPFLAGS += $(INCLUDE)
+LDFLAGS += -L$(LIB) -lmxIgraph -ligraph -Wl,-rpath=$(LIB)
+MEXFLAGS := -R2018a
 
-mexext := mexa64
-outdir := mxIgraph/private
-sources := $(wildcard mxIgraph/mex/*.c)
+sources = $(wildcard $(target)/mex/*.c)
+objs = $(subst $(target)/mex,$(target)/private,$(sources:.c=.$(mexext)))
 
-vpath %.c mxIgraph/mex
+define mex-cmd =
+@cd $1; [ -d private ] || mkdir private
+@cd $1; mex $(CPPFLAGS) "LDFLAGS=$$LDFLAGS $(LDFLAGS)" "CFLAGS=$$CFLAGS $(CFLAGS)" \
+  "COPTIMFLAGS=$$COPTIMFLAGS $(COPTIMFLAGS)" $(MEXFLAGS) \
+  -outdir private mex/$(notdir $<)
+endef
+
+vpath %.c mxIgraph/mex toolbox/mex
 vpath %.so $(LIB)
 
 .PHONY: all
-all: $(subst mxIgraph/mex,$(outdir),$(sources:.c=.$(mexext)))
+all: mxIgraph toolbox
 
-$(outdir)/%.$(mexext): %.c libmxIgraph.so
-	mex $(CPPFLAGS) "LDFLAGS=$$LDFLAGS $(LDFLAGS)" "CFLAGS=$$CFLAGS $(CFLAGS)" \
-	  "COPTIMFLAGS=$$COPTIMFLAGS $(COPTIMFLAGS)" $(MEXFLAGS) \
-	  -outdir $(outdir) $<
+.PHONY: mxIgraph
+target := mxIgraph
+mxIgraph: $(objs)
+
+mxIgraph/private/%.$(mexext): %.c libmxIgraph.so libigraph.so
+	$(call mex-cmd,mxIgraph)
+
+.PHONY: toolbox
+target := toolbox
+toolbox: $(objs)
+
+toolbox/private/%.$(mexext): %.c libmxIgraph.so libigraph.so
+	$(call mex-cmd,toolbox)
 
 .PHONY: clean
 clean:
-	-rm -r $(outdir)/*.$(mexext)
+	-rm -r mxIgraph/private/*.$(mexext)
+	-rm -r toolbox/private/*.$(mexext)

@@ -1,32 +1,34 @@
 CFLAGS += -fPIC -Wall -Wextra -Wno-format -Wno-format-security
-CPPFLAGS += -Iinclude -I../igraph-core/include -I../$(BUILD)/igraph/include
-LDFLAGS += -L$(LIB)
-MEXFLAGS = -R2018a
-LIB := ../$(LIB)
+CPPFLAGS += $(INCLUDE)
+BUILD := $(BUILD)/mxIgraph
+MEXFLAGS := -R2018a -outdir $(BUILD)
 
-vpath %.so $(LIB)
 vpath %.h include src
 vpath %.c src
+vpath %.o $(BUILD)
 
 sources := $(wildcard src/mx*.c)
-objs := $(subst src/,,$(sources:.c=.o))
+objs := $(subst src/,$(BUILD)/,$(sources:.c=.o))
 
 .PHONY: all
-all: $(LIB)/libmxIgraph.so mxIgraph.h
+all: $(LIB)/libmxIgraph.so
 
-$(LIB)/libmxIgraph.so: $(objs)
+$(LIB)/libmxIgraph.so: $(objs) | $(BUILD)
 	$(CC) $(CFLAGS) -shared $^ -o $@
 
 mxGraph.o: mxIterators.o
 mxIterators.o: mxIterators.h
 
-%.o: %.c mxIgraph.h
+$(BUILD)/%.o: %.c mxIgraph.h
 	mex $(CPPFLAGS) "LDFLAGS=$$LDFLAGS $(LDFLAGS)" "CFLAGS=$$CFLAGS $(CFLAGS)" \
 	  "COPTIMFLAGS=$$COPTIMFLAGS $(COPTIMFLAGS)" $(MEXFLAGS) -c $<
 
+$(BUILD):
+	mkdir $(BUILD)
+
 .PHONY: clean
 clean:
-	-rm -r *.o
+	-rm -r $(BUILD)
 
 .PHONY: clean-dist
 clean-dist: clean
