@@ -41,4 +41,8 @@ mxArray *mxIgraphCreateAdj(const igraph_t *graph,
 void mxIgraphPrintGraph(const igraph_t *graph,
                         const igraph_vector_t *weights);
 
+// mxArgumentParsers
+igraph_integer_t mxIgraphSelectMethod(const char *name, const char *methods[],
+                                      const igraph_integer_t n_methods);
+
 #endif
