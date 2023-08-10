@@ -12,5 +12,7 @@ function testMxIgraphTask(~)
 end
 
 function testToolboxTask(~)
+    oldPath = addpath("toolbox");
     results = runtests("tests/toolbox");
+    path(oldPath);
 end
