@@ -127,7 +127,7 @@ function adj = load(filename, ioOptions, adjOptions)
     end
 
     if strcmp(adjOptions.dtype, 'logical') && adjOptions.isweighted
-        MException("Igraph:badDataType", "Cannot use a logical adjacency " + ...
+        error("Igraph:badDataType", "Cannot use a logical adjacency " + ...
                    "matrix to represent weighted graph.");
     end
 
