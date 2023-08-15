@@ -6,7 +6,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   igraph_vector_int_t comm1;
   igraph_vector_int_t comm2;
-  igraph_community_comparison_t method = IGRAPH_COMMCMP_VI;
+  igraph_community_comparison_t method;
   igraph_real_t res;
 
   if (nrhs != 3) {
@@ -19,7 +19,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                       "%s produces 1 output", mexFunctionName());
   }
 
-  char *method_name = mxArrayToString(prhs[2]);
   const char *methods[] = {
     [IGRAPH_COMMCMP_VI] = "vi",
     [IGRAPH_COMMCMP_NMI] = "nmi",
@@ -28,7 +27,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     [IGRAPH_COMMCMP_ADJUSTED_RAND] = "adjusted_rand"
   };
   igraph_integer_t n_methods = sizeof(methods) / sizeof(*methods);
-  method = mxIgraphSelectMethod(method_name, methods, n_methods);
+  method = mxIgraphSelectMethod(prhs[2], methods, n_methods);
+
+  if (method == n_methods) {
+    mexErrMsgIdAndTxt("Igraph:internal:unknownMethod",
+                      "%s is not a known method.", mxArrayToString(prhs[2]));
+  }
 
   mxIgraphArrayToPartition(prhs[0], &comm1);
   mxIgraphArrayToPartition(prhs[1], &comm2);

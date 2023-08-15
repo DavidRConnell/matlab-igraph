@@ -13,10 +13,10 @@ igraph_integer_t mxIgraphVCount(const mxArray *p)
  If the adj is undirected, pairs of symmetric edges are counted as a single
  edge. */
 igraph_integer_t mxIgraphECount(const mxArray *p,
-                                const igraph_bool_t directed)
+                                const igraph_bool_t is_directed)
 {
   mxIgraph_eit eit;
-  mxIgraph_eit_create(p, &eit, directed);
+  mxIgraph_eit_create(p, &eit, is_directed);
 
   igraph_integer_t n_edges = 0;
   while (!MXIGRAPH_EIT_END(eit)) {
@@ -38,19 +38,19 @@ igraph_integer_t mxIgraphECount(const mxArray *p,
    callers responsibility to destroy them when done. */
 void mxIgraphGetGraph(const mxArray *p, igraph_t *graph,
                       igraph_vector_t *weights,
-                      const igraph_bool_t directed)
+                      const igraph_bool_t is_directed)
 {
   if (!mxIgraphIsSquare(p)) {
     mexErrMsgIdAndTxt("Igraph:notSquare", "Adjacency matrix must be square.");
   }
 
   igraph_integer_t n_nodes = mxIgraphVCount(p);
-  igraph_integer_t n_edges = mxIgraphECount(p, directed);
+  igraph_integer_t n_edges = mxIgraphECount(p, is_directed);
   igraph_vector_int_t edges;
   mxIgraph_eit eit;
 
-  mxIgraph_eit_create(p, &eit, directed);
-  igraph_empty(graph, n_nodes, directed);
+  mxIgraph_eit_create(p, &eit, is_directed);
+  igraph_empty(graph, n_nodes, is_directed);
   igraph_vector_int_init(&edges, 2 * n_edges);
   igraph_vector_init(weights, n_edges);
 
@@ -93,7 +93,7 @@ mxArray *create_adj_full_double_i(igraph_t const *graph,
   return p;
 }
 
-mxArray *create_adj_full_logicals_i(igraph_t const *graph)
+mxArray *create_adj_full_logical_i(igraph_t const *graph)
 {
   mwSize n_nodes = (mwSize)igraph_vcount(graph);
   mxArray *p = mxCreateLogicalMatrix(n_nodes, n_nodes);
@@ -162,6 +162,48 @@ static mxArray *create_adj_sparse_double_i(igraph_t const *graph,
   return p;
 }
 
+static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
+{
+  mwSize n_edges = (mwSize)igraph_ecount(graph);
+  mwSize n_nodes = (mwSize)igraph_vcount(graph);
+  mxArray *p = mxCreateSparseLogicalMatrix(n_nodes, n_nodes, n_edges);
+  bool *adj = mxGetLogicals(p);
+  mwIndex *jc = mxGetJc(p);
+  mwIndex *ir = mxGetIr(p);
+  igraph_eit_t eit;
+  igraph_integer_t eid;
+
+  igraph_eit_create(graph, igraph_ess_all(IGRAPH_EDGEORDER_TO), &eit);
+
+  mwIndex count = 0;
+  mwIndex column = 0, prev_column = 0;
+  jc[prev_column] = count;
+  while (!IGRAPH_EIT_END(eit)) {
+    eid = IGRAPH_EIT_GET(eit);
+    column = IGRAPH_TO(graph, eid);
+    if (prev_column != column) {
+      for (mwIndex i = prev_column; i < column; i++) {
+        jc[i + 1] = count;
+      }
+      prev_column = column;
+    }
+
+    ir[count] = (mwIndex)IGRAPH_FROM(graph, eid);
+    adj[count] = true;
+
+    IGRAPH_EIT_NEXT(eit);
+    count++;
+  }
+
+  while (column < n_nodes) {
+    jc[column + 1] = count;
+    column++;
+  }
+
+  igraph_eit_destroy(&eit);
+
+  return p;
+}
 
 /* Create a matlab adjacency matrix using an igraph graph and weight vector.
 
@@ -171,15 +213,22 @@ static mxArray *create_adj_sparse_double_i(igraph_t const *graph,
    See `mxIgraphGetGraph` to convert an matlab adj into an igraph graph. */
 mxArray *mxIgraphCreateAdj(const igraph_t *graph,
                            const igraph_vector_t *weights,
-                           const igraph_bool_t sparse)
+                           const igraph_bool_t sparse,
+                           const mxIgraphDType_t type)
 {
   mxArray *p;
-  if (sparse) {
+  if (sparse && (type == MXIGRAPH_DTYPE_LOGICAL)) {
+    p = create_adj_sparse_logical_i(graph);
+  } else if (sparse && (type == MXIGRAPH_DTYPE_DOUBLE)) {
     p = create_adj_sparse_double_i(graph, weights);
-  } else {
+  } else if (!sparse && (type == MXIGRAPH_DTYPE_LOGICAL)) {
+    p = create_adj_full_logical_i(graph);
+  } else if (!sparse && (type == MXIGRAPH_DTYPE_DOUBLE)) {
     p = create_adj_full_double_i(graph, weights);
+  } else {
+    mexErrMsgIdAndTxt("Igraph:internal:unknownType", "Unhandled data type.");
+    exit(1);
   }
-  // TODO: Allow user to specify dtype (logical or double)
 
   return p;
 }

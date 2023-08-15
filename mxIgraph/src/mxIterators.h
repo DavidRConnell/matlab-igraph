@@ -85,7 +85,7 @@ the diagonal. */
 #define MXIGRAPH_EIT_GET_WEIGHT(eit)			\
   (eit).is_bool ?					\
        ((bool *)(eit).weight)[(eit).flat_idx] :		\
-       ((double *)(eit.weight))[(eit).flat_idx]		\
+       ((double *)(eit).weight)[(eit).flat_idx]		\
 
 #define MXIGRAPH_EIT_END(eit) (eit).stop
 

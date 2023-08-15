@@ -39,7 +39,7 @@ static void mxIgraph_eit_full_create(const mxArray *p, mxIgraph_eit *eit,
 
   if (mxIgraphIsTriU(p)) {
     eit->row_stop_at_col = true;
-  } else if (!directed) {
+  } else if (mxIgraphIsTriL(p) || (!directed && mxIgraphIsSymmetric(p))) {
     eit->row_start_at_col = true;
   }
 }

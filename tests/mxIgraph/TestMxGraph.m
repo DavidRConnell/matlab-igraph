@@ -2,6 +2,8 @@ classdef TestMxGraph < matlab.unittest.TestCase
     properties
         adj;
         weightedAdj;
+        craateLogical;
+        createDouble;
         createSparse = true;
     end
 
@@ -15,11 +17,13 @@ classdef TestMxGraph < matlab.unittest.TestCase
     methods (TestClassSetup)
         function unWeightedSetup(testCase, n, dtype, useSparse)
             testCase.adj = randomGraph(n, 5, dtype, useSparse);
+            testCase.createDouble = isequal(dtype, 'double');
         end
 
         function weightedSetup(testCase, n, useSparse)
             testCase.weightedAdj = randomGraph(n, 5, 'double', useSparse);
             testCase.weightedAdj = addWeights(testCase.weightedAdj);
+            testCase.createDouble = true;
         end
     end
 
@@ -34,26 +38,32 @@ classdef TestMxGraph < matlab.unittest.TestCase
             testCase.verifyEqual(actual, full(sum(testCase.adj > 0, 'all')));
         end
 
-        function testReadAndCreateFullGraph(testCase)
-            actual = testReproduceAdj(testCase.adj, ~testCase.createSparse);
-            testCase.verifyEqual(actual, full(double(testCase.adj)))
+        function testReadAndCreateFullGraph(testCase, dtype)
+            actual = testReproduceAdj(testCase.adj, ~testCase.createSparse, ...
+                                      testCase.createdDouble);
+            testCase.verifyEqual(actual, full(testCase.adj))
         end
 
         function testReadAndCreateSparseGraph(testCase)
-            actual = testReproduceAdj(testCase.adj, testCase.createSparse);
-            testCase.verifyEqual(actual, sparse(double(testCase.adj)))
+            actual = testReproduceAdj(testCase.adj, testCase.createSparse, ...
+                                      testCase.createDouble);
+            testCase.verifyEqual(actual, sparse(testCase.adj))
         end
     end
 
     methods (Test, TestTags = {'Unit', 'weighted'})
         function testReadAndCreateWeightedFullGraph(testCase)
-            actual = testReproduceAdj(testCase.weightedAdj, ~testCase.createSparse);
-            testCase.verifyEqual(actual, full(double(testCase.weightedAdj)))
+            actual = testReproduceAdj(testCase.weightedAdj, ...
+                                      ~testCase.createSparse, ...
+                                      testCase.createDouble);
+            testCase.verifyEqual(actual, full(testCase.weightedAdj))
         end
 
         function testReadAndCreateWeightedSparseGraph(testCase)
-            actual = testReproduceAdj(testCase.weightedAdj, testCase.createSparse);
-            testCase.verifyEqual(actual, sparse(double(testCase.weightedAdj)))
+            actual = testReproduceAdj(testCase.weightedAdj, ...
+                                      testCase.createSparse, ...
+                                      testCase.createDouble);
+            testCase.verifyEqual(actual, sparse(testCase.weightedAdj))
         end
     end
 end

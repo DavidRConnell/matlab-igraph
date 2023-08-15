@@ -2,7 +2,8 @@
 
 Toolbox for integrating the [[https://igraph.org/][igraph]] C library with MATLAB.
 
-*In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute.
+*In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute. Additionally, you should not see any internal errors (i.e. error ids of the form ~Igraph:internal:something~), please open an error if you find one.
+Also note, I am not familiar with all the file formats supported by igraph, so if any of read/write logic is not sensible, let me know by opening an issue.
 
 The igraph C library provides efficient graph analysis functions including graph generation, reading/writing graphs to file, and community detection.
 
@@ -105,6 +106,10 @@ See CONTRIBUTING for more information on branching and version releases as well 
 * Possible future changes
 ** Prefer returning error codes to directly calling an error function.
 Specifically in the ~mxIgraph~ lib, it may be better to pass up error codes that can be interpreted by providing something like ~errno~ and ~errstr~ so the higher level functions in the toolbox can provide more information about why the error occurred to the user.
+** Integrate attributes
+Specifically for saving and loading. Some file types allow for specifying the name of attributes, so it's possible an external file will have weight attributes with a name other than the default "weight". For these it would be beneficial to be able to supply the desired edge attribute name to use for weights.
+
+ADditionally, lgl and ncol use the order a node is seen as it's index, even in the scenario where the node names are their previous index. This leads to reordering the nodes when reading them in. May be useful to be able to pass a list of node names.
 * See also
 - [[https://igraph.org/][igraph homepage]]
 - [[https://r.igraph.org][igraph R package]]

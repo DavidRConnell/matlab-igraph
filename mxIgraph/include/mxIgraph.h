@@ -7,6 +7,28 @@
 #include "igraph_datatype.h"
 #include "igraph_error.h"
 
+// types
+typedef enum {
+  MXIGRAPH_DTYPE_LOGICAL = 0,
+  MXIGRAPH_DTYPE_DOUBLE,
+  MXIGRAPH_DTYPE_N
+} mxIgraphDType_t;
+
+typedef enum {
+  MXIGRAPH_FORMAT_EDGELIST = 0,
+  MXIGRAPH_FORMAT_NCOL,
+  MXIGRAPH_FORMAT_LGL,
+  MXIGRAPH_FORMAT_DIMACS,
+  MXIGRAPH_FORMAT_GRAPHDB,
+  MXIGRAPH_FORMAT_GRAPHML,
+  MXIGRAPH_FORMAT_GML,
+  MXIGRAPH_FORMAT_PAJEK,
+  MXIGRAPH_FORMAT_DL,
+  MXIGRAPH_FORMAT_DOT,
+  MXIGRAPH_FORMAT_LEDA,
+  MXIGRAPH_FORMAT_N
+} mxIgraphFileFormat_t;
+
 // mxError
 igraph_error_handler_t mxIgraphErrorHandlerMex;
 void mxIgraphSetErrorHandler();
@@ -30,19 +52,22 @@ mxArray *mxIgraphCreatePartition(igraph_vector_int_t const *membership);
 // mxGraph
 igraph_integer_t mxIgraphVCount(const mxArray *p);
 igraph_integer_t mxIgraphECount(const mxArray *p,
-                                const igraph_bool_t directed);
+                                const igraph_bool_t is_directed);
 void mxIgraphGetGraph(const mxArray *p, igraph_t *graph,
-                      igraph_vector_t *weights, const igraph_bool_t directed);
+                      igraph_vector_t *weights, const igraph_bool_t is_directed);
 mxArray *mxIgraphCreateAdj(const igraph_t *graph,
                            const igraph_vector_t *weights,
-                           const igraph_bool_t sparse);
+                           const igraph_bool_t sparse,
+                           const mxIgraphDType_t type);
 
 // mxHelpers
 void mxIgraphPrintGraph(const igraph_t *graph,
                         const igraph_vector_t *weights);
 
 // mxArgumentParsers
-igraph_integer_t mxIgraphSelectMethod(const char *name, const char *methods[],
+igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
                                       const igraph_integer_t n_methods);
+mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p);
+mxIgraphDType_t mxIgraphSelectDType(const mxArray *p);
 
 #endif
