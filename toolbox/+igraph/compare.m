@@ -1,10 +1,11 @@
-function similarity = compare(comm1, comm2, method)
+function score = compare(comm1, comm2, method)
 %COMPARE score the similarity of two membership vectors
-%   SIMILARITY = COMPARE(COMM1, COMM2) return a score of how similar the
-%   membership vector COMM1 is to membership vector COMM2.
+%   SCORE = COMPARE(COMM1, COMM2) return a score of how similar the membership
+%       vector COMM1 is to membership vector COMM2.
 %
-%   SIMILARITY = COMPARE(COMM1, COMM2, METHOD) use method METHOD to compare the
-%   membership vectors. Valid methods are:
+%   SCORE = COMPARE(COMM1, COMM2, METHOD) use method METHOD to compare the
+%       membership vectors. Valid methods are:
+%
 %       Name                        Method
 %   -------------------------------------------------------------------------
 %      'nmi'                    normalized mutual information (the default)
