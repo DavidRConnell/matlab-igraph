@@ -4,6 +4,8 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+  mxIgraphSetErrorHandler();
+
   igraph_vector_int_t comm1;
   igraph_vector_int_t comm2;
   igraph_community_comparison_t method;

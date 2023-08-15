@@ -3,6 +3,8 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+  mxIgraphSetErrorHandler();
+
   if (nrhs != 4) {
     mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfInputs",
                       "%s must have 4 inputs",

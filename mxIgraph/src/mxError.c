@@ -7,8 +7,7 @@ void mxIgraphErrorHandlerMex(const char *reason, const char *file,
   /* May be an issue in multi-threaded code when a different thread tries to
   call a freed object before the current thread can send the error. */
   IGRAPH_FINALLY_FREE();
-  mexErrMsgIdAndTxt("Igraph:Internal", "Error at %s:%i : %s - %s.\n", file,
-                    line, reason, errmsg);
+  mexErrMsgIdAndTxt("Igraph:Internal", "%s: %s\n", errmsg, reason);
 }
 
 void mxIgraphSetErrorHandler()

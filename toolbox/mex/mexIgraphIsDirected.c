@@ -2,6 +2,8 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+  mxIgraphSetErrorHandler();
+
   if (nrhs != 1) {
     mexErrMsgIdAndTxt("Igraph:wrongNumberOfInputs", "%s must have 1 input",
                       mexFunctionName());

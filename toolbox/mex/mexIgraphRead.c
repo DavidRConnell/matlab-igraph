@@ -12,6 +12,8 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+  mxIgraphSetErrorHandler();
+
   if (nlhs != 1) {
     mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfOutputs",
                       "%s returns a single output.", mexFunctionName());

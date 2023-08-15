@@ -11,6 +11,8 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+  mxIgraphSetErrorHandler();
+
   if (nlhs != 0) {
     mexErrMsgIdAndTxt("Igraph:internal:tooManyOutputs",
                       "%s does not provide any outputs.", mexFunctionName());
