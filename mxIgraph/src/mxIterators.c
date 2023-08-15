@@ -63,4 +63,8 @@ void mxIgraph_eit_create(const mxArray *p, mxIgraph_eit *eit,
     eit->weight = mxGetLogicals(p);
     eit->is_bool = true;
   }
+
+  if (!(bool)(MXIGRAPH_EIT_GET_WEIGHT(*eit))) {
+    MXIGRAPH_EIT_NEXT(*eit);
+  }
 }
