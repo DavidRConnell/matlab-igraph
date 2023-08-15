@@ -52,14 +52,19 @@ void mxIgraphGetGraph(const mxArray *p, igraph_t *graph,
   mxIgraph_eit_create(p, &eit, is_directed);
   igraph_empty(graph, n_nodes, is_directed);
   igraph_vector_int_init(&edges, 2 * n_edges);
-  igraph_vector_init(weights, n_edges);
+
+  if (weights) {
+    igraph_vector_init(weights, n_edges);
+  }
 
   igraph_integer_t edge_idx = 0;
   while (!MXIGRAPH_EIT_END(eit)) {
     VECTOR(edges)[edge_idx] = MXIGRAPH_EIT_GET_ROW(eit);
     VECTOR(edges)[edge_idx + 1] = MXIGRAPH_EIT_GET_COL(eit);
-    VECTOR(*weights)[edge_idx / 2] =
-      (igraph_real_t)MXIGRAPH_EIT_GET_WEIGHT(eit);
+    if (weights) {
+      VECTOR(*weights)[edge_idx / 2] =
+        (igraph_real_t)(MXIGRAPH_EIT_GET_WEIGHT(eit));
+    }
     edge_idx += 2;
     MXIGRAPH_EIT_NEXT(eit);
   }
