@@ -29,35 +29,38 @@ function adj = load(filename, ioOptions, adjOptions)
 %   'FORMAT' the folliwing
 %
 %       Parameter        Value
-%        'isweighted'*   'auto' (default) tries to load weights if they exist,
-%                        unless data type ('dtype') is 'logical', in which case
-%                        weights will be ignored. If false, ignore weights even
-%                        if they exist (also causes data type, to default to
-%                        'logical'). If true, behaves like 'auto' except it
-%                        will error if data type is set to 'logical'.
+%        'isweighted'*   Whether to load weights if they exist or not. If no
+%                        weights exist in the file, there is no harm in leaving
+%                        this as true. By default this is true unless data type
+%                        ('dtype') is 'logical', in which case it will be set
+%                        to false. If false, ignore weights even if they exist
+%                        (also causes data type, to default to 'logical'). If
+%                        explicitly true it will error if data type is set to
+%                        'logical'.
 %
-%        'isdirected'*   'auto' (default) and true are equivalent both return
-%                        the adjacency matrix as is. Setting to false causes
-%                        the resulting adjacency matrix to be returned as just
-%                        the lower triangle to reduce redundancy. If the
-%                        resulting adjacency matrix appears to be directed (as
-%                        determined by IGRAPH.ISDIRECTED) and ISDIRECTED is set
-%                        to false, a warning will be displayed since edges
-%                        could be combined (A(i, j) = A(i, j) + A(j, i)) and
-%                        this is likely undesirable. NOTE: some storage methods
-%                        reorder nodes, this will not change the information
-%                        but may cause the loaded adjacency matrix to be the
-%                        transpose of the saved adjacency matrix in the
-%                        undirected case. This *should* not impact other
-%                        igraph calculations.
+%        'isdirected'*   Whether to treat the adjacency matrix as directed or
+%                        undirected. Like ISWEIGHTED, there is no harm in
+%                        leaving this true (default) when the graph is
+%                        undirected. Setting to false causes the resulting
+%                        adjacency matrix to be returned as just the lower
+%                        triangle to reduce redundancy. If the resulting
+%                        adjacency matrix appears to be directed (as determined
+%                        by IGRAPH.ISDIRECTED) and ISDIRECTED is set to false,
+%                        a warning will be displayed since edges could be
+%                        combined (A(i, j) = A(i, j) + A(j, i)) and this is
+%                        likely undesirable. NOTE: some storage methods reorder
+%                        nodes, this will not change the information but may
+%                        cause the loaded adjacency matrix to be the transpose
+%                        of the saved adjacency matrix in the undirected case.
+%                        This *should* not impact other igraph calculations.
 %
-%        'dtype'         Set the returned ADJ's datatype. If 'auto' (default)
-%                        the data type will be determined by the value of
-%                        ISWEIGHTED ('logical' if false, 'double' otherwise).
-%                        Allowed data types are 'double' and 'logical'. If
-%                        DTYPE is set to 'logical' and ISWEIGHTED is explicitly
-%                        set to true, this will cause an error since a logical
-%                        adjacency matrix cannot store weights.
+%        'dtype'         Set the returned ADJ's datatype. By default, the data
+%                        type will be determined by the value of ISWEIGHTED
+%                        ('logical' if false, 'double' otherwise). Allowed data
+%                        types are 'double' and 'logical'. If DTYPE is set to
+%                        'logical' and ISWEIGHTED is explicitly set to true,
+%                        this will cause an error since a logical adjacency
+%                        matrix cannot store weights.
 %
 %        'makeSparse'    Whether the resulting ADJ should use a full matrix
 %                        representation (false) or a sparse representation
@@ -85,11 +88,10 @@ function adj = load(filename, ioOptions, adjOptions)
         filename char {mustBeVector}
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
         ioOptions.index (1, 1) double {mustBeInteger, mustBeNonnegative} = 0;
-        adjOptions.isweighted {mustBeLogicalOrAuto} = 'auto';
-        adjOptions.isdirected {mustBeLogicalOrAuto} = 'auto';
+        adjOptions.isweighted (1, 1) logical
+        adjOptions.isdirected (1, 1) logical = true;
         adjOptions.dtype char {mustBeMember(adjOptions.dtype, ...
-                                            {'double', 'logical', 'auto'})} ...
-                                            = 'auto';
+                                            {'double', 'logical'})};
         adjOptions.makeSparse (1, 1) logical = true;
     end
 
@@ -104,19 +106,15 @@ function adj = load(filename, ioOptions, adjOptions)
         return
     end
 
-    if strcmp(adjOptions.isdirected, 'auto')
-        adjOptions.isdirected = true;
-    end
-
-    if strcmp(adjOptions.dtype, 'auto')
-        if ~(strcmp(adjOptions.isweighted, 'auto') || adjOptions.isweighted)
+    if ~isoptionset(adjOptions, 'dtype')
+        if isoptionset(adjOptions, 'isweighted') && ~adjOptions.isweighted
             adjOptions.dtype = 'logical';
         else
             adjOptions.dtype = 'double';
         end
     end
 
-    if strcmp(adjOptions.isweighted, 'auto')
+    if ~isoptionset(adjOptions, 'isweighted')
         if strcmp(adjOptions.dtype, 'logical')
             adjOptions.isweighted = false;
         else
