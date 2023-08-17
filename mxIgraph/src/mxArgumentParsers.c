@@ -7,7 +7,7 @@ igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
 {
   if (!mxIsChar(p)) {
     mexErrMsgIdAndTxt("Igraph:notChar",
-                      "Name must be specified as a string.");
+                      "Method name must be specified as a string.");
   }
   char *name = mxArrayToString(p);
 

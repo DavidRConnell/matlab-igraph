@@ -12,11 +12,6 @@ igraph_integer_t mxIgraphVectorLength(const mxArray *p)
                       "Inputs should be a vector not a matrix");
   }
 
-  if ((n == 1) && (m == 1)) {
-    mexErrMsgIdAndTxt("Igraph:NotVector",
-                      "Inputs should be a vector not a scalar");
-  }
-
   return n > m ? n : m;
 }
 

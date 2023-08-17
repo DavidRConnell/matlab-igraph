@@ -32,6 +32,8 @@ typedef enum {
 // mxError
 igraph_error_handler_t mxIgraphErrorHandlerMex;
 void mxIgraphSetErrorHandler();
+void mxIgraphErrorNotImplemented(const char *caller, const char *method);
+void mxIgraphErrorUnknownMethod(const char *caller, const char *method);
 
 // mxPredicate
 igraph_bool_t mxIgraphIsSquare(const mxArray *p);

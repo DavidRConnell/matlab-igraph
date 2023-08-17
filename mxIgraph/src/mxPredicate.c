@@ -336,9 +336,5 @@ igraph_bool_t mxIgraphIsVector(const mxArray *p)
     return false;
   }
 
-  if ((n == 1) && (m == 1)) {
-    return false;
-  }
-
   return true;
 }
