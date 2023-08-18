@@ -1,13 +1,15 @@
 #include "mxIgraph.h"
 #include "igraph.h"
 
-#define VERIFY_OPTIONALS(expected)				\
-  do {								\
-    if (n_optionals != (expected)) {				\
-      mexErrMsgIdAndTxt("Igraph:interenal:wrongNumberOfInputs",	\
-			"%s requires %s arguments.",		\
-			method, (expected));			\
-    }								\
+#include "utils.h"
+
+#define VERIFY_N_OPTIONALS(expected)			\
+  do {							\
+    if (n_optionals != (expected)) {			\
+      mexErrMsgIdAndTxt("Igraph:interenal:n_optionals",	\
+			"%s expected %s optionals.",	\
+			method, (expected));		\
+    }							\
   } while (0)
 
 typedef enum {
@@ -225,15 +227,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_integer_t n_optionals = nrhs - n_required;
   const mxArray **p_optionals = prhs + n_required;
 
-  if (nrhs < n_required) {
-    mexErrMsgIdAndTxt("Igraph:internal:tooFewInputs",
-                      "%s requires atleast 3 inputs", mexFunctionName());
-  }
-
-  if (nlhs != 1) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfOutputs",
-                      "%s produces 1 output", mexFunctionName());
-  }
+  VERIFY_N_INPUTS_ATLEAST(n_required);
+  VERIFY_N_OUTPUTS_EQUAL(1);
 
   mxIgraph_generator_t method;
   igraph_bool_t make_sparse = mxGetScalar(prhs[1]);
@@ -271,55 +266,55 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   switch (method) {
   case MXIGRAPH_GENERATOR_STAR:
-    VERIFY_OPTIONALS(3);
+    VERIFY_N_OPTIONALS(3);
     generator_func = mxIgraph_star_i;
     break;
   case MXIGRAPH_GENERATOR_WHEEL:
-    VERIFY_OPTIONALS(3);
+    VERIFY_N_OPTIONALS(3);
     generator_func = mxIgraph_wheel_i;
     break;
   case MXIGRAPH_GENERATOR_RING:
-    VERIFY_OPTIONALS(4);
+    VERIFY_N_OPTIONALS(4);
     generator_func = mxIgraph_ring_i;
     break;
   case MXIGRAPH_GENERATOR_KARY_TREE:
-    VERIFY_OPTIONALS(3);
+    VERIFY_N_OPTIONALS(3);
     generator_func = mxIgraph_kary_tree_i;
     break;
   case MXIGRAPH_GENERATOR_REGULAR_TREE:
-    VERIFY_OPTIONALS(3);
+    VERIFY_N_OPTIONALS(3);
     generator_func = mxIgraph_regular_tree_i;
     break;
   case MXIGRAPH_GENERATOR_FULL:
-    VERIFY_OPTIONALS(3);
+    VERIFY_N_OPTIONALS(3);
     generator_func = mxIgraph_full_i;
     break;
   case MXIGRAPH_GENERATOR_CITATION:
-    VERIFY_OPTIONALS(2);
+    VERIFY_N_OPTIONALS(2);
     generator_func = mxIgraph_citation_i;
     break;
   case MXIGRAPH_GENERATOR_PRUFER:
-    VERIFY_OPTIONALS(1);
+    VERIFY_N_OPTIONALS(1);
     generator_func = mxIgraph_prufer_i;
     break;
   case MXIGRAPH_GENERATOR_ATLAS:
-    VERIFY_OPTIONALS(1);
+    VERIFY_N_OPTIONALS(1);
     generator_func = mxIgraph_atlas_i;
     break;
   case MXIGRAPH_GENERATOR_DE_BRUIJN:
-    VERIFY_OPTIONALS(2);
+    VERIFY_N_OPTIONALS(2);
     generator_func = mxIgraph_de_bruijn_i;
     break;
   case MXIGRAPH_GENERATOR_KAUTZ:
-    VERIFY_OPTIONALS(2);
+    VERIFY_N_OPTIONALS(2);
     generator_func = mxIgraph_kautz_i;
     break;
   case MXIGRAPH_GENERATOR_CIRCULANT:
-    VERIFY_OPTIONALS(3);
+    VERIFY_N_OPTIONALS(3);
     generator_func = mxIgraph_circulant_i;
     break;
   case MXIGRAPH_GENERATOR_PETERSEN:
-    VERIFY_OPTIONALS(2);
+    VERIFY_N_OPTIONALS(2);
     generator_func = mxIgraph_petersen_i;
     break;
   case MXIGRAPH_GENERATOR_N:

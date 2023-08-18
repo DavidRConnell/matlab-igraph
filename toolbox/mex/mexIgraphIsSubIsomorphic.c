@@ -1,21 +1,14 @@
 #include "mxIgraph.h"
 #include "igraph.h"
 
+#include "utils.h"
+
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   mxIgraphSetErrorHandler();
 
-  if (nrhs != 4) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfInputs",
-                      "%s must have 4 inputs",
-                      mexFunctionName());
-  }
-
-  if (nlhs != 1) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfOutputs",
-                      "%s must have 1 output",
-                      mexFunctionName());
-  }
+  VERIFY_N_INPUTS_EQUAL(4);
+  VERIFY_N_OUTPUTS_EQUAL(1);
 
   igraph_bool_t adj1IsDirected = mxGetScalar(prhs[2]);
   igraph_bool_t adj2IsDirected = mxGetScalar(prhs[3]);

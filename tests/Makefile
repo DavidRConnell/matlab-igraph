@@ -36,4 +36,3 @@ toolbox/private/%.$(mexext): %.c libmxIgraph.so libigraph.so
 .PHONY: clean
 clean:
 	-rm -r mxIgraph/private/*.$(mexext)
-	-rm -r toolbox/private/*.$(mexext)

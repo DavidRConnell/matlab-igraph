@@ -3,6 +3,8 @@
 #include "mxIgraph.h"
 #include "igraph.h"
 
+#include "utils.h"
+
 #define mexIgraphError(eid, msg)		\
   fclose(fptr);					\
   igraph_destroy(&graph);			\
@@ -14,15 +16,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   mxIgraphSetErrorHandler();
 
-  if (nlhs != 1) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfOutputs",
-                      "%s returns a single output.", mexFunctionName());
-  }
-
-  if (nrhs != 7) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfInputs",
-                      "%s must have 7 inputs.", mexFunctionName());
-  }
+  VERIFY_N_INPUTS_EQUAL(7);
+  VERIFY_N_OUTPUTS_EQUAL(1);
 
   igraph_t graph;
   igraph_vector_t weights;

@@ -1,25 +1,21 @@
 #include <string.h>
+
 #include "igraph.h"
 #include "mxIgraph.h"
+
+#include "utils.h"
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   mxIgraphSetErrorHandler();
 
+  VERIFY_N_INPUTS_EQUAL(3);
+  VERIFY_N_OUTPUTS_EQUAL(1);
+
   igraph_vector_int_t comm1;
   igraph_vector_int_t comm2;
   igraph_community_comparison_t method;
   igraph_real_t res;
-
-  if (nrhs != 3) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfArguments",
-                      "%s requires 3 arguments.", mexFunctionName());
-  }
-
-  if (nlhs != 1) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfOutputsl",
-                      "%s produces 1 output", mexFunctionName());
-  }
 
   const char *methods[] = {
     [IGRAPH_COMMCMP_VI] = "vi",

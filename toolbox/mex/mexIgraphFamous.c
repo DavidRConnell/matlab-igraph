@@ -1,19 +1,14 @@
 #include "mxIgraph.h"
 #include "igraph.h"
 
+#include "utils.h"
+
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   mxIgraphSetErrorHandler();
 
-  if (nrhs != 3) {
-    mexErrMsgIdAndTxt("Igraph:internal:tooFewInputs",
-                      "%s requires 3 inputs", mexFunctionName());
-  }
-
-  if (nlhs != 1) {
-    mexErrMsgIdAndTxt("Igraph:internal:wrongNumberOfOutputs",
-                      "%s produces 1 output", mexFunctionName());
-  }
+  VERIFY_N_INPUTS_EQUAL(3);
+  VERIFY_N_OUTPUTS_EQUAL(1);
 
   char *name = mxArrayToString(prhs[0]);
   igraph_bool_t make_sparse = mxGetScalar(prhs[1]);
