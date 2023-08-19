@@ -1,7 +1,6 @@
 // Functions useful for debugging / understanding mxIgraph.
 
 #include "mxIgraph.h"
-#include "igraph_interface.h"
 
 void mxIgraphPrintGraph(const igraph_t *graph,
                         const igraph_vector_t *weights)

@@ -2,10 +2,7 @@
 #define MEX_IGRAPH_H
 
 #include "mex.h"
-
-#include "igraph_vector.h"
-#include "igraph_datatype.h"
-#include "igraph_error.h"
+#include "igraph.h"
 
 // types
 typedef enum {
@@ -61,6 +58,12 @@ mxArray *mxIgraphCreateAdj(const igraph_t *graph,
                            const igraph_vector_t *weights,
                            const igraph_bool_t sparse,
                            const mxIgraphDType_t type);
+
+// mxStructures
+mxArray *mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
+    *list);
+mxArray *mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
+    *list);
 
 // mxHelpers
 void mxIgraphPrintGraph(const igraph_t *graph,

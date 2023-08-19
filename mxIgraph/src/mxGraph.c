@@ -1,6 +1,5 @@
 #include "mxIgraph.h"
 #include "mxIterators.h"
-#include "igraph_interface.h"
 
 /* Return the number of nodes in the adjacency matrix pointed to by p. */
 igraph_integer_t mxIgraphVCount(const mxArray *p)

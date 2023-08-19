@@ -1,6 +1,6 @@
 CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
 CPPFLAGS += $(INCLUDE)
-LDFLAGS += -Wl,-rpath=$(LIB) -L$(LIB) -ligraph -lmxIgraph
+LDFLAGS += -Wl,-rpath=$(LIB),-z,noexecstack -L$(LIB) -ligraph -lmxIgraph
 MEXFLAGS = -R2018a -outdir $(outdir)
 
 vpath %.c mex

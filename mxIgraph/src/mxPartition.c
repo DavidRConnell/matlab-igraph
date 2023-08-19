@@ -1,5 +1,4 @@
 #include "mxIgraph.h"
-#include "igraph_interface.h"
 
 /* Return the length of the vector pointed to by p. */
 igraph_integer_t mxIgraphVectorLength(const mxArray *p)

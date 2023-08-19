@@ -1,6 +1,6 @@
 CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
 CPPFLAGS += $(INCLUDE)
-LDFLAGS += -L$(LIB) -lmxIgraph -ligraph -Wl,-rpath=$(LIB)
+LDFLAGS += -L$(LIB) -lmxIgraph -ligraph -Wl,-rpath=$(LIB),-z,noexecstack
 MEXFLAGS := -R2018a
 
 sources = $(wildcard $(target)/mex/*.c)
@@ -35,4 +35,4 @@ toolbox/private/%.$(mexext): %.c libmxIgraph.so libigraph.so
 
 .PHONY: clean
 clean:
-	-rm -r mxIgraph/private/*.$(mexext)
+	-rm mxIgraph/private/*.$(mexext)

@@ -1,8 +1,6 @@
 #include <stdio.h>
 
 #include "mxIgraph.h"
-#include "igraph.h"
-
 #include "utils.h"
 
 #define mexIgraphError(eid, msg)		\

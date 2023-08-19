@@ -1,6 +1,4 @@
 #include "mxIgraph.h"
-#include "igraph.h"
-
 #include "utils.h"
 
 #define VERIFY_N_OPTIONALS(expected)			\

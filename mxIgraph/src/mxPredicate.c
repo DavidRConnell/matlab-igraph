@@ -1,5 +1,4 @@
 #include "mxIgraph.h"
-#include "igraph_interface.h"
 
 igraph_bool_t mxIgraphIsSquare(const mxArray *p)
 {
