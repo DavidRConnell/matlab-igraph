@@ -44,7 +44,7 @@ $(LIB)/libigraph.so: $(BUILD)/igraph/Makefile
 $(BUILD)/igraph/Makefile: igraph-core/CHANGELOG.md
 	@[ -d $(BUILD)/igraph ] || mkdir $(BUILD)/igraph
 	cd $(BUILD)/igraph; \
-	cmake ../../igraph-core \
+	cmake $(PWD)/igraph-core \
 	  -DIGRAPH_GRAPHML_SUPPORT=ON \
 	  -DIGRAPH_GLPK_SUPPORT=ON \
 	  -DIGRAPH_OPENMP_SUPPORT=ON \
