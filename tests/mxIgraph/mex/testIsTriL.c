@@ -3,7 +3,7 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetErrorHandler();
+  mxIgraphSetupHook();
 
   igraph_bool_t flag = mxIgraphIsTriL(prhs[0]);
 

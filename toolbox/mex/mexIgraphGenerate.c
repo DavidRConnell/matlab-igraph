@@ -219,7 +219,7 @@ static igraph_error_t mxIgraph_petersen_i(const mxArray *p_optionals[],
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetErrorHandler();
+  mxIgraphSetupHook();
 
   igraph_integer_t n_required = 3;
   igraph_integer_t n_optionals = nrhs - n_required;

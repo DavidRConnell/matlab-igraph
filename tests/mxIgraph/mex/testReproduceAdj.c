@@ -3,7 +3,7 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetErrorHandler();
+  mxIgraphSetupHook();
 
   bool useSparse = mxGetScalar(prhs[1]);
   mxIgraphDType_t useLogical = mxGetScalar(prhs[2]);

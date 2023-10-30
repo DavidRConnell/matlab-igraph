@@ -645,7 +645,7 @@ static igraph_error_t mxIgraph_simple_interconnected_islands_i(
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetErrorHandler();
+  mxIgraphSetupHook();
 
   igraph_integer_t n_required = 3;
   igraph_integer_t n_optionals = nrhs - n_required;

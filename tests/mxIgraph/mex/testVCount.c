@@ -3,7 +3,7 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetErrorHandler();
+  mxIgraphSetupHook();
 
   igraph_integer_t n_nodes = mxIgraphVCount(prhs[0]);
 

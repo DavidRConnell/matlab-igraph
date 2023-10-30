@@ -12,7 +12,7 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetErrorHandler();
+  mxIgraphSetupHook();
 
   VERIFY_N_INPUTS_EQUAL(7);
   VERIFY_N_OUTPUTS_EQUAL(1);

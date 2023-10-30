@@ -28,7 +28,7 @@ typedef enum {
 
 // mxError
 igraph_error_handler_t mxIgraphErrorHandlerMex;
-void mxIgraphSetErrorHandler();
+void mxIgraphSetupHook();
 void mxIgraphErrorNotImplemented(const char *caller, const char *method);
 void mxIgraphErrorUnknownMethod(const char *caller, const char *method);
 
