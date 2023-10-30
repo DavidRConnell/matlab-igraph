@@ -1,13 +1,13 @@
 #include "mxIgraph.h"
 #include "utils.h"
 
-#define VERIFY_N_OPTIONALS(expected)                            \
-  do {                                                          \
-    if (n_optionals != (expected)) {                            \
-      mexErrMsgIdAndTxt("Igraph:internal:n_optionals",          \
-			"%s expected %d optionals.",            \
-			mxArrayToString(prhs[0]), (expected));	\
-    }                                                           \
+#define VERIFY_N_OPTIONALS(expected)			\
+  do {							\
+    if (n_optionals != (expected)) {			\
+      mexErrMsgIdAndTxt("Igraph:interenal:n_optionals",	\
+			"%s expected %s optionals.",	\
+			method, (expected));		\
+    }							\
   } while (0)
 
 typedef enum {

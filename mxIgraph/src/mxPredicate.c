@@ -313,8 +313,8 @@ igraph_bool_t mxIgraphIsSymmetric(const mxArray *p)
 
   mexErrMsgIdAndTxt("mxIgraph:UnknownType",
                     "Adjacency matrix is not a known type.");
-  // Keeps the compiller happy since it doesn't understand mexErr* are early
-  // termination.
+  // Keeps the compiler happy since it doesn't understand mexErr* are early
+  // terminators.
   return false;
 }
 
@@ -328,12 +328,11 @@ igraph_bool_t mxIgraphIsDirected(const mxArray *p)
 vector. */
 igraph_bool_t mxIgraphIsVector(const mxArray *p)
 {
-  mwSize n = mxGetN(p);
-  mwSize m = mxGetM(p);
+  return ((mxGetN(p) == 1) || (mxGetM(p) == 1));
+}
 
-  if ((n != 1) && (m != 1)) {
-    return false;
-  }
-
-  return true;
+/* Test if the matlab array pointed to by p is empty. */
+igraph_bool_t mxIgraphIsEmpty(const mxArray *p)
+{
+  return ((mxGetN(p) == 0) || (mxGetM(p) == 0));
 }

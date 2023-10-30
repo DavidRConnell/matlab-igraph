@@ -14,31 +14,6 @@ igraph_integer_t mxIgraphVectorLength(const mxArray *p)
   return n > m ? n : m;
 }
 
-/* Copy a matlab vector to an igraph vector.
-
- The igraph vector should be uninitialized, but it's the callers responsibility
- to destroy it when done. */
-int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec)
-{
-  if (!mxIgraphIsVector(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotVector", "Input should be a vector.");
-  }
-
-  if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input vector should be double.");
-  }
-
-  mxDouble *x_mat = mxGetDoubles(p);
-  igraph_integer_t n = mxIgraphVectorLength(p);
-
-  igraph_vector_int_init(vec, n);
-  for (igraph_integer_t i = 0; i < n; i++) {
-    VECTOR(*vec)[i] = (igraph_integer_t)x_mat[i];
-  }
-
-  return EXIT_SUCCESS;
-}
-
 static int mxIgraphGetPartitionFromCell(const mxArray *p,
                                         igraph_vector_int_t *membership)
 {

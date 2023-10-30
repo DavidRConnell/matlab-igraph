@@ -35,6 +35,7 @@ void mxIgraphErrorUnknownMethod(const char *caller, const char *method);
 // mxPredicate
 igraph_bool_t mxIgraphIsSquare(const mxArray *p);
 igraph_bool_t mxIgraphIsVector(const mxArray *p);
+igraph_bool_t mxIgraphIsEmpty(const mxArray *p);
 igraph_bool_t mxIgraphIsWeighted(const mxArray *p);
 igraph_bool_t mxIgraphIsDirected(const mxArray *p);
 igraph_bool_t mxIgraphIsTriU(const mxArray *p);
@@ -43,7 +44,6 @@ igraph_bool_t mxIgraphIsSymmetric(const mxArray *p);
 
 // mxPartition
 igraph_integer_t mxIgraphVectorLength(const mxArray *p);
-int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec);
 int mxIgraphArrayToPartition(const mxArray *p,
                              igraph_vector_int_t *membership);
 mxArray *mxIgraphCreatePartition(igraph_vector_int_t const *membership);
@@ -60,6 +60,9 @@ mxArray *mxIgraphCreateAdj(const igraph_t *graph,
                            const mxIgraphDType_t type);
 
 // mxStructures
+int mxIgraphGetVector(const mxArray *p, igraph_vector_t *vec);
+int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec);
+int mxIgraphGetMatrix(const mxArray *p, igraph_matrix_t *mat);
 mxArray *mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
     *list);
 mxArray *mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
