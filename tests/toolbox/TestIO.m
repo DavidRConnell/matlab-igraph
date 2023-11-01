@@ -20,15 +20,15 @@ classdef TestIO < matlab.unittest.TestCase
     end
 
     methods
-        function TF = weightsAllowed(testCase, method)
+        function TF = weightsAllowed(~, method)
             TF = ~strcmp(method, 'edgelist');
         end
 
-        function TF = directedAllowed(testCase, method)
+        function TF = directedAllowed(~, method)
             TF = ~any(strcmp(method, {'ncol', 'lgl'}));
         end
 
-        function ext = methodExt(testCase, method)
+        function ext = methodExt(~, method)
             ext = method;
             switch lower(method)
               case 'edgelist'

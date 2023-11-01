@@ -38,7 +38,7 @@ classdef TestMxGraph < matlab.unittest.TestCase
             testCase.verifyEqual(actual, full(sum(testCase.adj > 0, 'all')));
         end
 
-        function testReadAndCreateFullGraph(testCase, dtype)
+        function testReadAndCreateFullGraph(testCase)
             actual = testReproduceAdj(testCase.adj, ~testCase.createSparse, ...
                                       testCase.createdDouble);
             testCase.verifyEqual(actual, full(testCase.adj))

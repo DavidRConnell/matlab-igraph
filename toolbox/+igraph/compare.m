@@ -34,13 +34,13 @@ function score = compare(comm1, comm2, method)
         method = 'adjusted_rand';
     end
 
-    similarity = mexIgraphCompare(comm1, comm2, method);
+    score = mexIgraphCompare(comm1, comm2, method);
 end
 
 function mustBeEqualLength(a, b)
     if ~isequal(length(a), length(b))
         eid = 'Igraph:Length:notEqual';
         msg = 'Length of first membership vector must be the same as second membership vector.';
-        throwAsCaller(MException(eid,msg));
+        error(eid,msg);
     end
 end
