@@ -26,9 +26,17 @@ typedef enum {
   MXIGRAPH_FORMAT_N
 } mxIgraphFileFormat_t;
 
-// mxError
+// mxHandler
 igraph_error_handler_t mxIgraphErrorHandlerMex;
+igraph_warning_handler_t mxIgraphWarningHandlerMex;
+igraph_warning_handler_t mxIgraphWarningHandlerIgnoreMex;
+igraph_progress_handler_t mxIgraphProgressHandlerMex;
+igraph_progress_handler_t mxIgraphProgressHandlerIgnoreMex;
+igraph_status_handler_t mxIgraphStatusHandlerMex;
+igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
 void mxIgraphSetupHook();
+
+// mxError
 void mxIgraphErrorNotImplemented(const char *caller, const char *method);
 void mxIgraphErrorUnknownMethod(const char *caller, const char *method);
 
