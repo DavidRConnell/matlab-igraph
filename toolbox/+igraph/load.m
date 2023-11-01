@@ -52,7 +52,11 @@ function adj = load(filename, ioOptions, adjOptions)
 %                        nodes, this will not change the information but may
 %                        cause the loaded adjacency matrix to be the transpose
 %                        of the saved adjacency matrix in the undirected case.
-%                        This *should* not impact other igraph calculations.
+%                        This *should* not impact other igraph calculations. To
+%                        prevent this, if ISDIRECTED is left unset,
+%                        IGRAPH.ISDIRECTED will be used after loading the ADJ
+%                        and the lower triangle will be return if it appears to
+%                        be undirected.
 %
 %        'dtype'         Set the returned ADJ's datatype. By default, the data
 %                        type will be determined by the value of ISWEIGHTED
@@ -89,7 +93,7 @@ function adj = load(filename, ioOptions, adjOptions)
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
         ioOptions.index (1, 1) double {mustBeInteger, mustBeNonnegative} = 0;
         adjOptions.isweighted (1, 1) logical
-        adjOptions.isdirected (1, 1) logical = true;
+        adjOptions.isdirected (1, 1) logical;
         adjOptions.dtype char {mustBeMember(adjOptions.dtype, ...
                                             {'double', 'logical'})};
         adjOptions.makeSparse (1, 1) logical = true;
@@ -129,9 +133,19 @@ function adj = load(filename, ioOptions, adjOptions)
                    "matrix to represent weighted graph.");
     end
 
+    userSetDirectedness = true;
+    if ~isoptionset(adjOptions, 'isdirected')
+       adjOptions.isdirected = true;
+       userSetDirectedness = false;
+    end
+
     adj = mexIgraphRead(filename, ioOptions.format, adjOptions.isweighted, ...
                         adjOptions.isdirected, adjOptions.makeSparse, ...
                         adjOptions.dtype, ioOptions.index);
+
+    if ~userSetDirectedness
+        adjOptions.isdirected = igraph.isdirected(adj);
+    end
 
     if ~adjOptions.isweighted && ~islogical(adj)
         adj = double(adj ~= 0);
@@ -144,7 +158,12 @@ function adj = load(filename, ioOptions, adjOptions)
                     "and A(j, i) for all i and j.")
         elseif issymmetric(adj)
             adj = tril(adj);
-            return;
+        elseif istriu(adj)
+            % For undirected graphs, igraph may flip the edges (see
+            % igraph_edge()), causing a lower triangle to be written as an
+            % upper and vice-versa. So stick to a standard of always using
+            % lower triangles to prevent unexpected behavior.
+            adj = adj';
         end
 
         if islogical(adj)
