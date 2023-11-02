@@ -15,18 +15,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_bool_t preserve_degree = mxGetScalar(prhs[4]);
   igraph_real_t probability = mxGetScalar(prhs[5]);
   igraph_integer_t n_rewires = mxGetScalar(prhs[6]);
-  igraph_neimode_t mode;
+  igraph_neimode_t mode = mxIgraphSelectMode(prhs[7]);
   igraph_bool_t loops = mxGetScalar(prhs[8]);
   igraph_error_t errorcode;
 
-  igraph_integer_t n_modes = 3;
-  const char *modes[3] = {
-    [IGRAPH_OUT - 1] = "out",
-    [IGRAPH_IN - 1] = "in",
-    [IGRAPH_ALL - 1] = "all"
-  };
-
-  mode = mxIgraphSelectMethod(prhs[7], modes, n_modes) + 1;
   mxIgraphGetGraph(prhs[0], &graph, NULL, directed);
 
   if (preserve_degree) {

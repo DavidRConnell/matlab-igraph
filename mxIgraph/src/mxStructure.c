@@ -30,6 +30,20 @@ int mxIgraphGetVector(const mxArray *p, igraph_vector_t *vec)
   return EXIT_SUCCESS;
 }
 
+/* Create a matlab vector from an igraph vector. */
+mxArray *mxIgraphCreateVector(igraph_vector_t const *vec)
+{
+  igraph_integer_t len = igraph_vector_int_size(vec);
+  mxArray *p = mxCreateDoubleMatrix(1, len, mxREAL);
+  double *mxVector = mxGetDoubles(p);
+
+  for (igraph_integer_t i = 0; i < len; i++) {
+    mxVector[(mwIndex)i] = (double)VECTOR(*vec)[i];
+  }
+
+  return p;
+}
+
 /* Copy a matlab vector to an igraph integer vector.
 
  The igraph vector should be uninitialized, but it's the callers responsibility
@@ -58,6 +72,20 @@ int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec)
   }
 
   return EXIT_SUCCESS;
+}
+
+/* Create a matlab vector from an igraph integer vector. */
+mxArray *mxIgraphCreateVectorInt(igraph_vector_int_t const *vec)
+{
+  igraph_integer_t len = igraph_vector_int_size(vec);
+  mxArray *p = mxCreateDoubleMatrix(1, len, mxREAL);
+  double *mxVector = mxGetDoubles(p);
+
+  for (igraph_integer_t i = 0; i < len; i++) {
+    mxVector[(mwIndex)i] = (double)VECTOR(*vec)[i];
+  }
+
+  return p;
 }
 
 /* Copy a matlab matrix to an igraph matrix.

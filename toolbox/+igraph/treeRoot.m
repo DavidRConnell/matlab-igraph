@@ -7,8 +7,7 @@ function root = treeRoot(adj, opts)
     arguments
         adj {mustBeAdj};
         opts.isdirected (1, 1) logical;
-        opts.mode (1, :) char {mustBeMemberi(opts.mode, ...
-                                             {'in', 'out', 'all'})} = 'all';
+        opts.mode (1, :) char {mustBeMode} = 'all';
     end
 
     if ~isoptionset(opts, "isdirected")

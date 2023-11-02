@@ -36,8 +36,7 @@ function adj = rewire(adj, adjOptions, methodOptions)
             {mustBeInRange(methodOptions.probability, 0, 1)} = 0;
         methodOptions.nRewires (1, 1) {mustBeNonnegative, mustBeInteger} = 0;
         methodOptions.preserveDegree (1, 1) logical = true;
-        methodOptions.mode (1, :) char ...
-            {mustBeMemberi(methodOptions.mode, {'in', 'out', 'all'})} = 'all';
+        methodOptions.mode (1, :) char {mustBeMode} = 'all';
         methodOptions.loops (1, 1) logical = false;
     end
 

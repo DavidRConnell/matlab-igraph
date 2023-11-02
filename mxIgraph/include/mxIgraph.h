@@ -69,7 +69,9 @@ mxArray *mxIgraphCreateAdj(const igraph_t *graph,
 
 // mxStructures
 int mxIgraphGetVector(const mxArray *p, igraph_vector_t *vec);
+mxArray *mxIgraphCreateVector(const igraph_vector_t *vec);
 int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec);
+mxArray *mxIgraphCreateVectorInt(const igraph_vector_int_t *vec);
 int mxIgraphGetMatrix(const mxArray *p, igraph_matrix_t *mat);
 mxArray *mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
     *list);
@@ -85,5 +87,6 @@ igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
                                       const igraph_integer_t n_methods);
 mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p);
 mxIgraphDType_t mxIgraphSelectDType(const mxArray *p);
+igraph_neimode_t mxIgraphSelectMode(const mxArray *p);
 
 #endif
