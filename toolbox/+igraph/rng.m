@@ -11,6 +11,13 @@ function rng(seed, generator)
 %       'glibc2'      GNU libc 2
 %       'pcg32'       32-bit PCG random number generator
 %       'pcg64'       64-bit PCG random number generator
+%
+%   NOTE: This does not impact Matlab's random number generator. If
+%   reproducible behavior is desired and random number from both Matlab and
+%   igraph are needed, set both generators.
+%
+%   Both Matlab and igraph default to MT19937 so using the same seed for both
+%   will lead to repeated values.
 
     arguments
         seed {mustBeNonnegative,mustBeInteger}
