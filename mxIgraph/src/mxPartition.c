@@ -45,6 +45,11 @@ int mxIgraphArrayToPartition(const mxArray *p,
 {
   int rc = EXIT_FAILURE;
 
+  if (mxIgraphIsEmpty(p)) {
+    igraph_vector_int_init(membership, 0);
+    return IGRAPH_SUCCESS;
+  }
+
   if (mxIsCell(p)) {
     rc = mxIgraphGetPartitionFromCell(p, membership);
   } else if (mxIsDouble(p)) {

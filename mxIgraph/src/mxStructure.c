@@ -160,3 +160,20 @@ int mxIgraphGetMatrix(const mxArray *p, igraph_matrix_t *mat)
 
   return EXIT_SUCCESS;
 }
+
+/* Create a Matlab matrix from an igraph matrix. */
+mxArray *mxIgraphCreateMatrix(igraph_matrix_t const *mat)
+{
+  igraph_integer_t m = igraph_matrix_nrow(mat);
+  igraph_integer_t n = igraph_matrix_ncol(mat);
+  mxArray *p = mxCreateDoubleMatrix(m, n, mxREAL);
+  double *mxMat = mxGetDoubles(p);
+
+  for (igraph_integer_t i = 0; i < m; i++) {
+    for (igraph_integer_t j = 0; j < n; j++) {
+      mxMat[(mwIndex)i + (mwIndex)(j * m)] = MATRIX(*mat, i, j);
+    }
+  }
+
+  return p;
+}
