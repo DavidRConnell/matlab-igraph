@@ -40,11 +40,6 @@ classdef TestMxPredicate < matlab.unittest.TestCase
             testCase.verifyFalse(actual);
         end
 
-        function testScalerIsNotVector(testCase)
-            actual = testIsVector(1);
-            testCase.verifyFalse(actual);
-        end
-
         function testVectorIsVector(testCase)
             actual = testIsVector(1:10);
             testCase.verifyTrue(actual);

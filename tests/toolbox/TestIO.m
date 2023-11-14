@@ -78,7 +78,11 @@ classdef TestIO < matlab.unittest.TestCase
             actual = igraph.load(name, isweighted=isweighted, ...
                                  isdirected=isdirected, makeSparse=false);
 
-            if isweighted
+            if any(strcmp(method, {'ncol', 'lgl'}))
+                % These methods do not track node id order so use a weaker
+                % test of equivalence.
+                testCase.verifyTrue(igraph.isisomorphic(actual, expected));
+            elseif isweighted
                 testCase.verifyApproximatly(actual, expected);
             else
                 testCase.verifyEqual(actual, expected);

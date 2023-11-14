@@ -14,15 +14,6 @@ igraph_integer_t mxIgraphVectorLength(const mxArray *p)
   return n > m ? n : m;
 }
 
-static int mxIgraphGetPartitionFromCell(const mxArray *p,
-                                        igraph_vector_int_t *membership)
-{
-  mexErrMsgIdAndTxt("Igraph:NotImplemented",
-                    "Getting a partition from a cell format has not been implemented.");
-
-  return EXIT_FAILURE;
-}
-
 static int mxIgraphGetPartitionFromDouble(const mxArray *p,
     igraph_vector_int_t *membership)
 {
@@ -50,10 +41,14 @@ int mxIgraphArrayToPartition(const mxArray *p,
     return IGRAPH_SUCCESS;
   }
 
-  if (mxIsCell(p)) {
-    rc = mxIgraphGetPartitionFromCell(p, membership);
-  } else if (mxIsDouble(p)) {
-    rc = mxIgraphGetPartitionFromDouble(p, membership);
+  if (!mxIsDouble(p)) {
+    mexErrMsgIdAndTxt("Igraph:wrongType",
+                      "Expected partition to be a double vector.");
+  }
+
+  if ((rc = mxIgraphGetPartitionFromDouble(p, membership))) {
+    mexErrMsgIdAndTxt("Igraph:NotPartition",
+                      "Value not a valid partition format.");
   }
 
   igraph_integer_t min_id = igraph_vector_int_min(membership);
@@ -61,11 +56,6 @@ int mxIgraphArrayToPartition(const mxArray *p,
     for (igraph_integer_t i = 0; i < igraph_vector_int_size(membership); i++) {
       VECTOR(*membership)[i] -= min_id;
     }
-  }
-
-  if (rc) {
-    mexErrMsgIdAndTxt("Igraph:NotPartition",
-                      "Value not a valid partition format.");
   }
 
   return rc;

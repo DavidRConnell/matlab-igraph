@@ -9,6 +9,15 @@ function save(filename, adj, ioOptions, adjOptions)
 %       extension. WARNING: Not all formats that can be saved by igraph can be
 %       read, compare format list with IGRAPH.LOAD's list.
 %
+%       Additionally, file types 'ncol' and 'lgl' use names instead of IDs to
+%       track vertices. While it may be useful to be able to read in these file
+%       types, given that this toolbox does not have a method for storing names
+%       these are likely not the most sensible file types for use within the
+%       toolbox. These will also drop information about node order, so the
+%       results of saving then loading will be a graph that is guaranteed to be
+%       isomorphic (see IGRAPH.ISOMORPHIC) to the original graph but not
+%       necessarily equal based on ISEQUAL (nodes are likely to be rearranged).
+%
 %   Available formats are:
 %      Format       File Extension    Description
 %   -------------------------------------------------------------------------

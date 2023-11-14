@@ -2,7 +2,6 @@ classdef TestMxGraph < matlab.unittest.TestCase
     properties
         adj;
         weightedAdj;
-        craateLogical;
         createDouble;
         createSparse = true;
     end
@@ -23,7 +22,6 @@ classdef TestMxGraph < matlab.unittest.TestCase
         function weightedSetup(testCase, n, useSparse)
             testCase.weightedAdj = randomGraph(n, 5, 'double', useSparse);
             testCase.weightedAdj = addWeights(testCase.weightedAdj);
-            testCase.createDouble = true;
         end
     end
 
@@ -40,7 +38,7 @@ classdef TestMxGraph < matlab.unittest.TestCase
 
         function testReadAndCreateFullGraph(testCase)
             actual = testReproduceAdj(testCase.adj, ~testCase.createSparse, ...
-                                      testCase.createdDouble);
+                                      testCase.createDouble);
             testCase.verifyEqual(actual, full(testCase.adj))
         end
 
@@ -55,14 +53,14 @@ classdef TestMxGraph < matlab.unittest.TestCase
         function testReadAndCreateWeightedFullGraph(testCase)
             actual = testReproduceAdj(testCase.weightedAdj, ...
                                       ~testCase.createSparse, ...
-                                      testCase.createDouble);
+                                      true);
             testCase.verifyEqual(actual, full(testCase.weightedAdj))
         end
 
         function testReadAndCreateWeightedSparseGraph(testCase)
             actual = testReproduceAdj(testCase.weightedAdj, ...
                                       testCase.createSparse, ...
-                                      testCase.createDouble);
+                                      true);
             testCase.verifyEqual(actual, sparse(testCase.weightedAdj))
         end
     end
