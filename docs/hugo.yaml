@@ -11,6 +11,9 @@ menu:
     - name: Documentation
       pageRef: /docs
       weight: 2
+    - name: Changelog
+      pageRef: /changelog
+      weight: 5
     - name: Search
       weight: 98
       params:
