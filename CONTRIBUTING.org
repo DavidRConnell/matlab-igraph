@@ -29,7 +29,7 @@ For C code, there is an ~.astylerc~ that will handle basic formatting.
 Make sure to follow the common API, such as providing options for the representation of a graph in any function that returns a graph.
 If you need any help, submit a pull request early and I'll take a look and provide feedback.
 
-Also see [[davidrconnell.github.io/matlab-igraph/docs/mxIgraph][Adding igraph functions]].
+Also see [[https://davidrconnell.github.io/matlab-igraph/docs/mxIgraph][Adding igraph functions]].
 * Adding to documentation
 Documentation is written in both org-mode and in matlab formats (live scripts or m-files).
 For org-mode, the files are in ~docs/content~, these can be viewed locally by installing [[https://gohugo.io/][Hugo]] and running ~hugo server~ in the ~docs~ directory.
