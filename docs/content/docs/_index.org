@@ -1,0 +1,7 @@
+#+TITLE: Documentation
+
+For end users the most useful pages will be [[../start][Getting started]], [[installation][Installation]], and [[usage][Basic usage]].
+If you experience issues see the [[contributing][Issues and Contributions]] page and consider opening an issue in the [[https://github.com/DavidRConnell/matlab-igraph/issues][github issue tracker]].
+The issue tracker can also be used for any feedback, feature requests, or ideas.
+
+If you are interested in helping develop the project, you can also see the [[mxIgraph][Adding igraph functions]] page for a basic overview of wrapping igraph functions, the [[contributing][Issues and Contributions]] for an overview of the projects future directions and a guide to contributing.

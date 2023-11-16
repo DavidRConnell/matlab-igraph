@@ -1,0 +1,10 @@
+#+TITLE: Adding igraph functions
+#+WEIGHT: 5
+
+If you are interested in adding igraph functions to the toolbox (or getting your own C functions based of the igraph library running in MATLAB), you'll need to know how to use the mxIgraph library.
+This library provides a bridge between MATLAB's mex API and the igraph API, it is primarily used for converting between MATLAB and igraph types in a consistent manner.
+The easiest way to learn how to wrap a function is to read through a few of the C source files in the toolbox (under ~toolbox/mex~, as opposed to the mxIgraph source under ~mxIgraph~).
+Even if you are not familiar with C, the common patterns should make it possible to wrap functions without too much difficulty in many cases.
+
+Additionally, the ~mxIgraph.h~ header file (~mxIgraph/include/mxIgraph.h~) provides all the exposed functions and which source file the are defined in.
+If you need a list of functions or want to see what the function is actually doing, start there.

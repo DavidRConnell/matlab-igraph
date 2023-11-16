@@ -24,6 +24,7 @@
           bear
           gnumake
           gdb
+          hugo
           # igraph dependencies
           arpack
           bison
@@ -37,7 +38,7 @@
           plfit
         ]);
         shellHook = ''
-          export OMP_NUM_THREADS=8
+          export OMP_NUM_THREADS=16
         '';
       };
     };

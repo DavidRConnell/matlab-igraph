@@ -1,0 +1,32 @@
+#+TITLE: matlab-igraph
+
+A toolbox that brings the power of the [[https://igraph.org/][igraph C library]] to MATLAB.
+
+For a quick start see [[start][Getting Started]] and the [[docs/installation][installation guide]]. Getting started also exists as a live script that can be loaded into MATLAB once the toolbox is installed.
+
+{{< callout type="warning" >}}
+This project is still in early development and may be difficult to set up. Any help getting the toolbox running in different environments would be much appreciated. Please use the [[https://github.com/DavidRConnell/matlab-igraph/issues][github issue tracker]] to start a discussion.
+{{< /callout >}}
+
+* Introduction
+The igraph library provides a large number of efficient routines written in C and C++ for working with graphs. This toolbox wraps many of those routines for use inside MATLAB, extending igraph access to the MATLAB community.
+
+This toolbox aims to follow MATLAB conventions and take advantage of MATLAB's builtin matrix syntax to make a seamless integration between igraph and MATLAB.
+As such, the toolbox uses plain matrices to store the graphs.
+This has some limitations, specifically, this means there is currently no way to track metadata about a graph (such as it's directedness) or a way to work with igraph's attributes.
+But, by using matrices, graphs fit comfortably into the MATLAB environment.
+It's possible to generate graphs using MATLAB's builtin functions that work as is with igraph's routines and work with graphs created by igraph directly in MATLAB using the functions you are already familiar with.
+
+* Citation
+If you publish results generated with the help of this package, make sure to cite igraph:
+
+#+begin_quote
+Csardi, G., & Nepusz, T. (2006). The igraph software package for complex network research. InterJournal, Complex Systems, 1695.
+#+end_quote
+
+* See also
+- [[https://igraph.org/][igraph homepage]]
+- [[https://r.igraph.org][igraph R package]]
+- [[https://python.igraph.org][igraph python package]]
+- [[http://szhorvat.net/mathematica/IGraphM][igraph Mathmatica package]]
+- [[https://igraph.org/c][igraph C library]]

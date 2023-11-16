@@ -1,0 +1,29 @@
+baseURL: 'https://davidrconnell.github.io/matlab-igraph'
+languageCode: 'en-us'
+title: 'matlab-igraph'
+theme: 'hextra'
+
+menu:
+  main:
+    - name: Getting Started
+      pageRef: /start
+      weight: 1
+    - name: Documentation
+      pageRef: /docs
+      weight: 2
+    - name: Search
+      weight: 98
+      params:
+        type: search
+    - name: Github
+      weight: 99
+      url: "https://github.com/davidrconnell/matlab-igraph"
+      params:
+        icon: github
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false

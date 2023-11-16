@@ -2,7 +2,9 @@
 
 Toolbox for integrating the [[https://igraph.org/][igraph]] C library with MATLAB.
 
-*In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute. Additionally, you should not see any internal errors (i.e. error ids of the form ~Igraph:internal:something~), please open an error if you find one.
+See [[The documentation][https://davidrconnell.github.io/matlab-igraph]] for a more thorough introduction.
+
+*In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute. Additionally, you should not see any internal errors (i.e. error ids of the form ~Igraph:internal:something~), please open an issue if you find one.
 Also note, I am not familiar with all the file formats supported by igraph, so if any of read/write logic is not sensible, let me know by opening an issue.
 
 The igraph C library provides efficient graph analysis functions including graph generation, reading/writing graphs to file, and community detection.
@@ -11,11 +13,14 @@ This toolbox aims to provide a consistent API to perform graph analyses inside M
 
 In MATLAB, graphs are stored as adjacency matrices.
 By using standard matrices, it's easy to produce and process graphs using builtin functions.
-Both full and sparse adjacency matrices are supported along with different data types (doubles and logicals).
+Both full and sparse adjacency matrices are supported along with different data types (doubles and logicals for now).
 This allows flexibility and easy integration into preexisting projects.
+
+See the getting started live script in the toolbox for basic usage as well as the other example scripts. For more thorough introduction, see the "Using the toolbox", "Common functions", and "Basic API" sections of this README.
 
 In addition to the toolbox, the ~mxIgraph~ interface library has been kept separate to allow developers access to the mex routines for bridging MATLAB and igraph.
 Using this library you can wrap your own igraph based C functions with the mex API to run them in MATLAB.
+For more information, see the ~README~ in the ~mxIgraph~ directory.
 
 * Citation
 If you publish results generated with the help of this package, make sure to cite igraph:
@@ -26,24 +31,17 @@ Csardi, G., & Nepusz, T. (2006). The igraph software package for complex network
 
 * Installation
 ** Installing igraph C library
-For the igraph C library dependency, there are two options: use your own or compiled the source code provided with this repo.
-Using your own may simplify things if you have a package manager that can handle installing it for you (and it will likely have a precompiled binary to reduce total compilation time).
-This will likely work fine but is not guaranteed to work correctly if the major version of the installed igraph package differs from the version expected by this toolbox.
-Compiling from the submodule here will ensure the version works well with the toolbox and allows the use of different versions on different branches but requires obtaining igraph's dependencies.
+Currently the igraph C library must be compiled from the source tracked as a submodule in this repo.
+It may be possible in the future to simplify the installation process by allowing the use of precompiled binaries.
+Compiling from the submodule here will ensure the version works well with the toolbox and allows the use of different versions on different branches.
 
-*** TODO Using your own igraph package
-See [[https://igraph.org/c/html/latest/igraph-Installation.html][igraph's installation instructions]] for how to obtain a copy.
-If using Linux, you can likely install through your package manager.
-
-Once igraph is installed to a location your compiler knows about, you can add the flag #TODO to the make commands in the following section to avoid compiling the provided copy.
-(Note: you can add the location to IGRAPH_LIB variable using make if it is not installed in a conventional location to explicitly tell the compiler where to find it; *this most be an absolute path* as the linker will determine where to find the library at run time and you may be in another directory when it does that.)
-*** Compiling from source
+*** Compiling igraph from source
 Before compiling from source you need to obtain the dependencies as declared in [[https://igraph.org/c/html/latest/igraph-Installation.html][igraph's installation instructions]].
 Specifically you need:
 - ~bison~
 - ~flex~
 - ~libxml2~
-It is also recommended but not required to have the libraries:
+It is also recommended, but not required, to have the libraries:
 - ~arpack~
 - ~blas~
 - ~glpk~
@@ -55,61 +53,15 @@ In addition to MATLAB, mex, and igraph, this toolbox depends on make.
 To install the toolbox use ~make all~.
 Compilation time can be improved using ~make -j all~ to run the make rules in parallel where possible.
 
-Once the mex files have been compiled, ensure the toolbox is on MATLAB's path. In MATLAB, run ~addpath(path/to/matlab-igraph/toolbox);~.
+Once the mex files have been compiled, ensure the toolbox is on MATLAB's path. In MATLAB, run ~addpath("path/to/matlab-igraph/toolbox");~.
 You'll likely want to run ~savepath;~ as well so the toolbox will remain on MATLAB's path between restarts.
 ** Upgrading
 Every once in awhile you will want to check for a new release by running ~git pull~ in the ~matlab-igraph~ directory.
-If git pulled anything new down, rerun the above make commands.
-Remember to pass the same flags to make if you are using your own copy of igraph.
+If this pulled anything new down, rerun the above make commands.
 ** Installing the mxIgraph C library
 ~make mxIgraph~  can be used to exclusively compile the C library.
 Since the toolbox does require this library, the above ~make all~ will also compile it.
 The only reason to run this command is if all you want is the mxIgraph library and not the toolbox.
-* TODO Using the toolbox
-** Collecting data
-** Running routines
-** Plotting graphs
-** Storing results
-* TODO Common functions
-Here are the functions I find most useful, the remaining functions can be found by looking through the ~+igraph~ package under the toolbox directory. All functions contain a help block with more information about their options that can be accessed through the help command.
-** ~igraph.read~
-** ~igraph.write~
-** ~igraph.generate~
-** ~igraph.similarity~
-** ~igraph.cluster~
-* TODO Basic API
-There are common output and input arguments throughout the toolbox (such as adjacency matrices, partitions, and filenames).
-For these common arguments, there are functions for parsing relevant optional arguments to ensure consistency throughout the package.
-The common patterns and their options are provided below.
-Each function that fits a pattern should accept each of the described optional parameters.
-
-** Methods
-To follow MATLAB convention, many of the functions in the ~igraph~ namespace provide access to multiple related igraph functions.
-For example, the ~igraph.read~ function provides access to all the igraph functions related to reading a graph from a file or the ~igraph.cluster~ function provides access to different community detection algorithms.
-These functions aim to select an intelligent default when applicable (i.e. ~igraph.read~ can guess the correct backend function based on the provided file extension) other functions (i.e. ~igraph.cluster~) default to a simple method if none is supplied. The defaults can be overrided by supplying the ~method~ name-value pair.
-See the help for specific functions for which methods are available and any method specific options there are.
-** Input: File names
-For ~igraph.read~ and ~igraph.write~, file names are used to guess the file type based on the names extension.
-The type can be explicitly provided using the ~FileType~ name-value pair.
-Available types are:
-# TODO
-- mat
-** Input: Adjacency matrix
-** Input: Partition
-** Output: Adjacency matrix
-When the function returns a matrix, the representation, full or sparse, using the ~AdjType~ name-value pair (defaults to sparse) and the data type can be specified using the ~Class~ name-value pair (defaults to double).
-** Output: Partition
-* TODO Wrapping custom igraph C files
-mxIgraph C library
-* TODO Development
-See CONTRIBUTING for more information on branching and version releases as well as how to make merge requests and open issues.
-* Possible future changes
-** Prefer returning error codes to directly calling an error function.
-Specifically in the ~mxIgraph~ lib, it may be better to pass up error codes that can be interpreted by providing something like ~errno~ and ~errstr~ so the higher level functions in the toolbox can provide more information about why the error occurred to the user.
-** Integrate attributes
-Specifically for saving and loading. Some file types allow for specifying the name of attributes, so it's possible an external file will have weight attributes with a name other than the default "weight". For these it would be beneficial to be able to supply the desired edge attribute name to use for weights.
-
-ADditionally, lgl and ncol use the order a node is seen as it's index, even in the scenario where the node names are their previous index. This leads to reordering the nodes when reading them in. May be useful to be able to pass a list of node names.
 * See also
 - [[https://igraph.org/][igraph homepage]]
 - [[https://r.igraph.org][igraph R package]]

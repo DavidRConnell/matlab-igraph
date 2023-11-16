@@ -62,6 +62,9 @@ check: toolbox
 	@cd tests; $(MAKE) all
 	matlab -nodesktop -nosplash -r "buildtool test; exit"
 
+docs: toolbox
+	matlab -softwareopengl -nodesktop -nosplash -r "buildtool makeDocs; exit"
+
 .PHONY: dist
 dist: clean-dist matlab-igraph.tar.gz
 

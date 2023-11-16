@@ -9,7 +9,7 @@ function testTask(~)
 end
 
 function makeDocsTask(~)
-    export("toolbox/gettingStarted.mlx", "docs/gettingStarted.md");
+    export("toolbox/gettingStarted.mlx", "docs/content/start/_index.md");
 end
 
 function testMxIgraphTask(~)

@@ -1,0 +1,83 @@
+#+TITLE: Issues and Contributions
+#+WEIGHT: 4
+
+For any issues, contributions, or discussions, use the [[https://github.com/DavidRConnell/matlab-igraph/issues][github issue tracker]].
+Contributions are welcome in any form, whether submitting issues, discussing changes, requesting features, or submitting pull requests.
+Before working on any major task, please open an issue first to prevent overlapping efforts and to help with organization.
+
+* Submitting issues
+If running into issues, there is a ~igraph.version~ function that will print the version of the C library.
+When upgrading, it's easy for the C library to get out of sync if it isn't explicitly rebuilt.
+Checking this command can serve as a sanity check that the error isn't related to the toolbox trying to run a new method (or a method whose header hasn't recently changed) on an older version of the C library.
+
+Other than that, please submit an issue to the tracker if you find anything that does not behave as expected or if there is anything missing.
+Try to provide enough information to reproduce the results if applicable.
+* Good contribution options
+At the moment, there are many tasks that can be completed to improve this project.
+If you are looking for something to do, find C methods that need to be wrapped (considering whether they are needed, see the *Why is <BLANK> missing?* section).
+Some things I intend on adding---in no particular order---are cycles, motifs, cliques, separators, structural properties (specifically shortest path), set operators, and 3d layouts and plotting.
+In addition, I plan on starting to add a reference to the documentation to provide thorough examples of using the different functions.
+There is also the possibility to make already existing functions more flexible by adding or modifying the arguments they accept.
+* Adding features
+If you are willing to add a feature, please submit it as a pull request.
+The general workflow should be to start by forking this repo, cloning the fork, creating a feature branch that you work off.
+Then after making commits to your private repo, submit a pull request.
+
+When writing, try to be consistent with the rest of the toolbox.
+Please look at related code and try to follow the general style.
+For C code, there is an ~.astylerc~ that will handle basic formatting.
+Make sure to follow the common API, such as providing options for the representation of a graph in any function that returns a graph.
+If you need any help, submit a pull request early and I'll take a look and provide feedback.
+
+Also see [[davidrconnell.github.io/matlab-igraph/docs/mxIgraph][Adding igraph functions]].
+* Adding to documentation
+Documentation is written in both org-mode and in matlab formats (live scripts or m-files).
+For org-mode, the files are in ~docs/content~, these can be viewed locally by installing [[https://gohugo.io/][Hugo]] and running ~hugo server~ in the ~docs~ directory.
+For live scripts, the files need to be written in the MATLAB editor.
+Live scripts and m-files can be exported to markdown using the ~make docs~ command (which should also place the files into the correct location so hugo can find them).
+* Versioning
+Currently, I will be using [[https://semver.org/][Semantic Versioning]].
+We are still pre 1.0.0, so this means non-major version changes may break the API.
+Once the toolbox is deemed more stable, I may start tracking the upstream igraph C library's versions instead of using semantic versioning to make it clear which version the toolbox is compatible with.
+* Possible future changes
+** Prefer returning error codes to directly calling an error function
+Specifically in the ~mxIgraph~ lib, it may be better to pass up error codes that can be interpreted by providing something like ~errno~ and ~errstr~ so the higher level functions in the toolbox can provide more information about why the error occurred to the user.
+** Make plotting more flexible
+Ideally there would be a way to alter how edges are displayed (i.e. different colors/transparencies) and a better why to modify other elements.
+The [[https://ggraph.data-imaginist.com/][ggraph]] package for R does this well.
+I'm not sure how to go about supplying edge specific attributes yet without introducing igraph's attributes tables.
+** Integrate attributes
+Specifically for saving and loading. Some file types allow for specifying the name of attributes, so it's possible an external file will have weight attributes with a name other than the default "weight".
+For these it would be beneficial to be able to supply the desired edge attribute name to use for weights.
+
+Additionally, lgl and ncol use the order a node is seen as it's index, even in the scenario where the node names are their previous index.
+This leads to reordering the nodes when reading them in.
+May be useful to be able to pass a list of node names.
+** Handle variable outputs
+Some igraph functions have optional outputs (i.e. ~igraph_grg_game~ which can return ~x~ and ~y~ vectors in addition to the graph).
+At the moment these optional outputs have been ignored.
+
+Using Matlab's ~varargout~ and the C interfaces ~nlhs~, it should be possible to add in different outputs.
+** Multigraphs
+Use 3d matrices to represent multigraphs.
+** Handle bipartite graphs
+In bipartite the source and destination are different node sets so the adjacency matrix should not be square.
+Remove requirement that adjs be square and add a ~isbipartite~ method to guess, that just compares number rows to number columns.
+Can add isbipartite to some functions.
+
+The other option is to just keep track a mask that determines which node type each node is in.
+* Why is <BLANK> missing?
+Missing functionality comes in three flavors: not needed, unsure how to implement, and haven't gotten to yet.
+For the most part, I tried to minimize the "haven't gotten to yet", but igraph is quite large so there are still many features missing that should be simple enough to add.
+** They are not useful
+There's a number of methods that seem like they are intended for writing higher level C methods rather than to be used by the end user.
+I have no intention of adding these.
+** Prefer to let Matlab handle it when reasonable
+Some graph operations can be performed simply using Matlab's matrix syntax.
+For example if you would like to find the degree of all nodes you can use ~degree = sum(adj, 1);~.
+Adjacency matrices can also be subsetted using normal matrix operations.
+Since the goal is to integrate with Matlab, calling igraph methods should be limited to complicated algorithms or when performance demands it.
+Which methods fall under this category is subjective and I could be swayed, but I do not intend on adding many of the more basic methods.
+** I'm not certain how to call a function
+I'm not familiar with all the algorithms in igraph, every once in awhile there is a method that I don't understand well enough to implement them.
+Like with the dimacs file type.

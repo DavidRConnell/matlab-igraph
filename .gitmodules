@@ -1,3 +1,6 @@
 [submodule "igraph-core"]
 	path = igraph-core
 	url = https://github.com/igraph/igraph.git
+[submodule "docs/themes/hextra"]
+	path = docs/themes/hextra
+	url = https://github.com/imfing/hextra

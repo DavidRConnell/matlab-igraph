@@ -1,0 +1,78 @@
+#+TITLE: Basic usage
+#+WEIGHT: 2
+
+See [[../../start][Getting Started]] for a quick overview.
+
+This gives a glance at the common functions the matlab-igraph toolbox and explains the common API that functions within the toolbox adhere to.
+
+* Primary functions
+While igraph provides a large number of routines, I find there is a common workflow involved in most my work with graphs.
+Here I will list the functions most useful to me for general graph analysis based on obtaining a graph, modifying or characterizing the graph, and viewing or storing the results to file.
+Most these functions include many methods or options, make sure to view their help in MATLAB to get the most out of them.
+** Collecting data
+There are three common ways to obtain a graph: load a graph from file, generate a graph (~igraph.generate~ for determinate generators, ~igraph.randgame~ for stochastic generators), or load a famous graph.
+- ~igraph.load~
+- ~igraph.generate~
+- ~igraph.randgame~
+- ~igraph.famous~
+** Modifying graphs
+The primary function for modfying graphs is ~igraph.rewire~.
+It is also possible to use builtin MATLAB functions for modifying a graph in the same manner as modifying matrices.
+** Characterizing graphs
+To characterize a graph there are a few functions including those that characterize nodes and those that predict community structure.
+The main function for characterizing nodes is ~igraph.centrality~, which provides many methods for defining the centrality of a node.
+For network level analysis, ~igraph.cluster~ will group nodes into a membership vector.
+The resulting communities can be compared with ~igraph.compare~ or scored using ~igraph.modularity~.
+** Plotting graphs
+The ~igraph.plot~ function displays a graph in a MATLAB plot.
+This has options for viewing node membership by coloring the nodes and using size to show a node metric (such as one produced by ~igraph.centrality~).
+Layouts can be generate directly via ~igraph.layout~, if there is need to modify a layout or reuse a layout for multiple plots.
+** Storing results
+Once finished processing the graph, it may be useful to save it to file in order to use it outside of MATLAB or to prevent having to rerun the processing steps.
+Saving graphs can be done using the ~igraph.save~ function.
+** Other important functions
+- ~igraph.rng~ can be used to ensure reproducible results when working with any indeterminate functions.
+- ~igraph.isdirected~ and ~igraph.isweighted~ are used by many functions to guess characteristics of the input graph.
+  If a function is not behaving as expected, it may be worthwhile to look at the help for these functions to understand how they determine whether a graph is directed or weighted.
+  When in doubt, the type of graph can be explicitly stated in the function call.
+* Common API
+There are common output and input arguments throughout the toolbox (such as adjacency matrices, partitions, and filenames).
+For these common arguments, there are functions for parsing relevant optional arguments to ensure consistency throughout the package.
+The common patterns and their options are provided below.
+Each function that fits a pattern should accept each of the described optional parameters.
+
+** Methods
+To follow MATLAB convention, many of the functions in the ~igraph~ namespace provide access to multiple related igraph functions.
+This is similar to how a function like ~corr~ can be supplied a correlation method, ~Pearson~, ~Spearman~, or ~Kendall~.
+For example, the ~igraph.load~ function provides access to all the igraph functions related to reading a graph from a file or the ~igraph.cluster~ function provides access to different community detection algorithms.
+These functions aim to select an intelligent default when applicable (i.e. ~igraph.load~ can guess the correct backend function based on the provided file extension) other functions may default to a simple method (~igraph.compare~) or require a method to be provided (~igraph.cluster~). The defaults can be overridden by supplying a ~method~ argument.
+See the help for specific functions for which methods are available and any method specific options there are.
+** File names
+For ~igraph.load~ and ~igraph.save~, file names are used to guess the file type based on the name's extension.
+The type can be explicitly provided using the ~FileType~ name-value pair.
+Available types are:
+- mat
+- edgelist
+- dl
+- ncol
+- lgl
+- graphdb
+- graphml
+- gml
+- pajek
+- dot
+- leda
+
+For more information about the file types see the [[https://igraph.org/c/doc/igraph-Foreign.html][igraph reference manual]].
+** Input: Adjacency matrix
+Functions that accept a matrix often need to know if the matrix is weighted or directed.
+The ~igraph.isweighted~ and ~igraph.isdirected~ functions are used to guess these.
+To override the guess use the ~isdirected~ or ~isweighted~ name-value pairs.
+Note: not all functions use weights, those the do not will not accept an ~isweighted~ value.
+** Output: Adjacency matrix
+When a function returns a graph, it provides optional arguments for the representation of the resulting adjacency matrix.
+There will be options for specifying whether the matrix should be sparse or full using the ~makeSparse~ name-value pair (defaults to sparse, unless the function also accepts a graph, in which case it will default to the input matrix) and the data type can be specified using the ~dtype~ name-value pair (defaults to double, again, unless there is an input graph, which will be used as a template).
+* Getting additional help
+To understand how to run a function, see the function's help in MATLAB using ~help <function-name>~ at the MATLAB command line.
+If something about the algorithm itself is not clear, it may be beneficial to view the [[https://igraph.org/c/doc/index.html][igraph C reference manual]], which has more detail about some of the inputs as well as links to primary sources.
+Beyond that, you can ask questions directly through the github issue tracker.
