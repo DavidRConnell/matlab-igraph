@@ -1,6 +1,6 @@
-CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
+CFLAGS += -fPIC -Wall -Wextra -Wno-format -Wno-format-security
 CPPFLAGS += $(INCLUDE)
-LDFLAGS += -Wl,-z,noexecstack -L$(LIB)
+LDFLAGS += -Wl,-rpath=$(LIB),-z,noexecstack -L$(LIB)
 MEXFLAGS = -R2018a -outdir $(outdir)
 
 mexdir := ../mex

@@ -1,4 +1,5 @@
 build/
 dist/
+toolbox/lib
 *.o
 *.mexa64

@@ -1,0 +1,68 @@
+name: MATLAB
+
+on:
+  push:
+    branches: [ simplify-compilation ]
+    # tags:
+    #   - 'v[0-9]+.[0-9]+.[0-9]+'
+
+# TODO: Add matrix for different OSes
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Pull submodules
+        run: git submodule init && git submodule update
+
+      - name: Install linux dependencies
+        # if: ${{ matrix.os ... }}
+        run: >
+          sudo apt update && sudo apt upgrade &&
+          sudo apt install cmake gcc-11 g++ libxml2-dev libgmp-dev libglpk-dev
+          libarpack2-dev libplfit-dev libopenblas64-dev libbison-dev libfl-dev
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+
+      - name: Build
+        run: make -j toolbox
+
+      # - name: Run tests and generate artifacts
+      #   uses: matlab-actions/run-tests@v1
+      #   with:
+      #     source-folder: tests/toolbox
+      #     test-results-junit: test-results/results.xml
+
+      # - name: Upload test results
+      #   uses: actions/upload-artifact@v2
+      #   if: always()
+      #   with:
+      #     name: test-results
+      #     path: test-results/results.xml
+
+      # - name: Package dist
+      #   run: >
+      #     mkdir ${{github.workspace}}/dist
+      #     tar czf ${{github.workspace}}/dist/matlab-igraph-${{matrix.os}}.tar.gz
+
+  # docs:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+
+  #   steps:
+  #     - name: Build docs
+
+  # release:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+
+  #   steps:
+  #     - name: Release
+  #       uses: elgohr/Github-Release-Action@v5
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+  #       with:
+  #         title: Release ${{ github.tag }}
+  #         workdir: ${{github.workspace}}/dist

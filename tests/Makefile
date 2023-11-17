@@ -1,6 +1,6 @@
 CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
 CPPFLAGS += $(INCLUDE)
-LDFLAGS += -L$(LIB) -Wl,-z,noexecstack
+LDFLAGS += -L$(LIB) -Wl,-rpath=$(LIB),-z,noexecstack
 MEXFLAGS := -R2018a
 
 sources = $(wildcard $(target)/mex/*.c)
