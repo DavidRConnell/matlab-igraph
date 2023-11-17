@@ -10,3 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - This changelog.
+
+### Changed
+
+- Use static libs for igraph dependency instead of dynamic.
+- Move mex out of toolbox so toolbox doesn't contain files not needed by the end user.

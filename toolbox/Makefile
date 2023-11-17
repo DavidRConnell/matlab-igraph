@@ -1,24 +1,26 @@
 CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
 CPPFLAGS += $(INCLUDE)
-LDFLAGS += -Wl,-rpath=$(LIB),-z,noexecstack -L$(LIB) -ligraph -lmxIgraph
+LDFLAGS += -Wl,-z,noexecstack -L$(LIB)
 MEXFLAGS = -R2018a -outdir $(outdir)
 
-vpath %.c mex
-vpath %.h mex
-vpath %.so $(LIB)
-
+mexdir := ../mex
 outdir := +igraph/private
-sources := $(wildcard mex/*.c)
-mexfiles := $(subst mex/,$(outdir)/,$(sources:.c=.$(mexext)))
+
+vpath %.c $(mexdir)
+vpath %.h $(mexdir)
+vpath %.$(libext) $(LIB)
+
+sources := $(wildcard $(mexdir)/*.c)
+mexfiles := $(subst $(mexdir)/,$(outdir)/,$(sources:.c=.$(mexext)))
 
 .PHONY: all
 all: $(mexfiles)
 
-$(outdir)/%.$(mexext): %.c libigraph.so libmxIgraph.so utils.h
+$(outdir)/%.$(mexext): %.c libmxIgraph.$(libext) libigraph.$(libext) utils.h
 	-[ -d $(outdir) ] || mkdir $(outdir)
 	mex $(CPPFLAGS) "LDFLAGS=$$LDFLAGS $(LDFLAGS)" "CFLAGS=$$CFLAGS $(CFLAGS)" \
-	  "COPTIMFLAGS=$$COPTIMFLAGS $(COPTIMFLAGS)" $(MEXFLAGS) $<
+	  "COPTIMFLAGS=$$COPTIMFLAGS $(COPTIMFLAGS)" $(MEXFLAGS) $< -lmxIgraph -ligraph
 
 .PHONY: clean
 clean:
-	-rm $(outdir)/*.$(mexext)
+	-$(RM) $(outdir)/*.$(mexext)

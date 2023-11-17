@@ -1,4 +1,4 @@
-CFLAGS += -fPIC -Wall -Wextra -Wno-format -Wno-format-security
+CFLAGS += -Wall -Wextra -Wno-format -Wno-format-security
 CPPFLAGS += $(INCLUDE)
 MXIGRAPHBUILD := $(BUILD)/mxIgraph
 MEXFLAGS := -R2018a -outdir $(MXIGRAPHBUILD)
@@ -11,10 +11,12 @@ sources := $(wildcard src/mx*.c)
 objs := $(subst src/,$(MXIGRAPHBUILD)/,$(sources:.c=.o))
 
 .PHONY: all
-all: $(MXIGRAPHBUILD) $(LIB)/libmxIgraph.so
+all: $(MXIGRAPHBUILD) $(LIB)/libmxIgraph.$(libext)
 
-$(LIB)/libmxIgraph.so: $(objs)
-	$(CC) $(CFLAGS) -shared $^ -o $@
+$(LIB)/libmxIgraph.$(libext): $(objs)
+	cd $(MXIGRAPHBUILD)
+	$(AR) rcs libmxIgraph.$(libext) $^
+	mv libmxIgraph.$(libext) $@
 
 mxGraph.o: mxIterators.o
 mxIterators.o: mxIterators.h
@@ -29,8 +31,8 @@ $(MXIGRAPHBUILD):
 
 .PHONY: clean
 clean:
-	-rm -r $(MXIGRAPHBUILD)
+	-$(RM) -r $(MXIGRAPHBUILD)
 
 .PHONY: clean-dist
 clean-dist: clean
-	-rm $(LIB)/libmxIgraph.so
+	-$(RM) $(LIB)/libmxIgraph.$(libext)

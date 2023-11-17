@@ -1,47 +1,48 @@
 export BUILD := $(PWD)/build
 export LIB := $(BUILD)/lib
+export DIST := $(PWD)/dist
 export INCLUDE := -I$(PWD)/mxIgraph/include -I$(PWD)/igraph-core/include -I$(BUILD)/igraph/include
 
-# TODO: Test for OS
+ifeq ($(OS), Windows_NT)
+arch := win64
+export mexext := mexw64
+export libext := lib
+else ifeq ($($shell uname -s), Darwin)
+arch := maci64
+export mexext := mexmaci64
+export libext := a
+else
+arch := linux
 export mexext := mexa64
+export libext := a
+endif
 
 .PHONY: all
 all: toolbox
 
 .PHONY: toolbox
-toolbox: mxIgraph igraph
+toolbox: mxIgraph
 	@cd toolbox; $(MAKE) all
 
 .PHONY: mxIgraph
-mxIgraph: igraph | $(BUILD)
+mxIgraph: igraph
 	@cd mxIgraph; $(MAKE) all
+
+.PHONY: igraph
+igraph: $(LIB)/libigraph.$(libext)
 
 $(BUILD):
 	mkdir $(BUILD)
 	mkdir $(LIB)
 
-.PHONY: igraph
-igraph: $(LIB)/libigraph.so | $(BUILD)
-
-$(LIB)/libigraph.so: soname := libigraph.so
-$(LIB)/libigraph.so: version := \
-  $(shell sed -n 's/set_target_properties(.* VERSION "\([0-9\.]*\)")/\1/p' <\
-  igraph-core/src/CMakeLists.txt)
-$(LIB)/libigraph.so: soversion := \
-  $(shell sed -n 's/set_target_properties(.* SOVERSION \([0-9\.]*\))/\1/p' <\
-  igraph-core/src/CMakeLists.txt)
-$(LIB)/libigraph.so: $(BUILD)/igraph/Makefile
+$(LIB)/libigraph.$(libext): soname := libigraph.$(libext)
+$(LIB)/libigraph.$(libext): $(BUILD)/igraph/Makefile | $(BUILD)
 	@cd $(BUILD)/igraph; $(MAKE) all
-	cp $(BUILD)/igraph/src/$(soname).$(version) $(LIB)
-	@cd $(LIB); \
-        [ -L $(soname).$(soversion) ] || \
-          ln -s $(soname).$(version) $(soname).$(soversion); \
-        [ -L $(soname) ] || \
-	  ln -s $(soname).$(soversion) $(soname)
+	cp $(BUILD)/igraph/src/$(soname) $(LIB)
 
 # CHANGELOG.md dependency is a fragile hack. Need a better method to determine
 # if igraph-core has been changed.
-$(BUILD)/igraph/Makefile: igraph-core/CHANGELOG.md
+$(BUILD)/igraph/Makefile: igraph-core/CHANGELOG.md | $(BUILD)
 	@[ -d $(BUILD)/igraph ] || mkdir $(BUILD)/igraph
 	cd $(BUILD)/igraph; \
 	cmake $(PWD)/igraph-core \
@@ -50,7 +51,7 @@ $(BUILD)/igraph/Makefile: igraph-core/CHANGELOG.md
 	  -DIGRAPH_OPENMP_SUPPORT=ON \
 	  -DIGRAPH_ENABLE_LTO=AUTO \
 	  -DIGRAPH_ENABLE_TLS=ON \
-	  -DBUILD_SHARED_LIBS=ON;
+	  -DBUILD_SHARED_LIBS=OFF;
 
 .PHONY: check-igraph
 check-igraph: igraph
@@ -66,15 +67,16 @@ docs: toolbox
 	matlab -softwareopengl -nodesktop -nosplash -r "buildtool makeDocs; exit"
 
 .PHONY: dist
-dist: clean-dist matlab-igraph.tar.gz
+dist: $(DIST)/matlab-igraph-$(arch).tar.gz
 
-matlab-igraph.tar.gz: toolbox
-	tar -xzf $@ build
+$(DIST)/matlab-igraph-$(arch).tar.gz: toolbox
+	-[ -d $(DIST) ] || mkdir $(DIST)
+	tar -czf $@ toolbox
 
 .PHONY: clean-dist
 clean-dist: clean
-	-[ -d $(BUILD) ] && rm -rf $(BUILD)
-	-[ -f *.tar.gz ] && rm *.tar.gz
+	-[ -d $(DIST) ] && $(RM) -r $(DIST)
+	-[ -d $(BUILD) ] && $(RM) -r $(BUILD)
 
 .PHONY: clean
 clean:
