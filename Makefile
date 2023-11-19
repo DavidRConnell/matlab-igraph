@@ -62,10 +62,10 @@ check-igraph: igraph
 .PHONY: check
 check: toolbox
 	@cd tests; $(MAKE) all
-	matlab -nodesktop -nosplash -r "buildtool test; exit"
+	matlab -batch "buildtool test"
 
 docs: toolbox
-	matlab -softwareopengl -nodesktop -nosplash -r "buildtool makeDocs; exit"
+	matlab -softwareopengl -batch "buildtool makeDocs"
 
 .PHONY: dist
 dist: $(DIST)/matlab-igraph-$(arch).tar.gz

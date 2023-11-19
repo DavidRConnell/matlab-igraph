@@ -6,6 +6,10 @@ on:
     # tags:
     #   - 'v[0-9]+.[0-9]+.[0-9]+'
 
+permissions:
+  checks: write
+  pull-requests: write
+
 # TODO: Add matrix for different OSes
 jobs:
   build:
@@ -20,27 +24,25 @@ jobs:
         # if: ${{ matrix.os ... }}
         run: >
           sudo apt update && sudo apt upgrade &&
-          sudo apt install cmake gcc-11 g++ libxml2-dev libgmp-dev libglpk-dev
+          sudo apt install cmake gcc g++ libxml2-dev libgmp-dev libglpk-dev
           libarpack2-dev libplfit-dev libopenblas64-dev libbison-dev libfl-dev
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v1
 
       - name: Build
-        run: make -j toolbox
+        run: >
+          LD_LIBRARY_PATH=/usr/local/MATLAB/R2023b/sys/os/glnxa64
+          make -j toolbox
 
-      # - name: Run tests and generate artifacts
-      #   uses: matlab-actions/run-tests@v1
-      #   with:
-      #     source-folder: tests/toolbox
-      #     test-results-junit: test-results/results.xml
+      - name: Run tests and generate artifacts
+        run: make -j check
 
-      # - name: Upload test results
-      #   uses: actions/upload-artifact@v2
-      #   if: always()
-      #   with:
-      #     name: test-results
-      #     path: test-results/results.xml
+      - name: Upload Linux test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: runner.os == 'Linux'
+        with:
+          files : build/tests/*.xml
 
       # - name: Package dist
       #   run: >
