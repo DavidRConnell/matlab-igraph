@@ -2,7 +2,7 @@
 
 Toolbox for integrating the [[https://igraph.org/][igraph]] C library with MATLAB.
 
-See [[The documentation][https://davidrconnell.github.io/matlab-igraph]] for a more thorough introduction.
+See [[https://davidrconnell.github.io/matlab-igraph][The documentation]] for a more thorough introduction.
 
 *In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute. Additionally, you should not see any internal errors (i.e. error ids of the form ~Igraph:internal:something~), please open an issue if you find one.
 Also note, I am not familiar with all the file formats supported by igraph, so if any of read/write logic is not sensible, let me know by opening an issue.
@@ -30,6 +30,8 @@ Csardi, G., & Nepusz, T. (2006). The igraph software package for complex network
 #+end_quote
 
 * Installation
+See [[https://davidrconnell.github.io/matlab-igraph/docs/installation][The installation guide]] for more in-depth instructions and error resolution.
+
 ** Installing igraph C library
 Currently the igraph C library must be compiled from the source tracked as a submodule in this repo.
 It may be possible in the future to simplify the installation process by allowing the use of precompiled binaries.

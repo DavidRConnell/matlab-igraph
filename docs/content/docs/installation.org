@@ -14,7 +14,7 @@ Go to the location you want to store the toolbox and run:
   git submodule init && git submodule update
 #+end_src
 
-* Installing the igraph C library
+* Building the igraph C library
 Currently the igraph C library must be compiled from the source tracked as a submodule in this repo.
 It may be possible in the future to simplify the installation process by allowing the use of precompiled binaries.
 Compiling from the submodule here will ensure the version works well with the toolbox and allows the use of different versions on different branches.
@@ -33,7 +33,54 @@ It is also recommended, but not required, to have the libraries:
 - ~gmp~
 - ~lapack~
 - ~plfit~
-* Installing the toolbox
+* Windows Users (Work in progress)
+The make file assumes windows users are using vcpkg to gather dependencies (as explained in more details in the [[https://igraph.org/c/html/latest/igraph-Installation.html#igraph-Installation-msys2][igraph reference manual]]).
+You will need to add
+If you do not want to use vcpkg, you can follow igraph's installation instructions, with slight modification, to handle the configuration step of building the igraph C library yourself.
+Use ~igraph-core~ as the source directory and ~build/igraph~ as the build directory (may need to create the directory if it does not exist).
+Additionally add the flags provided in the ~Makefile~.
+For example, from the root of the MATLAB package directory, run something like:
+#+begin_src bash
+  cmake -B build/igraph -S igraph-core \
+      -DIGRAPH_GRAPHML_SUPPORT=ON \
+      -DIGRAPH_GLPK_SUPPORT=ON \
+      -DIGRAPH_OPENMP_SUPPORT=ON \
+      -DIGRAPH_ENABLE_LTO=AUTO \
+      -DIGRAPH_ENABLE_TLS=ON \
+      -DBUILD_SHARED_LIBS=ON;
+#+end_src
+Then follow the rest of the instructions as normal.
+* Linux Users
+Due to MATLAB packaging an old version of ~libstdc++.so~, there may be issues when running files compiled with a newer version of ~gcc~.
+These will lead to errors that look like:
+#+begin_src bash
+   Invalid MEX-file
+      '/home/runner/work/matlab-igraph/matlab-igraph/toolbox/+igraph/private/mexIgraphCompare.mexa64':
+      /usr/local/MATLAB/R2023b/bin/glnxa64/../../sys/os/glnxa64/libstdc++.so.6:
+      version `GLIBCXX_3.4.29' not found (required by /home/runner/work/matlab-igraph/matlab-igraph/toolbox/lib/libigraph.so.3)
+#+end_src
+There are a few solutions to this issue:
+1. Remove the packaged version of ~libstdc++.so~ to use the system version
+   #+begin_src bash
+     rm $MATLAB_ROOT/sys/os/glnxa64/libstdc++.so.6
+   #+end_src
+   Where ~$MATLAB_ROOT~ is the root of the MATLAB installation, this should default to something like ~/usr/local/MATLAB/$RELEASE~, where ~$RELEASE~ will look like R2023b, depending on the installed version of MATLAB.
+   Note: ~libstdc++.so.6~ is a link to ~libstdc++.so.6.0.28~, so this can be undone by re-linking, ~ln -s libstdc++.so.6.0.28 libstdc++.so.6~.
+2. Replace the packaged ~libstdc++.so~ with a version ~6.0.29~
+   Copy ~libstdc++.so.6.0.29~ to ~$MATLAB_ROOT/sys/os/glnxa64~, then:
+   #+begin_src bash
+     cd $MATLAB_ROOT/sys/os/glnxa64
+     rm libstdc++.so.6
+     ln -s libstdc++.so.6.0.29 libstdc++.so.6
+   #+end_src
+   Again this can be undone by re-linking the old version to ~libstdc++.so.6~
+3. Using an older version of ~gcc~ that MATLAB is officially compatible with
+   This may not work well.
+   I've tried with version 11 and still got the above errors.
+   While, when using ~gcc~ version 10, igraph did not install correctly.
+
+ Be aware, since linking is done at runtime, changing ~libstdc++.so~ back after compiling will cause the errors to come back (but I don't believe there is any problem with upgrading the library).
+* Building the toolbox
 To install the toolbox use ~make all~.
 Compilation time can be improved using ~make -j all~ to run the make rules in parallel where possible.
 
