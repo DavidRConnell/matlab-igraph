@@ -39,7 +39,7 @@ $(LIB):
 
 $(LIB)/libigraph.$(libext): soname := libigraph.$(libext)
 $(LIB)/libigraph.$(libext): $(BUILD)/igraph/Makefile
-	@cd $(BUILD)/igraph; cmake --build .
+	@cd $(BUILD)/igraph; cmake --build . --config release
 	cp $(BUILD)/igraph/src/$(soname)* $(LIB)
 
 # CHANGELOG.md dependency is a fragile hack. Need a better method to determine
@@ -47,6 +47,7 @@ $(LIB)/libigraph.$(libext): $(BUILD)/igraph/Makefile
 $(BUILD)/igraph/Makefile: igraph-core/CHANGELOG.md | $(BUILD)
 	@[ -d $(BUILD)/igraph ] || mkdir $(BUILD)/igraph
 	cmake -B $(BUILD)/igraph -S $(PWD)/igraph-core \
+	  $(IGRAPH_OPTIONS) \
 	  -DIGRAPH_GRAPHML_SUPPORT=ON \
 	  -DIGRAPH_GLPK_SUPPORT=ON \
 	  -DIGRAPH_OPENMP_SUPPORT=ON \
