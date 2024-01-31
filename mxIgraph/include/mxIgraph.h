@@ -2,6 +2,11 @@
 #define MEX_IGRAPH_H
 
 #include "mex.h"
+#if defined(__GNUC__)
+#  undef printf
+#  define printf(...) __attribute__((format(mexPrintf, ...)))
+#endif
+
 #include "igraph.h"
 
 // types
