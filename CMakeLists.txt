@@ -28,6 +28,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(igraph-core)
 
 add_subdirectory(mxIgraph)
-add_subdirectory(toolbox)
+add_subdirectory(mex)
 
 add_subdirectory(tests)

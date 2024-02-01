@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Change
 
 - Use CMake instead of GNUMake for portability.
+- Move mex source code out of toolbox since they're not needed at runtime.
 
 ### Fix
 
