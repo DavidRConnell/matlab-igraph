@@ -18,8 +18,8 @@ foreach(test_file ${mxIgraph_tests})
     UNITTEST_FILE ${test_file}
     CUSTOM_TEST_COMMAND "run(runner, suite), exit(max([ans(1, :).Failed]))"
     UNITTEST_PRECOMMAND
-    "import matlab.unittest.plugins.XMLPlugin; suite = testsuite('matlab_file_name'); runner = testrunner('textoutput'); xmlFile = '${CMAKE_CURRENT_BINARY_DIR}/test_${test_name}_results.xml'; p = XMLPlugin.producingJUnitFormat(xmlFile); addPlugin(runner, p);"
-    ADDITIONAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mxIgraph
+    "import matlab.unittest.plugins.XMLPlugin; suite = testsuite('${test_name}'); runner = testrunner('textoutput'); xmlFile = '${CMAKE_CURRENT_BINARY_DIR}/test_${test_name}_results.xml'; p = XMLPlugin.producingJUnitFormat(xmlFile); addPlugin(runner, p);"
+    ADDITIONAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mxIgraph ${CMAKE_CURRENT_BINARY_DIR}
   )
 endforeach()
 
@@ -29,7 +29,7 @@ foreach(test_file ${toolbox_tests})
     UNITTEST_FILE ${test_file}
     CUSTOM_TEST_COMMAND "run(runner, suite), exit(max([ans(1, :).Failed]))"
     UNITTEST_PRECOMMAND
-    "import matlab.unittest.plugins.XMLPlugin; suite = testsuite('matlab_file_name'); runner = testrunner('textoutput'); xmlFile = '${CMAKE_CURRENT_BINARY_DIR}/test_${test_name}_results.xml'; p = XMLPlugin.producingJUnitFormat(xmlFile); addPlugin(runner, p);"
-    ADDITIONAL_PATH ${PROJECT_SOURCE_DIR}/toolbox
+    "import matlab.unittest.plugins.XMLPlugin; suite = testsuite('${test_name}'); runner = testrunner('textoutput'); xmlFile = '${CMAKE_CURRENT_BINARY_DIR}/test_${test_name}_results.xml'; p = XMLPlugin.producingJUnitFormat(xmlFile); addPlugin(runner, p);"
+    ADDITIONAL_PATH ${PROJECT_SOURCE_DIR}/toolbox ${PROJECT_BINARY_DIR}/mex
   )
 endforeach()

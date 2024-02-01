@@ -1,0 +1,157 @@
+name: Build
+
+on:
+  push:
+    branches: [ build-precompiled-toolboxes ]
+    # tags:
+    #   - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  checks: write
+  pull-requests: write
+
+jobs:
+  build-linux:
+    name: Build Linux toolbox
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt upgrade
+          sudo apt install cmake ninja-build gcc g++ libxml2-dev libbison-dev libfl-dev
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+
+      - name: Build toolbox
+        run: |
+          cmake -B build . -G Ninja
+          cmake --build build
+
+      - name: Run tests and generate artifacts
+        continue-on-error: true
+        run: |
+          cd build
+          ctest --test-dir . --output-on-failure --parallel $(nproc)
+
+      - name: Upload test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: build/tests/test_*.xml
+
+      - name: Package dist
+        run: cmake --build build --target package
+
+      - name: Package source
+        run: cmake --build build --target package_source
+
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
+          path: build/matlab-igraph_*.tar.gz
+
+  build-windows:
+    name: Build Windows toolbox
+    runs-on: windows-latest
+    env:
+      matlab-release: R2023b
+
+    defaults:
+      run:
+        shell:  msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install packages
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: git base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-toolchain mingw-w64-x86_64-libxml2
+          update: true
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+        with:
+          release: ${{ env.matlab-release }}
+
+      # For some reason CMake's findMatlab is not succeeding so explicitly
+      # passing the Matlab root. The path depends on the Matlab release so need
+      # to keep up-to-date.
+      - name: Build toolbox
+        run: |
+          cmake -B build . -DFLEX_KEEP_LINE_NUMBERS=ON -DIGRAPH_OPENMP_SUPPORT=ON -DMatlab_ROOT_DIR="C:/Program Files/MATLAB/${{ env.matlab-release }}"
+          cmake --build build
+
+      - name: Run tests and generate artifacts
+        continue-on-error: true
+        run: |
+          cd build
+          ctest --test-dir . --output-on-failure --parallel $(nproc)
+
+      - name: Upload test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        with:
+          files: build/tests/test_*.xml
+
+      - name: Package dist
+        run: cmake --build build --target package
+
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
+          path: build/matlab-igraph_*.zip
+
+  build-macos:
+    name: Build macOS toolbox
+    runs-on: macos-latest
+    env:
+      LLVM_VERSION: "14.0.5"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: brew install ninja autoconf automake libtool
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+
+      - name: Build toolbox
+        run: |
+          cmake -B build . -G Ninja
+          cmake --build build
+
+      - name: Run tests and generate artifacts
+        continue-on-error: true
+        run: |
+          cd build
+          ctest --test-dir . --output-on-failure --parallel $(nproc)
+
+      - name: Upload test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        with:
+          files: build/tests/test_*.xml
+
+      - name: Package dist
+        run: cmake --build build --target package
+
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
+          path: build/matlab-igraph_*.tar.gz
