@@ -27,7 +27,17 @@ set(IGRAPH_USE_INTERNAL_plfit ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(igraph-core)
 
+set(CMAKE_INSTALL_RPATH "$ORIGIN/../../lib")
 add_subdirectory(mxIgraph)
 add_subdirectory(mex)
 
 add_subdirectory(tests)
+
+install(DIRECTORY toolbox DESTINATION matlab-igraph)
+install(TARGETS mxIgraph DESTINATION matlab-igraph/toolbox/lib)
+
+file(GLOB mex_files mex/*.c)
+foreach(mex_file ${mex_files})
+  get_filename_component(mex_name ${mex_file} NAME_WE)
+  install(TARGETS ${mex_name} DESTINATION matlab-igraph/toolbox/+igraph/private)
+endforeach()
