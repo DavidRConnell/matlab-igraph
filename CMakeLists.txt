@@ -25,7 +25,7 @@ set(IGRAPH_USE_INTERNAL_GMP ON)
 set(IGRAPH_USE_INTERNAL_GLPK ON)
 set(IGRAPH_USE_INTERNAL_plfit ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_subdirectory(igraph-core)
+add_subdirectory(vendor/igraph)
 
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../../lib")
 add_subdirectory(mxIgraph)
