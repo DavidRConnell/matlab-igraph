@@ -20,7 +20,6 @@ See the getting started live script in the toolbox for basic usage as well as th
 
 In addition to the toolbox, the ~mxIgraph~ interface library has been kept separate to allow developers access to the mex routines for bridging MATLAB and igraph.
 Using this library you can wrap your own igraph based C functions with the mex API to run them in MATLAB.
-For more information, see the ~README~ in the ~mxIgraph~ directory.
 
 * Citation
 If you publish results generated with the help of this package, make sure to cite igraph:
@@ -32,38 +31,51 @@ Csardi, G., & Nepusz, T. (2006). The igraph software package for complex network
 * Installation
 See [[https://davidrconnell.github.io/matlab-igraph/docs/installation][The installation guide]] for more in-depth instructions and error resolution.
 
-** Installing igraph C library
-Currently the igraph C library must be compiled from the source tracked as a submodule in this repo.
-It may be possible in the future to simplify the installation process by allowing the use of precompiled binaries.
-Compiling from the submodule here will ensure the version works well with the toolbox and allows the use of different versions on different branches.
-
-*** Compiling igraph from source
-Before compiling from source you need to obtain the dependencies as declared in [[https://igraph.org/c/html/latest/igraph-Installation.html][igraph's installation instructions]].
-Specifically you need:
-- ~bison~
-- ~flex~
-- ~libxml2~
-It is also recommended, but not required, to have the libraries:
-- ~arpack~
-- ~blas~
-- ~glpk~
-- ~gmp~
-- ~lapack~
-- ~plfit~
 ** Installing the toolbox
-In addition to MATLAB, mex, and igraph, this toolbox depends on make.
-To install the toolbox use ~make all~.
-Compilation time can be improved using ~make -j all~ to run the make rules in parallel where possible.
+In addition to MATLAB this toolbox depends on ~cmake~, ~bison~, ~flex~, and ~libxml2~.
+To build, start in the root directory of this git repo and run:
+#+begin_src bash
+  mkdir build
+  cd build
+  cmake ..
+  cmake --build .
+#+end_src
+See ~cmake~'s docs for more options, using the ~ninja~ generator (depends on the ~ninja~ build tool) instead of the default ~make~ is faster.
 
-Once the mex files have been compiled, ensure the toolbox is on MATLAB's path. In MATLAB, run ~addpath("path/to/matlab-igraph/toolbox");~.
-You'll likely want to run ~savepath;~ as well so the toolbox will remain on MATLAB's path between restarts.
+You may want to build the package target instead of the default target to get a toolbox with all the files in the correct place:
+#+begin_src bash
+  cmake --build . --target package
+#+end_src
+Then unzip the package and add the contained toolbox to MATLAB's path.
+
+** Development
+Since the toolbox is a mix of MATLAB source files and compiled files that end up in build directory, the easiest approach for development is to build the default target then link the compiled files to the correct location in the toolbox so MATLAB can find them.
+From the build directory:
+#+begin_src bash
+  cd ../toolbox/+igraph/private
+  ln -s ../../../build/mex/*.mexa64 .
+  cd ../../../tests/mxIgraph/private
+  ln -s ../../../build/tests/*.mexa64 .
+#+end_src
+Where ~mexa64~ is the linux mex extension.
+If using a different extension, make sure to add a new rule to the ~.gitignore~ file.
+Now the source toolbox directory can be added to MATLAB's path and rebuilding the mex files will be recognized by MATLAB (although new files will need to be linked).
+There will also be a ~compile_commands.json~ in the build directory that can be linked to the root of the repository.
+** Testing
+Tests can be run using ~ctest~ with the ~--test-dir~ being set to the build directory.
+For interactive development, it's faster to run ~buildtool~ in a running MATLAB instance since it doesn't require repeatedly starting MATLAB.
+To run all tests:
+#+begin_src matlab
+  buildtool test
+#+end_src
+Test can be replaced with ~testMxIgraph~ or ~testToolbox~.
+** Using mxIgraph library
+mxIgraph is provided as a standalone shared library in ~toolbox/lib~ of the packaged compiled toolbox.
+This library contains igraph and its dependencies and therefore can be used without igraph installed separately.
+To use, point mex to the library directory using the ~-L~ flag and add the mxIgraph include directory (at ~<repo-root>/mxIgraph/include~) with the ~-I~ flag.
 ** Upgrading
 Every once in awhile you will want to check for a new release by running ~git pull~ in the ~matlab-igraph~ directory.
-If this pulled anything new down, rerun the above make commands.
-** Installing the mxIgraph C library
-~make mxIgraph~  can be used to exclusively compile the C library.
-Since the toolbox does require this library, the above ~make all~ will also compile it.
-The only reason to run this command is if all you want is the mxIgraph library and not the toolbox.
+If this pulled anything new down, rerun the ~cmake --build .~ command in the build directory.
 * See also
 - [[https://igraph.org/][igraph homepage]]
 - [[https://r.igraph.org][igraph R package]]
