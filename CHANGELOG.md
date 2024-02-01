@@ -10,3 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - This changelog.
+
+### Change
+
+- Use CMake instead of GNUMake for portability.
+- Move mex source code out of toolbox since they're not needed at runtime.
+
+### Fix
+
+- Add the format attribute to mexPrintf to prevent extraneous compiler warnings

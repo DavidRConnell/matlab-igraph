@@ -1,4 +1,5 @@
 #+TITLE: Documentation
+#+WEIGHT: 1
 
 For end users the most useful pages will be [[../start][Getting started]], [[installation][Installation]], and [[usage][Basic usage]].
 If you experience issues see the [[contributing][Issues and Contributions]] page and consider opening an issue in the [[https://github.com/DavidRConnell/matlab-igraph/issues][github issue tracker]].

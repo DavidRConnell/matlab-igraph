@@ -1,9 +1,5 @@
 #+TITLE: Installation
-#+WEIGHT: 1
-
-{{< callout type="warning" >}}
-  At the moment, the make commands likely only work on Linux. It will take a bit of time to figure out how to simplify the installation process on different OSes. This may require changing the build system to autotools or CMake.
-{{< /callout >}}
+#+WEIGHT: 2
 
 * Getting the source code
 The first thing to do is clone the source code with git.
@@ -14,42 +10,24 @@ Go to the location you want to store the toolbox and run:
   git submodule init && git submodule update
 #+end_src
 
-* Building the igraph C library
-Currently the igraph C library must be compiled from the source tracked as a submodule in this repo.
-It may be possible in the future to simplify the installation process by allowing the use of precompiled binaries.
-Compiling from the submodule here will ensure the version works well with the toolbox and allows the use of different versions on different branches.
-
-** Preparing for compilation
-While ~make~ will handle the igraph compilation for you, you'll still need to obtain igraph's dependencies as declared in [[https://igraph.org/c/html/latest/igraph-Installation.html][igraph's installation instructions]] before continuing.
-
-Specifically you need:
-- ~bison~
-- ~flex~
-- ~libxml2~
-It is also recommended, but not required, to have the libraries:
-- ~arpack~
-- ~blas~
-- ~glpk~
-- ~gmp~
-- ~lapack~
-- ~plfit~
-* Windows Users (Work in progress)
-The make file assumes windows users are using vcpkg to gather dependencies (as explained in more details in the [[https://igraph.org/c/html/latest/igraph-Installation.html#igraph-Installation-msys2][igraph reference manual]]).
-You will need to add
-If you do not want to use vcpkg, you can follow igraph's installation instructions, with slight modification, to handle the configuration step of building the igraph C library yourself.
-Use ~igraph-core~ as the source directory and ~build/igraph~ as the build directory (may need to create the directory if it does not exist).
-Additionally add the flags provided in the ~Makefile~.
-For example, from the root of the MATLAB package directory, run something like:
+* Dependencies
+Building the toolbox depends on ~cmake~ (and optionally the ~ninja~ build tool) as well as ~bison~, ~flex~, and ~libxml2~.
+* Building toolbox
+From the git command above:
 #+begin_src bash
-  cmake -B build/igraph -S igraph-core \
-      -DIGRAPH_GRAPHML_SUPPORT=ON \
-      -DIGRAPH_GLPK_SUPPORT=ON \
-      -DIGRAPH_OPENMP_SUPPORT=ON \
-      -DIGRAPH_ENABLE_LTO=AUTO \
-      -DIGRAPH_ENABLE_TLS=ON \
-      -DBUILD_SHARED_LIBS=ON;
+  cd matlab-igraph
+  mkdir build
+  cd build
+  cmake ..
+  cmake --build .
 #+end_src
-Then follow the rest of the instructions as normal.
+See ~cmake~'s docs for more options.
+
+You may want to build the package target instead of the default target to get a toolbox with all the files in the correct place:
+#+begin_src bash
+  cmake --build . --target package
+#+end_src
+Then unzip the package and add the contained toolbox to MATLAB's path.
 * Linux Users
 Due to MATLAB packaging an old version of ~libstdc++.so~, there may be issues when running files compiled with a newer version of ~gcc~.
 These will lead to errors that look like:
@@ -80,22 +58,37 @@ There are a few solutions to this issue:
    While, when using ~gcc~ version 10, igraph did not install correctly.
 
  Be aware, since linking is done at runtime, changing ~libstdc++.so~ back after compiling will cause the errors to come back (but I don't believe there is any problem with upgrading the library).
-* Building the toolbox
-To install the toolbox use ~make all~.
-Compilation time can be improved using ~make -j all~ to run the make rules in parallel where possible.
-
-Once the mex files have been compiled, ensure the toolbox is on MATLAB's path. In MATLAB, run ~addpath("path/to/matlab-igraph/toolbox");~.
-You'll likely want to run ~savepath;~ as well so the toolbox will remain on MATLAB's path between restarts.
+* Development
+Since the toolbox is a mix of MATLAB source files and compiled files that end up in build directory, the easiest approach for development is to build the default target then link the compiled files to the correct location in the toolbox so MATLAB can find them.
+From the build directory:
+#+begin_src bash
+  cd ../toolbox/+igraph/private
+  ln -s ../../../build/mex/*.mexa64 .
+  cd ../../../tests/mxIgraph/private
+  ln -s ../../../build/tests/*.mexa64 .
+#+end_src
+Where ~mexa64~ is the linux mex extension.
+If using a different extension, make sure to add a new rule to the ~.gitignore~ file.
+Now the source toolbox directory can be added to MATLAB's path and rebuilding the mex files will be recognized by MATLAB (although new files will need to be linked).
+There will also be a ~compile_commands.json~ in the build directory that can be linked to the root of the repository.
+* Testing
+Tests can be run using ~ctest~ with the ~--test-dir~ being set to the build directory.
+For interactive development, it's faster to run ~buildtool~ in a running MATLAB instance since it doesn't require repeatedly starting MATLAB.
+To run all tests:
+#+begin_src matlab
+  buildtool test
+#+end_src
+Test can be replaced with ~testMxIgraph~ or ~testToolbox~.
+* Using mxIgraph library
+mxIgraph is provided as a standalone shared library in ~toolbox/lib~ of the packaged compiled toolbox.
+This library contains igraph and its dependencies and therefore can be used without igraph installed separately.
+To use, point mex to the library directory using the ~-L~ flag and add the mxIgraph include directory (at ~<repo-root>/mxIgraph/include~) with the ~-I~ flag.
 * Upgrading
 Every once in awhile you will want to check for a new release by running ~git pull~ in the ~matlab-igraph~ directory.
-If this pulled anything new down, rerun the above make commands.
-* Compiling the mxIgraph C library
-~make mxIgraph~  can be used to exclusively compile the mxIgraph C library.
-Since the toolbox does require this library, the above ~make all~ will also compile it.
-The only reason to run this command is if all you want is the mxIgraph library and not the toolbox.
-* Running tests
-The ~make check~ command can be used to run the tests related to this toolbox and ~make check-igraph~ can be used to run the igraph C library's tests.
+If this pulled anything new down, rerun the ~cmake --build .~ command in the build directory.
 * Making the docs
-To make the docs locally, run ~make docs~, this will export any documentation written using a MATLAB file type to markdown.
-Hugo is used to create the documentation site.
-To serve the site locally, install Hugo then go into the ~docs~ directory and run ~hugo server~.
+Hugo is used to create the documentation website.
+For viewing the website locally, hugo can be run a local server with ~hugo server~ which should be run in the ~docs~ directory.
+When running, hugo will print an address to view the local site.
+This site will update as the markdown files under ~docs/content~ at modified.
+To make the docs locally, run ~buildtool makeDocs~, this will export MATLAB livescripts to markdown for the website.

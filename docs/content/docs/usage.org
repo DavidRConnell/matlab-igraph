@@ -1,5 +1,5 @@
 #+TITLE: Basic usage
-#+WEIGHT: 2
+#+WEIGHT: 3
 
 See [[../../start][Getting Started]] for a quick overview.
 

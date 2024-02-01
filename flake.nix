@@ -21,21 +21,14 @@
           matlab-mex
         ]) ++ (with pkgs; [
           astyle
-          bear
-          gnumake
+          cmake
+          ninja
           gdb
           hugo
           # igraph dependencies
-          arpack
           bison
-          blas
-          cmake
           flex
-          glpk
-          gmp
-          lapack
           libxml2
-          plfit
         ]);
         shellHook = ''
           export OMP_NUM_THREADS=16
