@@ -1,8 +1,6 @@
 file(GLOB src_files ${CMAKE_CURRENT_SOURCE_DIR}/mex/*.c)
 foreach(source ${src_files})
-  get_filename_component(mex_name ${source}
-    NAME_WE
-  )
+  get_filename_component(mex_name ${source} NAME_WE)
   matlab_add_mex(NAME ${mex_name}
     MODULE
     SRC ${source}

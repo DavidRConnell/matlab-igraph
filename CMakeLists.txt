@@ -29,3 +29,5 @@ add_subdirectory(igraph-core)
 
 add_subdirectory(mxIgraph)
 add_subdirectory(toolbox)
+
+add_subdirectory(tests)
