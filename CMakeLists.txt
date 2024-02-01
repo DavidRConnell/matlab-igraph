@@ -27,17 +27,56 @@ set(IGRAPH_USE_INTERNAL_plfit ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(vendor/igraph)
 
+include(vendor/igraph/etc/cmake/GetGitRevisionDescription.cmake)
+git_describe(CMAKE_PACKAGE_VERSION)
+if ("${CMAKE_PACKAGE_VERSION}" STREQUAL "")
+  set(CMAKE_PACKAGE_VERSION "NOTFOUND")
+endif()
+
+message(STATUS "${CMAKE_PROJECT_NAME} version: ${CMAKE_PACKAGE_VERSION}")
+message(STATUS "MEX extension: ${Matlab_MEX_EXTENSION}")
+message(STATUS "")
+
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../../lib")
 add_subdirectory(mxIgraph)
 add_subdirectory(mex)
 
 add_subdirectory(tests)
 
-install(DIRECTORY toolbox DESTINATION matlab-igraph)
-install(TARGETS mxIgraph DESTINATION matlab-igraph/toolbox/lib)
+# Installation
+install(DIRECTORY toolbox
+  DESTINATION matlab-igraph
+  COMPONENT toolbox)
+install(TARGETS mxIgraph
+  DESTINATION matlab-igraph/toolbox/lib
+  COMPONENT toolbox)
 
 file(GLOB mex_files mex/*.c)
 foreach(mex_file ${mex_files})
   get_filename_component(mex_name ${mex_file} NAME_WE)
-  install(TARGETS ${mex_name} DESTINATION matlab-igraph/toolbox/+igraph/private)
+  install(TARGETS ${mex_name}
+    DESTINATION matlab-igraph/toolbox/+igraph/private
+    COMPONENT toolbox)
 endforeach()
+
+# Packaging
+set(CPACK_PACKAGE_HOMEPAGE_URL("https://github.com/DavidRConnell/matlab-igraph"))
+
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CMAKE_PACKAGE_VERSION}")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_GENERATOR "TGZ")
+if(CMAKE_SYSTEM MATCHES Windows)
+  set(CPACK_GENERATOR "ZIP")
+endif()
+
+set(CPACK_SOURCE_IGNORE_FILES
+  "\\\\..*/"
+  "\\\\.${Matlab_MEX_EXTENSION}$"
+  "${CMAKE_SOURCE_DIR}/build"
+  "${CMAKE_SOURCE_DIR}/dist"
+  "compile_commands.json")
+
+include(CPack)
+
+# Only package files needed to run the toolbox.
+cpack_add_component(toolbox)
