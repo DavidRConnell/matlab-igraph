@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Workflow for automating building and packaging toolbox.
+- Automatic release pre-compiled toolboxes.
+
+### Fix
+
+- Modify CMake so it compiles on Windows and macOS.
+
+### Change
+
+- Use CMake's "Object" library for mxIgraph instead of a shared library.
+- Package now only contain toolbox.
 
 ## [0.1.1] 2024-02-01
 
