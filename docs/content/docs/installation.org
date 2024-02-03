@@ -4,10 +4,7 @@
 * Pre-compiled toolboxes
 The easiest way to get the toolbox running is to download a pre-compiled toolbox from github.
 Toolboxes can be found at the [[https://github.com/DavidRConnell/matlab-igraph/releases][matlab-igraph release page]].
-Download the one for your OS, unzip it and and add the toolbox to Matlab's path via:
-#+begin_src matlab
-  addpath(/path/to/matlab-igraph/toolbox)
-#+end_src
+See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and Manage Add-ons]] for information on installing toolboxes (.mltbx) files.
 
 {{< callout type="warning" >}}
   Linux Users: If you are getting an error related to ~GLIBCXX_3.4.29~ not found, this is a known issue with Matlab shipping an older version of ~libstdc++.so.6~ see the *Linux Users* heading below for a fix.

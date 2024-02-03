@@ -33,7 +33,7 @@ See [[https://davidrconnell.github.io/matlab-igraph/docs/installation][The insta
 
 ** Pre-compiled toolbox (recommended)
 Download the toolbox matching your OS from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]].
-Then unzip and add the toolbox to Matlab's path with the ~addpath~ command.
+See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and Manage Add-ons]] for installing the toolbox.
 ** Building the toolbox
 In addition to MATLAB this toolbox depends on ~cmake~, ~bison~, ~flex~, and ~libxml2~.
 To build, start in the root directory of this git repo and run:

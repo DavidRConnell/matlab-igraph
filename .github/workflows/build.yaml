@@ -31,7 +31,8 @@ jobs:
 
       - name: Build toolbox
         run: |
-          cmake -B build . -G Ninja
+          cmake -B build . -G Ninja \
+            -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
           cmake --build build
 
       - name: Run tests and generate artifacts
@@ -46,7 +47,8 @@ jobs:
           files: build/tests/test_*.xml
 
       - name: Package dist
-        run: cmake --build build --target package
+        run: |
+          cmake --build build --target package
 
       - name: Package source
         run: cmake --build build --target package_source
@@ -55,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
-          path: build/matlab-igraph_*.tar.gz
+          path: build/matlab-igraph_${{ github.ref_name }}*.tar.gz
 
   build-windows:
     name: Build Windows toolbox
@@ -90,7 +92,11 @@ jobs:
       # to keep up-to-date.
       - name: Build toolbox
         run: |
-          cmake -B build . -DFLEX_KEEP_LINE_NUMBERS=ON -DIGRAPH_OPENMP_SUPPORT=ON -DMatlab_ROOT_DIR="C:/Program Files/MATLAB/${{ env.matlab-release }}"
+          cmake -B build . \
+            -DFLEX_KEEP_LINE_NUMBERS=ON \
+            -DIGRAPH_OPENMP_SUPPORT=ON \
+            -DMatlab_ROOT_DIR="C:/Program Files/MATLAB/${{ env.matlab-release }}" \
+            -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
           cmake --build build
 
       - name: Run tests and generate artifacts
@@ -111,7 +117,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
-          path: build/matlab-igraph_*.zip
+          path: build/matlab-igraph_${{ github.ref_name }}*.zip
 
   build-macos:
     name: Build macOS toolbox
@@ -133,7 +139,8 @@ jobs:
 
       - name: Build toolbox
         run: |
-          cmake -B build . -G Ninja
+          cmake -B build . -G Ninja \
+            -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
           cmake --build build
 
       - name: Run tests and generate artifacts
@@ -154,7 +161,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
-          path: build/matlab-igraph_*.tar.gz
+          path: build/matlab-igraph_${{ github.ref_name }}*.tar.gz
 
   release:
     name: Release new version
@@ -162,16 +169,32 @@ jobs:
     needs: [ build-linux, build-windows, build-macos ]
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Collect OS specific toolboxes
         uses: actions/download-artifact@v3
         with:
           path: artifacts
 
-      - run: |
-          ls artifacts
-          ls artifacts/matlab-igraph-*-${{ github.sha }}
+      - name: Extract files
+        run: |
+          mkdir release
+          mv artifacts/matlab-igraph-Linux-${{ github.sha }}/*_source.tar.gz release
+          cd artifacts
+          tar xf matlab-igraph-Linux-${{ github.sha }}/* --directory matlab-igraph-Linux-${{ github.sha }}
+          tar xf matlab-igraph-macOS-${{ github.sha }}/* --directory matlab-igraph-macOS-${{ github.sha }}
+          unzip matlab-igraph-Windows-${{ github.sha }}/* -d matlab-igraph-Windows-${{ github.sha }}
+          cd ..
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+
+      - name: Make toolboxes
+        uses: matlab-actions/run-command@v1
+        with:
+          command: addpath(".github/workflows"), buildAllToolboxes("artifacts", "release", "${{ github.ref_name }}")
 
       - name: Upload assets to release
         uses: softprops/action-gh-release@v1
         with:
-          files: artifacts/matlab-igraph-*/*
+          files: release/*
