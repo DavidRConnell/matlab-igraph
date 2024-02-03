@@ -1,6 +1,17 @@
 #+TITLE: Installation
 #+WEIGHT: 2
 
+* Pre-compiled toolboxes
+The easiest way to get the toolbox running is to download a pre-compiled toolbox from github.
+Toolboxes can be found at the [[https://github.com/DavidRConnell/matlab-igraph/releases][matlab-igraph release page]].
+Download the one for your OS, unzip it and and add the toolbox to Matlab's path via:
+#+begin_src matlab
+  addpath(/path/to/matlab-igraph/toolbox)
+#+end_src
+
+{{< callout type="warning" >}}
+  Linux Users: If you are getting an error related to ~GLIBCXX_3.4.29~ not found, this is a known issue with Matlab shipping an older version of ~libstdc++.so.6~ see the *Linux Users* heading below for a fix.
+{{< /callout >}}
 * Getting the source code
 The first thing to do is clone the source code with git.
 Go to the location you want to store the toolbox and run:
@@ -37,7 +48,7 @@ These will lead to errors that look like:
       /usr/local/MATLAB/R2023b/bin/glnxa64/../../sys/os/glnxa64/libstdc++.so.6:
       version `GLIBCXX_3.4.29' not found (required by /home/runner/work/matlab-igraph/matlab-igraph/toolbox/lib/libigraph.so.3)
 #+end_src
-There are a few solutions to this issue:
+There are a few solutions to this issue (if unsure, use 1.):
 1. Remove the packaged version of ~libstdc++.so~ to use the system version
    #+begin_src bash
      rm $MATLAB_ROOT/sys/os/glnxa64/libstdc++.so.6
@@ -79,10 +90,8 @@ To run all tests:
   buildtool test
 #+end_src
 Test can be replaced with ~testMxIgraph~ or ~testToolbox~.
-* Using mxIgraph library
-mxIgraph is provided as a standalone shared library in ~toolbox/lib~ of the packaged compiled toolbox.
-This library contains igraph and its dependencies and therefore can be used without igraph installed separately.
-To use, point mex to the library directory using the ~-L~ flag and add the mxIgraph include directory (at ~<repo-root>/mxIgraph/include~) with the ~-I~ flag.
+* Using mxIgraph library (In progress)
+Currently, the build process is not compiling mxIgraph as a real library (it's created as a CMake Object library to simplify linking). As such there is no simple way to gain access to the mxIgraph library at the moment.
 * Upgrading
 Every once in awhile you will want to check for a new release by running ~git pull~ in the ~matlab-igraph~ directory.
 If this pulled anything new down, rerun the ~cmake --build .~ command in the build directory.
