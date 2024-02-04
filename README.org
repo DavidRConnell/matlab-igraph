@@ -1,5 +1,7 @@
 #+TITLE: Igraph toolbox
 
+[[https://matlab.mathworks.com/open/fileexchange/v1?id=158946][https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg]]
+
 Toolbox for integrating the [[https://igraph.org/][igraph]] C library with MATLAB.
 
 See [[https://davidrconnell.github.io/matlab-igraph][The documentation]] for a more thorough introduction.
@@ -16,10 +18,9 @@ By using standard matrices, it's easy to produce and process graphs using builti
 Both full and sparse adjacency matrices are supported along with different data types (doubles and logicals for now).
 This allows flexibility and easy integration into preexisting projects.
 
-See the getting started live script in the toolbox for basic usage as well as the other example scripts. For more thorough introduction, see the "Using the toolbox", "Common functions", and "Basic API" sections of this README.
+See the getting started live script in the toolbox for basic usage.
 
-In addition to the toolbox, the ~mxIgraph~ interface library has been kept separate to allow developers access to the mex routines for bridging MATLAB and igraph.
-Using this library you can wrap your own igraph based C functions with the mex API to run them in MATLAB.
+*For File Exchange users* download toolboxes from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]]. Toolboxes are built for each OS but the file exchange only grabs one of the available ones. You need to select the toolbox whose name corresponds with your computers architecture (glnxa64 for linux, win64 for windows, maci64 for macOS with intel processor, there is no compiled toolbox for arm based macs yet but it can be compiled manually).
 
 * Citation
 If you publish results generated with the help of this package, make sure to cite igraph:
@@ -37,7 +38,7 @@ See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and
 ** Building the toolbox
 In addition to MATLAB this toolbox depends on ~cmake~, ~bison~, ~flex~, and ~libxml2~.
 To build, start in the root directory of this git repo and run:
-#+begin_src bash
+#+begin_src bash :noeval
   mkdir build
   cd build
   cmake ..
@@ -46,7 +47,7 @@ To build, start in the root directory of this git repo and run:
 See ~cmake~'s docs for more options, using the ~ninja~ generator (depends on the ~ninja~ build tool) instead of the default ~make~ is faster.
 
 You may want to build the package target instead of the default target to get a toolbox with all the files in the correct place:
-#+begin_src bash
+#+begin_src bash :noeval
   cmake --build . --target package
 #+end_src
 Then unzip the package and add the contained toolbox to MATLAB's path.
@@ -54,7 +55,7 @@ Then unzip the package and add the contained toolbox to MATLAB's path.
 ** Development
 Since the toolbox is a mix of MATLAB source files and compiled files that end up in build directory, the easiest approach for development is to build the default target then link the compiled files to the correct location in the toolbox so MATLAB can find them.
 From the build directory:
-#+begin_src bash
+#+begin_src bash :noeval
   cd ../toolbox/+igraph/private
   ln -s ../../../build/mex/*.mexa64 .
   cd ../../../tests/mxIgraph/private
@@ -68,11 +69,11 @@ There will also be a ~compile_commands.json~ in the build directory that can be 
 Tests can be run using ~ctest~ with the ~--test-dir~ being set to the build directory.
 For interactive development, it's faster to run ~buildtool~ in a running MATLAB instance since it doesn't require repeatedly starting MATLAB.
 To run all tests:
-#+begin_src matlab
+#+begin_src matlab :noeval
   buildtool test
 #+end_src
 Test can be replaced with ~testMxIgraph~ or ~testToolbox~.
-** Using mxIgraph library
+** Using mxIgraph library (in progress)
 mxIgraph is provided as a standalone shared library in ~toolbox/lib~ of the packaged compiled toolbox.
 This library contains igraph and its dependencies and therefore can be used without igraph installed separately.
 To use, point mex to the library directory using the ~-L~ flag and add the mxIgraph include directory (at ~<repo-root>/mxIgraph/include~) with the ~-I~ flag.
