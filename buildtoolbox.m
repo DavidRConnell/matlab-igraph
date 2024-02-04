@@ -9,8 +9,9 @@ function buildtoolbox(toolboxFolder, outDir, arch, version)
 
     opts.ToolboxName = "matlab-igraph";
     opts.ToolboxVersion = versionNumber;
-    opts.ToolboxGettingStartedGuide = fullfile(toolboxFolder, "doc", ...
+    opts.ToolboxGettingStartedGuide = fullfile(toolboxFolder, ...
                                                "GettingStarted.mlx");
+    % opts.ToolboxMatlabPath = {toolboxFolder, fullfile(toolboxFolder, 'doc')};
 
     opts.AuthorName = "David R. Connell";
     opts.Summary = "Igraph bindings for Matlab";
