@@ -75,8 +75,17 @@ foreach(mex_file ${mex_files})
   get_filename_component(mex_name ${mex_file} NAME_WE)
   install(TARGETS ${mex_name}
     DESTINATION matlab-igraph/toolbox/+igraph/private
+    RUNTIME_DEPENDENCY_SET toolbox_deps
     COMPONENT toolbox)
 endforeach()
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+  install(RUNTIME_DEPENDENCY_SET toolbox_deps
+    DIRECTORIES "C:\\msys64\\mingw64\\bin" "C:\\msys64\\ucrt64\\bin"
+    PRE_EXCLUDE_REGEXES "api-ms-*" "libmx" "libmex"
+    DESTINATION matlab-igraph/toolbox/+igraph/private
+    COMPONENT toolbox)
+endif()
 
 # Packaging
 set(CPACK_PACKAGE_HOMEPAGE_URL("https://github.com/DavidRConnell/matlab-igraph"))

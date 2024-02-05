@@ -93,7 +93,7 @@ jobs:
       - name: Build toolbox
         run: |
           cmake -B build . \
-            -DFLEX_KEEP_LINE_NUMBERS=ON \
+            -G Ninja \
             -DIGRAPH_OPENMP_SUPPORT=ON \
             -DMatlab_ROOT_DIR="C:/Program Files/MATLAB/${{ env.matlab-release }}" \
             -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Ship runtime dependencies for windows (#3)
+
 ### Changed
 
 - Pin igraph C library to release 0.10.9.
