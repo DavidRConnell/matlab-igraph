@@ -82,8 +82,10 @@ endforeach()
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
   install(RUNTIME_DEPENDENCY_SET toolbox_deps
-    DIRECTORIES "C:\\msys64\\mingw64\\bin" "C:\\msys64\\ucrt64\\bin"
-    PRE_EXCLUDE_REGEXES "api-ms-*" "libmx" "libmex"
+    DIRECTORIES
+    "C:\\msys64\\mingw64\\bin" "C:\\msys64\\ucrt64\\bin"
+    "D:\\msys64\\mingw64\\bin" "D:\\msys64\\ucrt64\\bin"
+    PRE_EXCLUDE_REGEXES "api-ms-*" "libmx" "libmex" "ext-ms-*"
     DESTINATION matlab-igraph/toolbox/+igraph/private
     COMPONENT toolbox)
 elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
