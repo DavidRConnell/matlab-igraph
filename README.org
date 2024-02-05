@@ -20,7 +20,7 @@ This allows flexibility and easy integration into preexisting projects.
 
 See the getting started live script in the toolbox for basic usage.
 
-*For File Exchange users* download toolboxes from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]]. Toolboxes are built for each OS but the file exchange only grabs one of the available ones. You need to select the toolbox whose name corresponds with your computers architecture (glnxa64 for linux, win64 for windows, maci64 for macOS with intel processor, there is no compiled toolbox for arm based macs yet but it can be compiled manually).
+*For File Exchange users* if downloading from the File Exchange or using MATLAB's Add-ons manager, you may want to run ~igraph.postinstall()~ after the installation to remove files that are not required on your system.
 
 * Citation
 If you publish results generated with the help of this package, make sure to cite igraph:
@@ -33,10 +33,11 @@ Csardi, G., & Nepusz, T. (2006). The igraph software package for complex network
 See [[https://davidrconnell.github.io/matlab-igraph/docs/installation][The installation guide]] for a more in-depth instructions and error resolution.
 
 ** Pre-compiled toolbox (recommended)
-Download the toolbox matching your OS from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]].
-See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and Manage Add-ons]] for installing the toolbox.
+You can use MATLAB Add-ons manager. This will track toolbox updates.
+It's also possible to download the toolbox matching your OS directly from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]], however, this will need to be manually updated. If manually downloading the toolbox, double click on the file (ending in ~.mltbx~) in MATLAB to install.
 ** Building the toolbox
 In addition to MATLAB this toolbox depends on ~cmake~, ~bison~, ~flex~, and ~libxml2~.
+On Windows, you will need to install the msys environment and download the dependencies using the provided ~pacman~ package manager.
 To build, start in the root directory of this git repo and run:
 #+begin_src bash :noeval
   mkdir build
@@ -46,7 +47,7 @@ To build, start in the root directory of this git repo and run:
 #+end_src
 See ~cmake~'s docs for more options, using the ~ninja~ generator (depends on the ~ninja~ build tool) instead of the default ~make~ is faster.
 
-You may want to build the package target instead of the default target to get a toolbox with all the files in the correct place:
+You can build the package target target to get a toolbox with all the files in the correct place:
 #+begin_src bash :noeval
   cmake --build . --target package
 #+end_src
@@ -73,13 +74,6 @@ To run all tests:
   buildtool test
 #+end_src
 Test can be replaced with ~testMxIgraph~ or ~testToolbox~.
-** Using mxIgraph library (in progress)
-mxIgraph is provided as a standalone shared library in ~toolbox/lib~ of the packaged compiled toolbox.
-This library contains igraph and its dependencies and therefore can be used without igraph installed separately.
-To use, point mex to the library directory using the ~-L~ flag and add the mxIgraph include directory (at ~<repo-root>/mxIgraph/include~) with the ~-I~ flag.
-** Upgrading
-Every once in awhile you will want to check for a new release by running ~git pull~ in the ~matlab-igraph~ directory.
-If this pulled anything new down, rerun the ~cmake --build .~ command in the build directory.
 * See also
 - [[https://igraph.org/][igraph homepage]]
 - [[https://r.igraph.org][igraph R package]]

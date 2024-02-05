@@ -2,14 +2,26 @@
 #+WEIGHT: 2
 
 * Pre-compiled toolboxes
-The easiest way to get the toolbox running is to download a pre-compiled toolbox from github.
-Toolboxes can be found at the [[https://github.com/DavidRConnell/matlab-igraph/releases][matlab-igraph release page]].
-See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and Manage Add-ons]] for information on installing toolboxes (.mltbx) files.
+** MATLAB's Add-on manager (Recommended)
+The toolbox can be installed using MATLAB's Add-on manager.
+Unless you are interested in developing or learning about the package this is the way to go.
+The Add-on manager will also handle tracking updates for you.
+See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and Manage Add-ons]] for more information.
 
-{{< callout type="warning" >}}
-  Linux Users: If you are getting an error related to ~GLIBCXX_3.4.29~ not found, this is a known issue with Matlab shipping an older version of ~libstdc++.so.6~ see the *Linux Users* heading below for a fix.
-{{< /callout >}}
-* Getting the source code
+After installing you can run ~igraph.postinstall()~ to clean up files that aren't needed on your system. This isn't required but will save space. It will need to be done after each update too.
+** Downloading from the release page
+Alternatively, you can get an architecture specific toolbox directly from [[https://github.com/DavidRConnell/matlab-igraph/releases][the release page]].
+There is little reason use this method other than the download will be smaller.
+Once the download has been completed, you can double click on the resulting ~.mltbx~ file in the MATLAB IDE and it will guide you through the installation method.
+With this method, there is no reason to run the ~igraph.postinstall()~ command.
+Upgrades will need to be done manually by downloading a newer toolbox from the release page and installing it through the MATLAB IDE in the same manner as mentioned above.
+* Compiling from source
+For those who want to build the code themselves, this can be done by cloning the git repo and compiling with cmake.
+If the pre-built toolboxes don't support your architecture, this is the only way to get the toolbox running.
+It may take a little work to get the build correct for an unsupported architecture.
+See [[https://igraph.org/c/html/latest/igraph-Installation.html][the igraph C library's installation instructions]] for obtaining the needed dependencies (note: this toolbox uses igraph's bundled libraries so none you don't need to install any of the optional external libraries).
+If you do work on getting this toolbox running on a new architecture, you can add an issue or pull-request to the github page to add future support to the toolbox.
+** Getting the source code
 The first thing to do is clone the source code with git.
 Go to the location you want to store the toolbox and run:
 
@@ -18,9 +30,9 @@ Go to the location you want to store the toolbox and run:
   git submodule init && git submodule update
 #+end_src
 
-* Dependencies
+** Dependencies
 Building the toolbox depends on ~cmake~ (and optionally the ~ninja~ build tool) as well as ~bison~, ~flex~, and ~libxml2~.
-* Building toolbox
+** Building toolbox
 From the git command above:
 #+begin_src bash
   cd matlab-igraph
@@ -36,37 +48,7 @@ You may want to build the package target instead of the default target to get a 
   cmake --build . --target package
 #+end_src
 Then unzip the package and add the contained toolbox to MATLAB's path.
-* Linux Users
-Due to MATLAB packaging an old version of ~libstdc++.so~, there may be issues when running files compiled with a newer version of ~gcc~.
-These will lead to errors that look like:
-#+begin_src bash
-   Invalid MEX-file
-      '/home/runner/work/matlab-igraph/matlab-igraph/toolbox/+igraph/private/mexIgraphCompare.mexa64':
-      /usr/local/MATLAB/R2023b/bin/glnxa64/../../sys/os/glnxa64/libstdc++.so.6:
-      version `GLIBCXX_3.4.29' not found (required by /home/runner/work/matlab-igraph/matlab-igraph/toolbox/lib/libigraph.so.3)
-#+end_src
-There are a few solutions to this issue (if unsure, use 1.):
-1. Remove the packaged version of ~libstdc++.so~ to use the system version
-   #+begin_src bash
-     rm $MATLAB_ROOT/sys/os/glnxa64/libstdc++.so.6
-   #+end_src
-   Where ~$MATLAB_ROOT~ is the root of the MATLAB installation, this should default to something like ~/usr/local/MATLAB/$RELEASE~, where ~$RELEASE~ will look like R2023b, depending on the installed version of MATLAB.
-   Note: ~libstdc++.so.6~ is a link to ~libstdc++.so.6.0.28~, so this can be undone by re-linking, ~ln -s libstdc++.so.6.0.28 libstdc++.so.6~.
-2. Replace the packaged ~libstdc++.so~ with a version ~6.0.29~
-   Copy ~libstdc++.so.6.0.29~ to ~$MATLAB_ROOT/sys/os/glnxa64~, then:
-   #+begin_src bash
-     cd $MATLAB_ROOT/sys/os/glnxa64
-     rm libstdc++.so.6
-     ln -s libstdc++.so.6.0.29 libstdc++.so.6
-   #+end_src
-   Again this can be undone by re-linking the old version to ~libstdc++.so.6~
-3. Using an older version of ~gcc~ that MATLAB is officially compatible with
-   This may not work well.
-   I've tried with version 11 and still got the above errors.
-   While, when using ~gcc~ version 10, igraph did not install correctly.
-
- Be aware, since linking is done at runtime, changing ~libstdc++.so~ back after compiling will cause the errors to come back (but I don't believe there is any problem with upgrading the library).
-* Development
+** Development
 Since the toolbox is a mix of MATLAB source files and compiled files that end up in build directory, the easiest approach for development is to build the default target then link the compiled files to the correct location in the toolbox so MATLAB can find them.
 From the build directory:
 #+begin_src bash
@@ -79,7 +61,7 @@ Where ~mexa64~ is the linux mex extension.
 If using a different extension, make sure to add a new rule to the ~.gitignore~ file.
 Now the source toolbox directory can be added to MATLAB's path and rebuilding the mex files will be recognized by MATLAB (although new files will need to be linked).
 There will also be a ~compile_commands.json~ in the build directory that can be linked to the root of the repository.
-* Testing
+** Testing
 Tests can be run using ~ctest~ with the ~--test-dir~ being set to the build directory.
 For interactive development, it's faster to run ~buildtool~ in a running MATLAB instance since it doesn't require repeatedly starting MATLAB.
 To run all tests:
@@ -87,12 +69,10 @@ To run all tests:
   buildtool test
 #+end_src
 Test can be replaced with ~testMxIgraph~ or ~testToolbox~.
-* Using mxIgraph library (In progress)
-Currently, the build process is not compiling mxIgraph as a real library (it's created as a CMake Object library to simplify linking). As such there is no simple way to gain access to the mxIgraph library at the moment.
-* Upgrading
+** Upgrading
 Every once in awhile you will want to check for a new release by running ~git pull~ in the ~matlab-igraph~ directory.
 If this pulled anything new down, rerun the ~cmake --build .~ command in the build directory.
-* Making the docs
+** Making the docs
 Hugo is used to create the documentation website.
 For viewing the website locally, hugo can be run a local server with ~hugo server~ which should be run in the ~docs~ directory.
 When running, hugo will print an address to view the local site.
