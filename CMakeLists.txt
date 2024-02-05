@@ -60,7 +60,6 @@ message(STATUS "MEX extension: ${Matlab_MEX_EXTENSION}")
 message(STATUS "Matlab arch: ${Matlab_ARCH}")
 message(STATUS "")
 
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../../lib")
 add_subdirectory(mxIgraph)
 add_subdirectory(mex)
 
