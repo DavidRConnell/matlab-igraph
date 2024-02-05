@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Package Linux toolbox with runtime dependencies.
+
 ### Fixed
 
-- Ship runtime dependencies for windows (#3)
+- Ship runtime dependencies for windows (#3).
 
 ### Changed
 
