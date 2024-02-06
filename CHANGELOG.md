@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Post install script not dependent on what the toolbox gets named locally.
 - Post install script gets name of arch that matches mexext function.
+- Use RPATH instead of RUNPATH to prevent LD_LIBRARY_PATH from having priority.
 
 ### Changed
 
