@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Post install function deletes itself after being called.
+- Remove OS specific toolboxes to ensure File Exchange gets appropriate toolbox (since it only grabs one and I can specify which).
 
 ## [0.1.5] 2024-02-05
 

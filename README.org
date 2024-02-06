@@ -34,7 +34,7 @@ See [[https://davidrconnell.github.io/matlab-igraph/docs/installation][The insta
 
 ** Pre-compiled toolbox (recommended)
 You can use MATLAB Add-ons manager. This will track toolbox updates.
-It's also possible to download the toolbox matching your OS directly from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]], however, this will need to be manually updated. If manually downloading the toolbox, double click on the file (ending in ~.mltbx~) in MATLAB to install.
+It's also possible to download the toolbox directly from the [[https://github.com/DavidRConnell/matlab-igraph/releases][release page]], however, this will need to be manually updated. If manually downloading the toolbox, double click on the file (ending in ~.mltbx~) in MATLAB to install.
 ** Building the toolbox
 In addition to MATLAB this toolbox depends on ~cmake~, ~bison~, ~flex~, and ~libxml2~.
 On Windows, you will need to install the msys environment and download the dependencies using the provided ~pacman~ package manager.

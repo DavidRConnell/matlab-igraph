@@ -10,11 +10,10 @@ See [[https://www.mathworks.com/help/matlab/matlab_env/get-add-ons.html][Get and
 
 After installing you can run ~igraph.postinstall()~ to clean up files that aren't needed on your system. This isn't required but will save space. It will need to be done after each update too.
 ** Downloading from the release page
-Alternatively, you can get an architecture specific toolbox directly from [[https://github.com/DavidRConnell/matlab-igraph/releases][the release page]].
-There is little reason use this method other than the download will be smaller.
+Alternatively, you can get the toolbox directly from [[https://github.com/DavidRConnell/matlab-igraph/releases][the release page]].
+There is likely no reason to use this method over the Add-on manager as it will require manually upgrading.
 Once the download has been completed, you can double click on the resulting ~.mltbx~ file in the MATLAB IDE and it will guide you through the installation method.
-With this method, there is no reason to run the ~igraph.postinstall()~ command.
-Upgrades will need to be done manually by downloading a newer toolbox from the release page and installing it through the MATLAB IDE in the same manner as mentioned above.
+To upgrade download a newer toolbox from the release page and install it through the MATLAB IDE in the same manner as mentioned above.
 * Compiling from source
 For those who want to build the code themselves, this can be done by cloning the git repo and compiling with cmake.
 If the pre-built toolboxes don't support your architecture, this is the only way to get the toolbox running.

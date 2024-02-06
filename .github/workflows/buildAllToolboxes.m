@@ -7,7 +7,6 @@ function buildAllToolboxes(artifactsDir, outDir, version)
         zipFile = dir(fullfile(artifactsDir, d(1).name, ...
                                "matlab-igraph_" + version + "*"));
         arch = regexp(zipFile.name, version + '_(.*)-toolbox', "tokens");
-        buildtoolbox(toolboxDir, outDir, arch{1}{1}, version);
 
         if ~exist(tmpDir, 'dir')
             mkdir(tmpDir);
@@ -28,7 +27,7 @@ function buildAllToolboxes(artifactsDir, outDir, version)
         end
     end
 
-    buildtoolbox(fullfile(tmpDir, "toolbox"), outDir, "combined", version);
+    buildtoolbox(fullfile(tmpDir, "toolbox"), outDir, version);
 end
 
 function ext = archmexext(arch)
