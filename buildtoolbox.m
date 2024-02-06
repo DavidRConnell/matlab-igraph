@@ -4,14 +4,13 @@ function buildtoolbox(toolboxFolder, outDir, version)
 
     releaseName = strjoin(['matlab-igraph', version], '_');
 
-    uuid = "e361fdb1-fd71-4184-b577-175f9d44ac9f";
+    uuid = "e100c63a-9d55-4527-9e0b-a43d8ff89d03";
     opts = matlab.addons.toolbox.ToolboxOptions(toolboxFolder, uuid);
 
     opts.ToolboxName = "matlab-igraph";
     opts.ToolboxVersion = versionNumber;
     opts.ToolboxGettingStartedGuide = fullfile(toolboxFolder, ...
                                                "GettingStarted.mlx");
-    % opts.ToolboxMatlabPath = {toolboxFolder, fullfile(toolboxFolder, 'doc')};
 
     opts.AuthorName = "David R. Connell";
     opts.Summary = "Igraph bindings for Matlab";
