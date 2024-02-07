@@ -1,6 +1,6 @@
 #+TITLE: Igraph toolbox
 
-[[https://matlab.mathworks.com/open/fileexchange/v1?id=159001][https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg]]
+[[https://matlab.mathworks.com/open/fileexchange/v1?id=159001][https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg]] [[https://www.mathworks.com/matlabcentral/fileexchange/159001-matlab-igraph][https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg]]
 
 Toolbox for integrating the [[https://igraph.org/][igraph]] C library with MATLAB.
 
