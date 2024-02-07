@@ -22,11 +22,6 @@ function postinstall()
         if ~startsWith(currentSystem, 'win')
             delete(fullfile(path{1}, "*.dll"));
         end
-
-        if exist(fullfile(path{1}, 'lib'), 'dir') && ...
-             ~startsWith(currentSystem, 'gln')
-            rmdir(fullfile(path{1}, "lib"), "s");
-        end
     end
 
     self = mfilename('fullpath') + ".m";

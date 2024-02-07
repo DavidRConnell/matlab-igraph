@@ -14,25 +14,26 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-      devShells.${system}.default = pkgs.mkShell {
-        buildInputs = (with nix-matlab.packages.${system}; [
-          matlab
-          matlab-mlint
-          matlab-mex
-        ]) ++ (with pkgs; [
-          astyle
-          cmake
-          ninja
-          gdb
-          hugo
-          # igraph dependencies
-          bison
-          flex
-          libxml2
-        ]);
-        shellHook = ''
-          export OMP_NUM_THREADS=16
-        '';
-      };
+      devShells.${system}.default =
+        (pkgs.mkShell.override { stdenv = pkgs.gcc10Stdenv; }) {
+          packages = (with nix-matlab.packages.${system}; [
+            matlab
+            matlab-mlint
+            matlab-mex
+          ]) ++ (with pkgs; [
+            astyle
+            cmake
+            ninja
+            gdb
+            hugo
+            # igraph dependencies
+            bison
+            flex
+            libxml2
+          ]);
+          shellHook = ''
+            export OMP_NUM_THREADS=16
+          '';
+        };
     };
 }

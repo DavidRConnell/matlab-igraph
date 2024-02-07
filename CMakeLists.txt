@@ -18,7 +18,6 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS OFF)
 
@@ -87,11 +86,6 @@ if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     "D:\\msys64\\mingw64\\bin" "D:\\msys64\\ucrt64\\bin"
     PRE_EXCLUDE_REGEXES "api-ms-*" "libmx" "libmex" "ext-ms-*"
     DESTINATION matlab-igraph/toolbox/+igraph/private
-    COMPONENT toolbox)
-elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-  install(RUNTIME_DEPENDENCY_SET toolbox_deps
-    DESTINATION matlab-igraph/toolbox/+igraph/private/lib
-    PRE_EXCLUDE_REGEXES "libmex" "libmx" "libicuuc.so.69" "libz.so.1"
     COMPONENT toolbox)
 endif()
 

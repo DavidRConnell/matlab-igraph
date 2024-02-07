@@ -8,10 +8,6 @@ foreach(source ${src_files})
     R2018a
   )
 
-  if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    target_link_options(${mex_name} PRIVATE LINKER:--disable-new-dtags)
-  endif()
-
   target_include_directories(${mex_name}
     PRIVATE ${Matlab_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}
   )
