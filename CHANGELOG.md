@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update igraph version to 0.10.10.
+
 ## [0.1.8] 2024-02-06
 
 ### Fixed
