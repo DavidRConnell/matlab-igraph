@@ -1,14 +1,8 @@
 
 # Getting Started
-## Add the toolbox to the path
+## Installing
 
-Before the toolbox will be available, it needs to be added to MATLAB's path. Use a path to the toolbox directory in this package relative to the current directory. This assumes the current directory is the package root. If <samp>pwd</samp> does not return the package root, use <samp>cd</samp> to change to the correct directory.
-
-```matlab
-addpath("toolbox");
-```
-
-You may also want to save the path with <samp>savepath</samp> so you don't need to reperform this task everytime you restart MATLAB.
+The toolbox can be install through MATLAB's ad-ons manager. Because this package depends on compiled code, in order to support mulltiple architectures, there are system specific files. To save space, you can run <samp>igraph.postinstall()</samp> after installing the toolbox or updating to clear out any files that are not useful on the current system. It's also possible to download a smaller architecture specific toolbox directly from the [github release page](https://github.com/DavidRConnell/matlab-igraph/releases), but this will require manually checking for updates.
 
 ## Set handlers
 
