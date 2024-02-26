@@ -62,7 +62,8 @@ mxIgraphDType_t mxIgraphSelectDType(const mxArray *p)
     [MXIGRAPH_DTYPE_DOUBLE] = "double"
   };
 
-  res = mxIgraphSelectMethod(p, dtypes, MXIGRAPH_DTYPE_N);
+  res = mxIgraphSelectMethod(mxGetField(p, 0, "dtype"), dtypes,
+                             MXIGRAPH_DTYPE_N);
   if (res == MXIGRAPH_DTYPE_N) {
     mexErrMsgIdAndTxt("Igraph:unknownDType", "Received unknown data type.");
   }
@@ -82,11 +83,65 @@ igraph_neimode_t mxIgraphSelectMode(const mxArray *p)
     [IGRAPH_ALL - 1] = "all"
   };
 
-  res = mxIgraphSelectMethod(p, modes, n_modes);
+  res = mxIgraphSelectMethod(mxGetField(p, 0, "mode"), modes, n_modes);
 
   if (res == n_modes) {
     mexErrMsgIdAndTxt("Igraph:unknownMode", "Received unknown mode type.");
   }
 
   return res + 1;
+}
+
+mxArray *mxIgraphGetArgument(mxArray const *arg_struct,
+                             char const fieldname[1])
+{
+  mxArray *arg = NULL;
+  if (!(arg = mxGetField(arg_struct, 0, fieldname))) {
+    mexErrMsgIdAndTxt("Igraph:internal:missingArgument",
+                      "Function was not passed an argument named %s", fieldname);
+  }
+
+  return arg;
+}
+
+igraph_integer_t mxIgraphGetInteger(const mxArray *arg_struct,
+                                    char const fieldname[1])
+{
+  return mxGetScalar(mxIgraphGetArgument(arg_struct, fieldname));
+}
+
+igraph_real_t mxIgraphGetReal(const mxArray *arg_struct,
+                              char const fieldname[1])
+{
+  return mxGetScalar(mxIgraphGetArgument(arg_struct, fieldname));
+}
+
+igraph_bool_t mxIgraphGetBool(const mxArray *arg_struct,
+                              char const fieldname[1])
+{
+  return mxGetScalar(mxIgraphGetArgument(arg_struct, fieldname));
+}
+
+void mxIgraphGetVector(const mxArray *arg_struct, char const fieldname[1],
+                       igraph_vector_t *vec)
+{
+  mxIgraphVectorFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec);
+}
+
+void mxIgraphGetVectorInt(const mxArray *arg_struct, char const fieldname[1],
+                          igraph_vector_int_t *vec)
+{
+  mxIgraphVectorIntFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec);
+}
+
+void mxIgraphGetVectorBool(const mxArray *arg_struct, char const fieldname[1],
+                           igraph_vector_bool_t *vec)
+{
+  mxIgraphVectorBoolFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec);
+}
+
+void mxIgraphGetMatrix(const mxArray *arg_struct, char const fieldname[1],
+                       igraph_matrix_t *mat)
+{
+  mxIgraphMatrixFromArray(mxIgraphGetArgument(arg_struct, fieldname), mat);
 }

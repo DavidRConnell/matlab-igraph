@@ -21,7 +21,7 @@ static int mxIgraphGetPartitionFromDouble(const mxArray *p,
     mexErrMsgIdAndTxt("Igraph:NotVector", "Partition must be a vector.");
   }
 
-  return mxIgraphGetVectorInt(p, membership);
+  return mxIgraphVectorIntFromArray(p, membership);
 }
 
 /* Copy a matlab partition to an igraph vector.
@@ -31,8 +31,8 @@ static int mxIgraphGetPartitionFromDouble(const mxArray *p,
 
    Membership should be uninitialized, but it's the callers responsibility to
    destroy it when done.*/
-int mxIgraphArrayToPartition(const mxArray *p,
-                             igraph_vector_int_t *membership)
+int mxIgraphMembershipFromArray(const mxArray *p,
+                                igraph_vector_int_t *membership)
 {
   int rc = EXIT_FAILURE;
 
@@ -65,7 +65,7 @@ int mxIgraphArrayToPartition(const mxArray *p,
    membership partition.
 
    Increments igraph partition so that the smallest node id is 1 instead of 0.*/
-mxArray *mxIgraphCreatePartition(igraph_vector_int_t const *membership)
+mxArray *mxIgraphMembershipToArray(igraph_vector_int_t const *membership)
 {
   igraph_integer_t n_nodes = igraph_vector_int_size(membership);
   mxArray *p = mxCreateDoubleMatrix(1, n_nodes, mxREAL);

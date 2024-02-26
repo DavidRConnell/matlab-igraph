@@ -215,19 +215,20 @@ static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
    `1` for the weight of all edges.
 
    See `mxIgraphGetGraph` to convert an matlab adj into an igraph graph. */
-mxArray *mxIgraphCreateAdj(const igraph_t *graph,
-                           const igraph_vector_t *weights,
-                           const igraph_bool_t sparse,
-                           const mxIgraphDType_t type)
+mxArray *mxIgraphCreateAdj(igraph_t const *graph,
+                           igraph_vector_t const *weights,
+                           mxArray const *adjOptions)
 {
+  igraph_bool_t sparse = mxIgraphGetBool(adjOptions, "makeSparse");
+  mxIgraphDType_t dtype = mxIgraphSelectDType(adjOptions);
   mxArray *p;
-  if (sparse && (type == MXIGRAPH_DTYPE_LOGICAL)) {
+  if (sparse && (dtype == MXIGRAPH_DTYPE_LOGICAL)) {
     p = create_adj_sparse_logical_i(graph);
-  } else if (sparse && (type == MXIGRAPH_DTYPE_DOUBLE)) {
+  } else if (sparse && (dtype == MXIGRAPH_DTYPE_DOUBLE)) {
     p = create_adj_sparse_double_i(graph, weights);
-  } else if (!sparse && (type == MXIGRAPH_DTYPE_LOGICAL)) {
+  } else if (!sparse && (dtype == MXIGRAPH_DTYPE_LOGICAL)) {
     p = create_adj_full_logical_i(graph);
-  } else if (!sparse && (type == MXIGRAPH_DTYPE_DOUBLE)) {
+  } else if (!sparse && (dtype == MXIGRAPH_DTYPE_DOUBLE)) {
     p = create_adj_full_double_i(graph, weights);
   } else {
     mexErrMsgIdAndTxt("Igraph:internal:unknownType", "Unhandled data type.");

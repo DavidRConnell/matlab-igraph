@@ -4,7 +4,7 @@
 
  The igraph vector should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphGetVector(const mxArray *p, igraph_vector_t *vec)
+int mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec)
 {
   if (mxIgraphIsEmpty(p)) {
     igraph_vector_init(vec, 0);
@@ -31,7 +31,7 @@ int mxIgraphGetVector(const mxArray *p, igraph_vector_t *vec)
 }
 
 /* Create a matlab vector from an igraph vector. */
-mxArray *mxIgraphCreateVector(igraph_vector_t const *vec)
+mxArray *mxIgraphVectorToArray(igraph_vector_t const *vec)
 {
   igraph_integer_t len = igraph_vector_size(vec);
   mxArray *p = mxCreateDoubleMatrix(1, len, mxREAL);
@@ -48,7 +48,7 @@ mxArray *mxIgraphCreateVector(igraph_vector_t const *vec)
 
  The igraph vector should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec)
+int mxIgraphVectorIntFromArray(const mxArray *p, igraph_vector_int_t *vec)
 {
   if (mxIgraphIsEmpty(p)) {
     igraph_vector_int_init(vec, 0);
@@ -75,7 +75,7 @@ int mxIgraphGetVectorInt(const mxArray *p, igraph_vector_int_t *vec)
 }
 
 /* Create a matlab vector from an igraph integer vector. */
-mxArray *mxIgraphCreateVectorInt(igraph_vector_int_t const *vec)
+mxArray *mxIgraphVectorIntToArray(igraph_vector_int_t const *vec)
 {
   igraph_integer_t len = igraph_vector_int_size(vec);
   mxArray *p = mxCreateDoubleMatrix(1, len, mxREAL);
@@ -92,7 +92,7 @@ mxArray *mxIgraphCreateVectorInt(igraph_vector_int_t const *vec)
 
  The igraph vector should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphGetVectorBool(const mxArray *p, igraph_vector_bool_t *vec)
+int mxIgraphVectorBoolFromArray(const mxArray *p, igraph_vector_bool_t *vec)
 {
   if (mxIgraphIsEmpty(p)) {
     igraph_vector_bool_init(vec, 0);
@@ -119,7 +119,7 @@ int mxIgraphGetVectorBool(const mxArray *p, igraph_vector_bool_t *vec)
 }
 
 /* Create a matlab vector from an igraph boolean vector. */
-mxArray *mxIgraphCreateVectorBool(igraph_vector_bool_t const *vec)
+mxArray *mxIgraphVectorBoolToArray(igraph_vector_bool_t const *vec)
 {
   igraph_integer_t len = igraph_vector_bool_size(vec);
   mxArray *p = mxCreateLogicalMatrix(1, len);
@@ -136,7 +136,7 @@ mxArray *mxIgraphCreateVectorBool(igraph_vector_bool_t const *vec)
 
  The igraph matrix should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphGetMatrix(const mxArray *p, igraph_matrix_t *mat)
+int mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat)
 {
   if (mxIgraphIsEmpty(p)) {
     igraph_matrix_init(mat, 0, 0);
@@ -162,7 +162,7 @@ int mxIgraphGetMatrix(const mxArray *p, igraph_matrix_t *mat)
 }
 
 /* Create a Matlab matrix from an igraph matrix. */
-mxArray *mxIgraphCreateMatrix(igraph_matrix_t const *mat)
+mxArray *mxIgraphMatrixToArray(igraph_matrix_t const *mat)
 {
   igraph_integer_t m = igraph_matrix_nrow(mat);
   igraph_integer_t n = igraph_matrix_ncol(mat);
