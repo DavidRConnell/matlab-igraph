@@ -620,3 +620,687 @@ function adj = randgame(method, adjOptions, methodOptions)
 
     adj = mexIgraphDispatcher(mfilename(), method, adjOptions, methodOptions);
 end
+
+function opts = parseOptionsGrg(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.radius (1, 1) {mustBeNonnegative} = 5;
+        opts.torus (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsBarabasi(method, opts)
+    arguments
+        method;
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger};
+        opts.power (1, 1) {mustBeNonnegative} = 1;
+        opts.nConnections (1, :) {mustBeNonnegative, mustBeInteger} = 1;
+        opts.outPreference (1, 1) logical = false;
+        opts.attractiveness (1, 1) {mustBeNumeric} = 1;
+        opts.isdirected (1, 1) logical;
+        opts.startFrom {mustBeAdj} = [];
+    end
+
+    if isoptionset(opts, "nNodes")
+        if (length(opts.nConnections) > 1) && ...
+           ((length(opts.nConnections)) ~= opts.nNodes)
+            eid = "Igraph:invalidVectorLength";
+            msg = "If out sequence is not a scalar it must have " + ...
+                  "length equal to the number of nodes.";
+           throwAsCaller(MException(eid, msg));
+        end
+    else
+        if length(opts.nConnections) == 1
+            opts.nNodes = 10;
+        else
+            opts.nNodes = length(opts.nConnections);
+        end
+    end
+
+    if method == "barabasibag" && opts.power ~= 1
+        eid = "Igraph:badPower";
+        throwAsCaller(MException(eid, ...
+                                 "Power must be 1 when using BarabasiBag."));
+    end
+
+    if method == "barabasibag" && opts.attractiveness ~= 1
+        eid = "Igraph:badAttractiveness";
+        throwAsCaller(MException(eid, "Attractiveness must be 1 when " + ...
+                                  "using BarabasiBag."));
+    end
+
+    if (~opts.outPreference) && (opts.attractiveness <= 0)
+        eid = "igraph:badAttractiveness";
+        throwAsCaller(MException(eid, "Attractiveness must be positive " + ...
+                                 "when out preference is false."))
+    end
+
+    if ~isoptionset(opts, "isdirected")
+       if isempty(opts.startFrom)
+           opts.isdirected = false;
+       else
+           opts.isdirected = igraph.isdirected(opts.startFrom);
+       end
+    end
+end
+
+function opts = parseOptionsErdosRenyi(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.nEdges (1, 1) {mustBeNonnegative, mustBeInteger};
+        opts.probability (1, 1) ...
+            {mustBeNonnegative, mustBeLessThanOrEqual(opts.probability, 1)};
+        opts.isdirected (1, 1) logical = false;
+        opts.loops (1, 1) logical = false;
+    end
+
+    if (~isoptionset(opts, "nEdges")) && (~isoptionset(opts, "probability"))
+        opts.nEdges = 10;
+    elseif (isoptionset(opts, "nEdges") && (isoptionset(opts, "probability")))
+        throwAsCaller(MException("Igraph:badOptions", ...
+                                 "Cannot set both probability and " + ...
+                                 "number of edges."));
+    end
+end
+
+function opts = parseOptionsWattsStrogatz(opts)
+    arguments
+        opts.dim (1, 1) {mustBeNonnegative, mustBeInteger} = 2;
+        opts.size (1, 1) {mustBeNonnegative, mustBeInteger} = 4;
+        opts.radius (1, 1) {mustBeNonnegative, mustBeInteger} = 1;
+        opts.probability (1, 1) ...
+            {mustBeNonnegative, ...
+             mustBeLessThanOrEqual(opts.probability, 1)} = 0.2;
+        opts.loops (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsDegSeq(opts)
+    arguments
+        opts.degree (1, :) {mustBeNonnegative, mustBeInteger};
+        opts.outDegree (1, :) {mustBeNonnegative, mustBeInteger};
+        opts.inDegree (1, :) {mustBeNonnegative, mustBeInteger};
+    end
+
+    if isoptionset(opts, "degree") && ...
+            (isoptionset(opts, "outDegree") || isoptionset(opts, "inDegree"))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "degree should be set for undirected " + ...
+                                 "graphs. Both inDegree and outDegree " + ...
+                                 "should be set for directed graphs. " + ...
+                                 "Cannot set both degree and outDegree " + ...
+                                 "or inDegree."));
+    end
+
+    if (isoptionset(opts, "outDegree") && ~isoptionset(opts, "inDegree")) || ...
+            (isoptionset(opts, "inDegree") && ~isoptionset(opts, "outDegree"))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "degree should be set for undirected " + ...
+                                 "graphs. Both inDegree and outDegree " + ...
+                                 "should be set for directed graphs. " + ...
+                                 "If outDegree is set inDegree must " + ...
+                                 "also be set."));
+    end
+
+    if isoptionset(opts, "outDegree")
+        if length(opts.outDegree) ~= length(opts.inDegree)
+            throwAsCaller(MException("Igraph:badArgument", ...
+                                     "outDegree and inDegree must have " + ...
+                                     "the same length."))
+        end
+    end
+
+    if ~isoptionset(opts, "inDegree")
+        opts.inDegree = [];
+    end
+
+    % opts.degree just for user interface. Internally use outDegree like igraph.
+    if isoptionset(opts, "degree")
+        opts.outDegree = opts.degree;
+    end
+
+    if ~(isoptionset(opts, "degree") || isoptionset(opts, "outDegree"))
+        opts.outDegree = ones(1, 10) * 3;
+    end
+end
+
+function opts = parseOptionsKRegular(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.degree (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.isdirected (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsStaticFitness(opts)
+    arguments
+        opts.fitness (1, :) {mustBeNonnegative, mustBeNumeric};
+        opts.outFitness (1, :) {mustBeNonnegative, mustBeNumeric};
+        opts.inFitness (1, :) {mustBeNonnegative, mustBeNumeric};
+        opts.nEdges (1, 1) {mustBeInteger, mustBePositive} = 20;
+        opts.loops (1, 1) logical = false;
+    end
+
+    if isoptionset(opts, "fitness") && ...
+            (isoptionset(opts, "outFitness") || isoptionset(opts, "inFitness"))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "fitness should be set for undirected " + ...
+                                 "graphs. Both inFitness and outFitness " + ...
+                                 "should be set for directed graphs. " + ...
+                                 "Cannot set both fitness and outFitness " + ...
+                                 "or inFitness."));
+    end
+
+    if (isoptionset(opts, "outFitness") && ~isoptionset(opts, "inFitness")) || ...
+            (isoptionset(opts, "inFitness") && ~isoptionset(opts, "outFitness"))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "fitness should be set for undirected " + ...
+                                 "graphs. Both inFitness and outFitness " + ...
+                                 "should be set for directed graphs. " + ...
+                                 "If outFitness is set inFitness must " + ...
+                                 "also be set."));
+    end
+
+    if isoptionset(opts, "outFitness")
+        if length(opts.outFitness) ~= length(opts.inFitness)
+            throwAsCaller(MException("Igraph:badArgument", ...
+                                     "outFitness and inFitness must have " + ...
+                                     "the same length."))
+        end
+    end
+
+    if ~isoptionset(opts, "inFitness")
+        opts.inFitness = [];
+    end
+
+    % opts.fitness just for user interface. Internally use outFitness like
+    % igraph.
+    if isoptionset(opts, "fitness")
+        opts.outFitness = opts.fitness;
+    end
+
+    if ~isoptionset(opts, "outFitness")
+        opts.outFitness = ones(1, 10) * 3;
+    end
+end
+
+function opts = parseOptionsStaticPowerLaw(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeInteger, mustBePositive} = 10;
+        opts.nEdges (1, 1) {mustBeInteger, mustBePositive} = 20;
+        opts.exponent (1, 1) {mustBeNumeric};
+        opts.outExponent (1, 1) {mustBeNumeric};
+        opts.inExponent (1, 1) {mustBeNumeric};
+        opts.loops (1, 1) logical = false;
+        opts.finiteSizeCorrection (1, 1) logical = false;
+    end
+
+    if isoptionset(opts, "exponent") && ...
+            (isoptionset(opts, "outExponent") || ...
+             isoptionset(opts, "inExponent"))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "exponent should be set for undirected " + ...
+                                 "graphs. Both inExponent and outExponent " + ...
+                                 "should be set for directed graphs. " + ...
+                                 "Cannot set both exponent and " + ...
+                                 "outExponent or inExponent."));
+    end
+
+    if (isoptionset(opts, "outExponent") && ...
+        ~isoptionset(opts, "inExponent")) || ...
+        (isoptionset(opts, "inExponent") && ...
+         ~isoptionset(opts, "outExponent"))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "exponent should be set for undirected " + ...
+                                 "graphs. Both inExponent and outExponent " + ...
+                                 "should be set for directed graphs. " + ...
+                                 "If outExponent is set inExponent must " + ...
+                                 "also be set."));
+    end
+
+    if ~isoptionset(opts, "inExponent")
+        opts.inExponent = -1;
+    end
+
+    % opts.exponent just for user interface. Internally use outExponent like
+    % igraph.
+    if isoptionset(opts, "exponent")
+        opts.outExponent = opts.exponent;
+    end
+
+    if ~isoptionset(opts, "outExponent")
+        opts.outExponent = 2;
+    end
+
+    if opts.inExponent >= 0 && opts.inExponent < 2
+        throwAsCaller(MException("Igraph:badValue", ...
+                                 "If inExponent is set it must be at least 2."));
+
+    end
+
+    if opts.outExponent >= 0 && opts.outExponent < 2
+        throwAsCaller(MException("Igraph:badValue", ...
+                                 "exponent or outExponent must be at least 2."));
+
+    end
+
+end
+
+function opts = parseOptionsForestFire(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.forwardProbability (1, 1) ...
+            {mustBeInRange(opts.forwardProbability, 0, 1)} = 0.5;
+        opts.backwardFactor (1, 1) {mustBeNonnegative, mustBeNumeric} = 1;
+        opts.nAmbassadors (1, 1) {mustBeInteger, mustBePositive} = 3;
+        opts.isdirected (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsGrowingRandom(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeInteger, mustBePositive} = 10;
+        opts.edgesPerStep (1, 1) {mustBeInteger, mustBePositive} = 4;
+        opts.isdirected (1, 1) logical = false;
+        opts.citation (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsCallawayTraits(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeInteger, mustBeNonnegative} = 10;
+        opts.edgesPerStep (1, 1) {mustBeInteger, mustBePositive} = 4;
+        opts.nTypes (1, :) {mustBeInteger, mustBePositive};
+        opts.typeDistribution (1, :) {mustBeNonnegative, mustBeNumeric};
+        opts.preference (:, :) {mustBeNonnegative, mustBeNumeric};
+        opts.isdirected (1, 1) logical;
+    end
+
+    if ~isoptionset(opts, "nTypes")
+        if ~(isoptionset(opts, "typeDistribution") || ...
+             isoptionset(opts, "preference"))
+            opts.nTypes = 4;
+        elseif isoptionset(opts, "typeDistribution")
+            opts.nTypes = length(opts.typeDistribution);
+        else
+            opts.nTypes = length(opts.preference);
+        end
+    end
+
+    if ~isoptionset(opts, "typeDistribution")
+       opts.typeDistribution = ones(1, opts.nTypes) / opts.nTypes;
+    end
+
+    if ~isoptionset(opts, "preference")
+       opts.preference = ones(opts.nTypes, opts.nTypes)  / opts.nTypes;
+    end
+
+    if length(opts.typeDistribution) ~= opts.nTypes
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Type distribution must be of length nTypes"));
+    end
+
+    if length(opts.preference) ~= opts.nTypes || ...
+            (size(opts.preference, 1) ~= size(opts.preference, 2))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference must be a square matrix " + ...
+                                 "with sides of length nTypes"));
+    end
+
+    if ~isoptionset(opts, "isdirected")
+        opts.isdirected = ~issymmetric(opts.preference);
+    end
+
+    if ~opts.isdirected && ~issymmetric(opts.preference)
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference matrix must be symmetric " + ...
+                                 "if graph is undirected"));
+    end
+end
+
+function opts = parseOptionsPreference(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeInteger, mustBePositive};
+        opts.edgesPerStep (1, 1) {mustBeInteger, mustBePositive} = 4;
+        opts.nTypes (1, 1) {mustBeInteger, mustBePositive};
+        opts.typeDistribution (1, :) {mustBeNonnegative, mustBeNumeric};
+        opts.blockSizes (1, :) {mustBeNonnegative, mustBeNumeric};
+        opts.preference (:, :) {mustBeNonnegative, mustBeNumeric};
+        opts.isdirected (1, 1) logical;
+        opts.loops (1, 1) logical = false;
+    end
+
+    if isoptionset(opts, "typeDistribution") && isoptionset(opts, "blockSizes")
+        throwAsCaller(MException("Igraph:overConstrained", ...
+                                 "typeDistribution and blockSizes " + ...
+                                 "cannot both be set."));
+    end
+
+    opts.fixedSizes = false;
+    if isoptionset(opts, "blockSizes")
+        if isoptionset(opts, "nNodes") && ...
+                ~(opts.nNodes == sum(opts.blockSizes))
+            throwAsCaller(MException("Igraph:overConstrained", ...
+                                     "nTypes must be equal to the sum of " + ...
+                                     "blockSizes. Leave nTypes blank " + ...
+                                     "to calculate based on blockSizes."));
+        else
+            opts.nNodes = sum(opts.blockSizes);
+        end
+        opts.fixedSizes = true;
+        opts.typeDistribution = opts.blockSizes;
+    end
+
+    if ~isoptionset(opts, "nNodes")
+        opts.nNodes = 10;
+    end
+
+    if ~isoptionset(opts, "nTypes")
+        if ~(isoptionset(opts, "typeDistribution") || ...
+             isoptionset(opts, "preference"))
+            opts.nTypes = 4;
+        elseif isoptionset(opts, "typeDistribution")
+            opts.nTypes = length(opts.typeDistribution);
+        else
+            opts.nTypes = length(opts.preference);
+        end
+    end
+
+    if ~isoptionset(opts, "typeDistribution")
+       opts.typeDistribution = ones(1, opts.nTypes) / opts.nTypes;
+    end
+
+    if ~isoptionset(opts, "preference")
+       opts.preference = ones(opts.nTypes, opts.nTypes)  / opts.nTypes;
+    end
+
+    if length(opts.typeDistribution) ~= opts.nTypes
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Type distribution must be of length nTypes"));
+    end
+
+    if length(opts.preference) ~= opts.nTypes || ...
+            (size(opts.preference, 1) ~= size(opts.preference, 2))
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference must be a square matrix " + ...
+                                 "with sides of length nTypes"));
+    end
+
+    if ~isoptionset(opts, "isdirected")
+        opts.isdirected = ~issymmetric(opts.preference);
+    end
+
+    if ~opts.isdirected && ~issymmetric(opts.preference)
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference matrix must be symmetric " + ...
+                                 "if graph is undirected"));
+    end
+end
+
+function opts = parseOptionsAsymmetricPreference(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeInteger, mustBePositive} = 10;
+        opts.nOutTypes (1, 1) {mustBeInteger, mustBePositive};
+        opts.nInTypes (1, 1) {mustBeInteger, mustBePositive};
+        opts.typeDistribution (:, :) {mustBeNonnegative, mustBeNumeric};
+        opts.preference (:, :) {mustBeNonnegative, mustBeNumeric};
+        opts.loops (1, 1) logical = false;
+    end
+
+    if ~isoptionset(opts, "nOutTypes")
+        if ~(isoptionset(opts, "typeDistribution") || ...
+             isoptionset(opts, "preference"))
+            opts.nOutTypes = 4;
+        elseif isoptionset(opts, "typeDistribution")
+            opts.nOutTypes = size(opts.typeDistribution, 1);
+        else
+            opts.nOutTypes = size(opts.preference, 1);
+        end
+    end
+
+    if ~isoptionset(opts, "nInTypes")
+        if ~(isoptionset(opts, "typeDistribution") || ...
+             isoptionset(opts, "preference"))
+            opts.nInTypes = 4;
+        elseif isoptionset(opts, "typeDistribution")
+            opts.nInTypes = size(opts.typeDistribution, 2);
+        else
+            opts.nInTypes = size(opts.preference, 2);
+        end
+    end
+
+    if ~isoptionset(opts, "typeDistribution")
+        opts.typeDistribution = ones(opts.nOutTypes, opts.nInTypes) / ...
+            (opts.nOutTypes * opts.nInTypes);
+    end
+
+    if ~isoptionset(opts, "preference")
+        opts.preference = ones(opts.nOutTypes, opts.nInTypes)  / ...
+            (opts.nOutTypes * opts.nInTypes);
+    end
+
+    if (size(opts.typeDistribution, 1) ~= opts.nOutTypes) || ...
+            (size(opts.typeDistribution, 2) ~= opts.nInTypes)
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Type distribution must be a matrix " + ...
+                                 "of size nOutTypes x nInTypes"));
+    end
+
+    if (size(opts.preference, 1) ~= opts.nOutTypes) || ...
+            (size(opts.preference, 2) ~= opts.nInTypes)
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference must be a matrix of size " + ...
+                                 "nOutTypes x nInTypes"));
+    end
+end
+
+function opts = parseOptionsRecentDegree(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger};
+        opts.degreeExp (1, 1) {mustBeNumeric} = 1;
+        opts.timeWindow (1, 1) {mustBePositive, mustBeInteger} = 3;
+        opts.edgesPerStep (1, :) {mustBeInteger, mustBePositive} = 3;
+        opts.outPreference (1, 1) logical = false;
+        opts.zeroAppeal (1, 1) {mustBeNonnegative, ...
+                                mustBeLessThan(opts.zeroAppeal, 1)} = 0.1;
+        opts.isdirected (1, 1) logical = false;
+    end
+
+    if ~isoptionset(opts, "nNodes")
+        if length(opts.edgesPerStep) > 1
+            opts.nNodes = length(opts.edgesPerStep);
+        else
+            opts.nNodes = 10;
+        end
+    end
+
+    if length(opts.edgesPerStep) > 1 && ...
+            length(opts.edgesPerStep) ~= opts.nNodes
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Edges Per time step must be a scalar " + ...
+                                 "or a vector of length nNodes."));
+    end
+
+    if length(opts.edgesPerStep) > 1
+        opts.outSeq = opts.edgesPerStep;
+        opts.edgesPerStep = 1; % Ignored when outSeq not empty.
+    else
+        opts.outSeq = [];
+    end
+end
+
+function opts = parseOptionsBarabasiAging(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.edgesPerStep (1, :) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.outPreference (1, 1) logical = false;
+        opts.zeroDegreeAppeal (1, 1) {mustBeNumeric} = 0.1;
+        opts.degreeCoef (1, 1) {mustBeNumeric} = 1;
+        opts.degreeExp (1, 1) {mustBeNumeric} = 1;
+        opts.zeroAgeAppeal (1, 1) {mustBeNumeric} = 0.1;
+        opts.ageCoef (1, 1) {mustBeNumeric} = 1;
+        opts.ageExp (1, 1) {mustBeNumeric} = 1;
+        opts.agingBins (1, 1) {mustBePositive, mustBeInteger} = 1;
+        opts.isdirected (1, 1) logical = false;
+    end
+
+    if length(opts.edgesPerStep) > 1
+        opts.outSeq = opts.edgesPerStep;
+        opts.edgesPerStep = 1;
+    else
+        opts.outSeq = [];
+    end
+end
+
+function opts = parseOptionsRecentDegreeAging(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.edgesPerStep (1, :) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.outPreference (1, 1) logical = false;
+        opts.zeroAppeal (1, 1) {mustBeNonnegative, mustBeNumeric} = 0.1;
+        opts.degreeExp (1, 1) {mustBeNumeric} = 1;
+        opts.ageExp (1, 1) {mustBeNumeric} = 1;
+        opts.agingBins (1, 1) {mustBePositive, mustBeInteger} = 3;
+        opts.timeWindow (1, 1) {mustBePositive, mustBeInteger} = 3;
+        opts.isdirected (1, 1) logical = false;
+    end
+
+    if length(opts.edgesPerStep) > 1
+        opts.outSeq = opts.edgesPerStep;
+        opts.edgesPerStep = 1;
+    else
+        opts.outSeq = [];
+    end
+end
+
+function opts = parseOptionsLastCit(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeInteger, mustBeNonnegative} = 10;
+        opts.edgesPerStep (1, 1) {mustBeInteger, mustBeNonnegative} = 3;
+        opts.agingBins (1, 1) {mustBeInteger, mustBePositive};
+        opts.preference (1, :) {mustBeInteger, mustBeNonnegative};
+        opts.isdirected (1, 1) logical = false;
+    end
+
+    if ~isoptionset(opts, "agingBins")
+        opts.agingBins = opts.nNodes;
+    end
+
+    if ~isoptionset(opts, "preference")
+        opts.preference = ones(1, opts.agingBins + 1);
+    end
+
+    if length(opts.preference) ~= opts.agingBins + 1
+        throwAsCaller(MException("Igraph:wrongSize", ...
+                                 "preference must be length agingBins + 1."));
+    end
+end
+
+function opts = parseOptionsCitedType(opts)
+    arguments
+        opts.edgesPerStep (1, 1) {mustBeInteger, mustBeNonnegative} = 3;
+        opts.types (1, :) {mustBeInteger, mustBePositive} = 1:10;
+        opts.preference (1, :) {mustBeNonnegative};
+        opts.isdirected (1, 1) logical = false;
+    end
+
+    opts.nNodes = length(opts.types);
+
+    if ~isoptionset(opts, "preference")
+        opts.preference = ones(1, max(opts.types));
+    end
+
+    if length(opts.preference) ~= max(opts.types)
+        throwAsCaller(MException("Igraph:wrongSize", ...
+                                 "Size of preference must be the number " + ...
+                                 "of types (i.e. max(types))."));
+    end
+
+    opts.types = opts.types - 1;
+end
+
+function opts = parseOptionsCitingCitedType(opts)
+    arguments
+        opts.edgesPerStep (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.types (1, :) {mustBePositive, mustBeInteger} = 1:10;
+        opts.preference (:, :) {mustBeNumeric, mustBeSquare};
+        opts.isdirected (1, 1) logical = false;
+    end
+
+    opts.nNodes = length(opts.types);
+
+    if ~isoptionset(opts, "preference")
+        opts.preference = ones(max(opts.types), max(opts.types));
+    end
+
+    if length(opts.preference) ~= max(opts.types)
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference must be square with side " + ...
+                                 "lengths equal to the number of types " + ...
+                                 "(i.e. max(types))."));
+    end
+
+    opts.types = opts.types - 1;
+end
+
+function opts = parseOptionsSBM(opts)
+    arguments
+        opts.blockSizes (1, :) {mustBePositive, mustBeInteger} = 2 * ones(1, 5);
+        opts.preference (:, :) ...
+            {mustBeInRange(opts.preference, 0, 1), mustBeSquare};
+        opts.isdirected (1, 1) logical = false;
+        opts.loops (1, 1) logical = false;
+    end
+
+    if ~isoptionset(opts, "preference")
+        opts.preference = ones(length(opts.blockSizes)) / ...
+            (length(opts.blockSizes) ^ 2);
+    end
+
+    if length(opts.preference) ~= length(opts.blockSizes)
+        throwAsCaller(MException("Igraph:badArgument", ...
+                                 "Preference must be square with side " + ...
+                                 "lengths equal to the number of groups " + ...
+                                 "(i.e. length(blockSizes))."));
+    end
+
+    opts.nNodes = sum(opts.blockSizes);
+end
+
+function opts = parseOptionsHSBM(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 20;
+        opts.blockSizes (1, 1) {mustBeNonnegative, mustBeInteger} = 5;
+        opts.rho (1, :) {mustBeInRange(opts.rho, 0, 1)} = [2 2 1] / 5;
+        opts.preference (:, :) {mustBeNonNegative, mustBeSquare};
+        opts.pOut (1, 1) {mustBeInRange(opts.pOut, 0, 1)} = 0.3;
+    end
+
+    if ~isoptionset(opts, "preference")
+        opts.preference = ones(length(opts.rho));
+    end
+end
+
+function opts = parseOptionsDotProduct(opts)
+    arguments
+        opts.positions (:, :) {mustBeNumeric} = ones(3, 10) / 3;
+        opts.isdirected (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsTree(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.isdirected (1, 1) logical = false;
+        opts.method (1, :) char;
+    end
+end
+
+function opts = parseOptionsSimpleInterconnectedIslands(opts)
+    arguments
+        opts.nIslands (1, 1) {mustBeNonnegative, mustBeInteger} = 5;
+        opts.islandSize (1, 1) {mustBeNonnegative, mustBeInteger} = 4;
+        opts.pIn (1, :) {mustBeInRange(opts.pIn, 0, 1)} = 0.75;
+        opts.nInterEdges (1, 1) {mustBeNonnegative, mustBeInteger} = 4;
+    end
+end

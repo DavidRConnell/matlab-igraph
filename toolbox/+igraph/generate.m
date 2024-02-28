@@ -235,3 +235,130 @@ function adj = generate(method, adjOptions, methodOptions)
 
     adj = mexIgraphDispatcher(mfilename(), method, adjOptions, methodOptions);
 end
+
+function opts = parseOptionsStar(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.mode (1, :) char {mustBeMemberi(opts.mode, ...
+                                             {'out', 'in', 'mutual', ...
+                                              'undirected'})} = 'undirected';
+        opts.center (1, 1) {mustBePositive, mustBeInteger} = 1;
+    end
+
+    if opts.center > opts.nNodes
+        error("Invalid value for 'center' argument. Value must be less " + ...
+              "than 'nNodes'.");
+    end
+
+    opts.center = opts.center - 1;
+end
+
+function opts = parseOptionsRing(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.isdirected (1, 1) logical;
+        opts.ismutual (1, 1) logical = false;
+        opts.iscircular (1, 1) logical = false;
+    end
+
+    if ~isoptionset(opts, 'isdirected')
+        if opts.ismutual
+            opts.isdirected = true;
+        else
+            opts.isdirected = false;
+        end
+    end
+
+    if opts.ismutual && ~opts.isdirected
+        error("Igraph:generateRing", ...
+              "Cannot create mutual edges when graph is not directed. " + ...
+             "ismutual can only be true when isdirected is true.")
+    end
+end
+
+function opts = parseOptionsKaryTree(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.children (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.mode (1, :) char {mustBeMemberi(opts.mode, ...
+                                             {'out', 'in', 'undirected'})} = ...
+                                             'undirected';
+    end
+
+    opts.mode = lower(opts.mode);
+end
+
+function opts = parseOptionsRegularTree(opts)
+    arguments
+        opts.height (1, 1) {mustBeNonnegative, mustBeInteger} = 4;
+        opts.degree (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.mode (1, :) char {mustBeMemberi(opts.mode, ...
+                                             {'out', 'in', 'undirected'})} = ...
+                                             'undirected';
+    end
+
+    opts.mode = lower(opts.mode);
+end
+
+function opts = parseOptionsFull(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.isdirected (1, 1) logical = false;
+        opts.loops (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsCitation(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.isdirected (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsPrufer(opts)
+    arguments
+        opts.prufer {mustBeInteger, mustBeVector, mustBePositive} = 1:10;
+    end
+
+    opts.prufer = opts.prufer - 1;
+end
+
+function opts = parseOptionsAtlas(opts)
+    arguments
+        opts.atlasId (1, 1) {mustBeNonnegative, mustBeInteger, ...
+                             mustBeLessThan(opts.atlasId,1254)} = 2;
+    end
+    opts.atlasId = opts.atlasId - 1;
+end
+
+function opts = parseOptionsKautz(opts)
+    arguments
+        opts.nLetters (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
+        opts.stringLength (1, 1) {mustBeNonnegative, mustBeInteger} = 2;
+    end
+end
+
+function opts = parseOptionsCirculant(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
+        opts.shifts {mustBeNonnegative, mustBeVector, mustBeInteger} = [1];
+        opts.isdirected (1, 1) logical = false;
+    end
+end
+
+function opts = parseOptionsPetersen(opts)
+    arguments
+        opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 5;
+        opts.shift (1, 1) {mustBeNonnegative, mustBeInteger} = 2;
+    end
+
+    if opts.nNodes < 3
+       error("nNodes must be at least 3.");
+    end
+
+    if opts.shift > (opts.nNodes / 2)
+        error("shift must be less than nNodes / 2.\n\n" + ...
+              "nNodes = %d, shift = %d, shift must be less than %g", ...
+              opts.nNodes, opts.shift, opts.nNodes / 2);
+    end
+end
