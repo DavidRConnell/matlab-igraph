@@ -1,22 +1,24 @@
 #include "mxIgraph.h"
 #include "utils.h"
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+igraph_error_t mexIgraphModularity(int nlhs, mxArray* plhs[], int nrhs,
+                                   mxArray const* prhs[])
 {
-  mxIgraphSetupHook();
-
-  VERIFY_N_INPUTS_EQUAL(4);
+  VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
+
+  mxArray const* opts = prhs[2];
 
   igraph_t graph;
   igraph_vector_t weights;
   igraph_vector_int_t membership;
-  igraph_real_t resolution = mxGetScalar(prhs[2]);
-  igraph_bool_t directed = mxGetScalar(prhs[3]);
+  igraph_real_t resolution = mxIgraphGetReal(opts, "resolution");
+  igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
   igraph_real_t modularity;
+  igraph_error_t errorcode = IGRAPH_SUCCESS;
 
   mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
-  mxIgraphArrayToPartition(prhs[1], &membership);
+  mxIgraphMembershipFromArray(prhs[1], &membership);
 
   igraph_modularity(&graph, &membership, &weights, resolution,
                     directed, &modularity);

@@ -38,6 +38,5 @@ function values = centrality(adj, method, opts)
     end
 
     opts.vids = opts.vids - 1;
-    values = mexIgraphCentrality(adj, method, opts.vids, opts.mode, ...
-                                 opts.directed, opts.normalized, opts.damping);
+    values = mexIgraphDispatcher(mfilename(), adj, method, opts);
 end

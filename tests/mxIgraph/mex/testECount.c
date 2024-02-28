@@ -3,8 +3,6 @@
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxIgraphSetupHook();
-
   igraph_integer_t n_edges = mxIgraphECount(prhs[0],
                              mxIgraphIsDirected(prhs[0]));
 

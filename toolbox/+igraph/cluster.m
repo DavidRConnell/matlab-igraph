@@ -1,4 +1,4 @@
-function membership = cluster(adj, method, adjOpts, methodOpts)
+function membership = cluster(adj, method, adjOptions, methodOptions)
 %CLUSTER perform community detection on a graph
 %   MEMBERSHIP = CLUSTER(ADJ, METHOD) use METHOD to find a community structure
 %       for the graph. See below for method specific options.
@@ -153,26 +153,26 @@ function membership = cluster(adj, method, adjOpts, methodOpts)
                             'fluidcommunities', 'labelpropagation', ...
                             'infomap'})};
 
-        adjOpts.isdirected (1, 1) logical = igraph.isdirected(adj);
-        methodOpts.nSpins;
-        methodOpts.parallel;
-        methodOpts.tempStart;
-        methodOpts.tempEnd;
-        methodOpts.coolingFactor;
-        methodOpts.updateRule;
-        methodOpts.resolution;
-        methodOpts.negResolution;
-        methodOpts.initial;
-        methodOpts.maxSteps;
-        methodOpts.nSteps;
-        methodOpts.isweighted;
-        methodOpts.randomness;
-        methodOpts.nIterations;
-        methodOpts.metric;
-        methodOpts.fixed;
-        methodOpts.mode;
-        methodOpts.nTrials;
-        methodOpts.nodeWeights;
+        adjOptions.isdirected (1, 1) logical = igraph.isdirected(adj);
+        methodOptions.nSpins;
+        methodOptions.parallel;
+        methodOptions.tempStart;
+        methodOptions.tempEnd;
+        methodOptions.coolingFactor;
+        methodOptions.updateRule;
+        methodOptions.resolution;
+        methodOptions.negResolution;
+        methodOptions.initial;
+        methodOptions.maxSteps;
+        methodOptions.nSteps;
+        methodOptions.isweighted;
+        methodOptions.randomness;
+        methodOptions.nIterations;
+        methodOptions.metric;
+        methodOptions.fixed;
+        methodOptions.mode;
+        methodOptions.nTrials;
+        methodOptions.nodeWeights;
     end
 
     method = lower(method);
@@ -180,40 +180,37 @@ function membership = cluster(adj, method, adjOpts, methodOpts)
         method = 'multilevel';
     end
 
-    methodOpts = namedargs2cell(methodOpts);
-    clusterWrapper = @(varargin) ...
-        mexIgraphCluster(method, adj, adjOpts.isdirected, varargin{:});
-
+    methodOptions = namedargs2cell(methodOptions);
     switch method
       case 'optimal'
-        methodOpts = parseNullOptions(adj, methodOpts{:});
+        methodOptions = parseNullOptions(adj, methodOptions{:});
       case 'spinglass'
-        methodOpts = parseSpinglassOptions(adj, methodOpts{:});
+        methodOptions = parseSpinglassOptions(adj, methodOptions{:});
       case 'leadingeigenvector'
         % Currently crashing Matlab with an memalloc error.
         error("igraph:notImplemented", ...
               "LeadingEigenvector currently not implemented.");
-        methodOpts = parseLeadingEigenvectorOptions(adj, methodOpts{:});
+        methodOptions = parseLeadingEigenvectorOptions(adj, methodOptions{:});
       case 'walktrap'
-        methodOpts = parseWalktrapOptions(adj, methodOpts{:});
+        methodOptions = parseWalktrapOptions(adj, methodOptions{:});
       case 'edgebetweenness'
-        methodOpts = parseEdgeBetweenness(adj, methodOpts{:});
+        methodOptions = parseEdgeBetweenness(adj, methodOptions{:});
       case 'fastgreedy'
-        methodOpts = parseNullOptions(adj, methodOpts{:});
+        methodOptions = parseNullOptions(adj, methodOptions{:});
       case 'multilevel'
-        methodOpts = parseMultilevelOptions(adj, methodOpts{:});
+        methodOptions = parseMultilevelOptions(adj, methodOptions{:});
       case 'leiden'
-        methodOpts = parseLeidenOptions(adj, methodOpts{:});
+        methodOptions = parseLeidenOptions(adj, methodOptions{:});
       case 'fluidcommunities'
-        methodOpts = parseFluidCommunitiesOptions(adj, methodOpts{:});
+        methodOptions = parseFluidCommunitiesOptions(adj, methodOptions{:});
       case 'labelpropagation'
-        methodOpts = parseLabelPropagationOptions(adj, methodOpts{:});
+        methodOptions = parseLabelPropagationOptions(adj, methodOptions{:});
       case 'infomap'
-        methodOpts = parseInfomapOptions(adj, methodOpts{:});
+        methodOptions = parseInfomapOptions(adj, methodOptions{:});
     end
 
-    methodOpts = namedargs2cell(methodOpts);
-    membership = clusterWrapper(methodOpts{2:2:end});
+    membership = mexIgraphDispatcher(mfilename(), adj, method, adjOptions, ...
+                                     methodOptions);
 end
 
 function opts = parseNullOptions(~)

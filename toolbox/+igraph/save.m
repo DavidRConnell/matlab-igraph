@@ -61,17 +61,17 @@ function save(filename, adj, ioOptions, adjOptions)
     end
 
     switch ioOptions.format
-      case "mat"
-        save(filename, "adj");
+      case 'mat'
+        save(filename, 'adj');
         return
-      case "edgelist"
+      case 'edgelist'
         mustBeUnweighted();
-      case {"lgl", "dimacs", "ncol"}
+      case {'lgl', 'dimacs', 'ncol'}
         mustBeUndirected();
     end
 
-    mexIgraphWrite(adj, filename, ioOptions.format, ...
-                   adjOptions.isweighted, adjOptions.isdirected);
+    mexIgraphDispatcher(mfilename(), filename, adj, ioOptions.format, ...
+                        adjOptions);
 
     function mustBeUndirected()
         if adjOptions.isdirected

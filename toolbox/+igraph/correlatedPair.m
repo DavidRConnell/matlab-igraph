@@ -1,4 +1,4 @@
-function varargout = correlatedPair(x, opts)
+function varargout = correlatedPair(x, adjOptions, methodOptions)
 %CORRELATEDPAIR create a pair of correlated graphs
 %   ADJ2 = CORRELATEDPAIR(ADJ1, ...) create a new graph that is correlated to
 %       ADJ1.
@@ -37,20 +37,21 @@ function varargout = correlatedPair(x, opts)
 
     arguments
         x
-        opts.makeSparse (1, 1) logical;
-        opts.dtype (1, :) char;
-        opts.correlation (1, 1) ...
-            {mustBeInRange(opts.correlation, -1, 1)} = 0.25;
-        opts.density (1, 1) {mustBeInRange(opts.density, 0, 1)};
-        opts.isdirected (1, 1) logical;
+        adjOptions.makeSparse (1, 1) logical;
+        adjOptions.dtype (1, :) char;
+        methodOptions.correlation (1, 1) ...
+            {mustBeInRange(methodOptions.correlation, -1, 1)} = 0.25;
+        methodOptions.density (1, 1) {mustBeInRange(methodOptions.density, 0, 1)};
+        methodOptions.isdirected (1, 1) logical;
     end
 
-    opts = namedargs2cell(opts);
+    adjOptions = namedargs2cell(adjOptions);
+    methodOptions = namedargs2cell(methodOptions);
     if nargout < 2
-        adj2 = correlateWith(x, opts{:});
+        adj2 = correlateWith(x, adjOptions{:}, methodOptions{:});
         varargout = {adj2};
     elseif nargout == 2
-        [adj1, adj2] = generatePair(x, opts{:});
+        [adj1, adj2] = generatePair(x, adjOptions{:}, methodOptions{:});
         varargout = {adj1, adj2};
     else
         error("Igraph:tooManyOutputs", "correlatedPair returns two or " + ...
@@ -58,14 +59,14 @@ function varargout = correlatedPair(x, opts)
     end
 end
 
-function adj2 = correlateWith(adj, adjOptions, opts)
+function adj2 = correlateWith(adj, adjOptions, methodOptions)
     arguments
         adj = {mustBeAdj}
         adjOptions.makeSparse = issparse(adj);
         adjOptions.dtype;
-        opts.correlation;
-        opts.density = nnz(adj + adj') / numel(adj);
-        opts.isdirected = igraph.isdirected(adj);
+        methodOptions.correlation;
+        methodOptions.density = nnz(adj + adj') / numel(adj);
+        methodOptions.isdirected = igraph.isdirected(adj);
     end
 
     if ~isoptionset(adjOptions, "dtype")
@@ -76,25 +77,20 @@ function adj2 = correlateWith(adj, adjOptions, opts)
         end
     end
 
-    adj2 = mexIgraphCorrelatedPairs('correlate', adjOptions.makeSparse, ...
-                                    adjOptions.dtype, adj, ...
-                                    opts.correlation, opts.density, ...
-                                    opts.isdirected);
+    adj2 = mexIgraphDispatcher(mfunctionname(), adj, adjOptions, ...
+                               methodOptions);
 end
 
-function [adj1, adj2] = generatePair(nNodes, adjOptions, opts)
+function [adj1, adj2] = generatePair(nNodes, adjOptions, methodOptions)
     arguments
         nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
         adjOptions.makeSparse = true;
         adjOptions.dtype = 'double';
-        opts.correlation;
-        opts.density = 0.5;
-        opts.isdirected = false;
+        methodOptions.correlation;
+        methodOptions.density = 0.5;
+        methodOptions.isdirected = false;
     end
 
-    [adj1, adj2] = mexIgraphCorrelatedPairs('generate', ...
-                                            adjOptions.makeSparse, ...
-                                            adjOptions.dtype, nNodes, ...
-                                            opts.correlation, opts.density, ...
-                                            opts.isdirected);
+    [adj1, adj2] = mexIgraphDispatcher(mfunctionname(), adjOptions, ...
+                                       methodOptions);
 end

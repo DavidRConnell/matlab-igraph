@@ -44,6 +44,5 @@ function adj = famous(name, adjOptions)
                                                     'double';
     end
 
-    adj = mexIgraphFamous(lower(name), adjOptions.makeSparse, ...
-                          adjOptions.dtype);
+    adj = mexIgraphDispatcher(mfilename(), lower(name), adjOptions);
 end

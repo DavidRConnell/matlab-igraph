@@ -1,16 +1,16 @@
 #include "mxIgraph.h"
 #include "utils.h"
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+igraph_error_t mexIgraphOptimalModularity(int nlhs, mxArray* plhs[], int nrhs,
+    mxArray const* prhs[])
 {
-  mxIgraphSetupHook();
-
   VERIFY_N_INPUTS_EQUAL(1);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   igraph_t graph;
   igraph_vector_t weights;
   igraph_real_t modularity;
+  igraph_error_t errorcode = IGRAPH_SUCCESS;
 
   mxIgraphGetGraph(prhs[0], &graph, &weights, false);
 
@@ -20,4 +20,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);
+
+  return errorcode;
 }

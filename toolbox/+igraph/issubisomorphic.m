@@ -1,4 +1,4 @@
-function TF = issubisomorphic(adj1, adj2, adjOptions)
+function TF = issubisomorphic(adj1, adj2, adj1Options, adj2Options)
 %ISISOMORPHIC test if adj2 is isomorphic to a subgraph of adj1
 %   TF = ISSUBISOMORPHIC(ADJ1, ADJ2) returns true if ADJ2 is isomorphic with
 %       a subgraph of ADJ1. Throws an error if ADJ1 is not bigger than ADJ2.
@@ -10,11 +10,13 @@ function TF = issubisomorphic(adj1, adj2, adjOptions)
     arguments
         adj1 {mustBeAdj}
         adj2 {mustBeAdj}
-        adjOptions.adj1isdirected (1, 1) logical = igraph.isdirected(adj1);
-        adjOptions.adj2isdirected (1, 1) logical = igraph.isdirected(adj2);
+        adj1Options.adj1isdirected (1, 1) logical = igraph.isdirected(adj1);
+        adj2Options.adj2isdirected (1, 1) logical = igraph.isdirected(adj2);
     end
 
-    if adjOptions.adj1isdirected ~= adjOptions.adj2isdirected
+    adj1Options.isdirected = adj1Options.adj1isdirected;
+    adj2Options.isdirected = adj2Options.adj2isdirected;
+    if adj1Options.isdirected ~= adj2Options.isdirected
        eid = "igraph:inconsistentProperties";
        msg = "Graphs must both be directed or both be undirected to " + ...
              "test if isomorphic.";
@@ -27,7 +29,5 @@ function TF = issubisomorphic(adj1, adj2, adjOptions)
         error(eid, msg);
     end
 
-    TF = mexIgraphIsSubIsomorphic(adj1, adj2, ...
-                                  adjOptions.adj1isdirected, ...
-                                  adjOptions.adj2isdirected);
+    TF = mexIgraphDispatcher(mfilename(), adj1, adj2, adj1Options, adj2Options);
 end

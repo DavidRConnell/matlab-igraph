@@ -232,9 +232,6 @@ function pos = layout(adj, method, opts, methodOpts)
     end
 
     methodOpts = namedargs2cell(methodOpts);
-    layoutWrapper = @(varargin) ...
-        mexIgraphLayout(method, adj, opts.isdirected, varargin{:});
-
     switch method
       case 'random'
         methodOpts = parseNullOptions(adj, methodOpts{:});
@@ -272,8 +269,8 @@ function pos = layout(adj, method, opts, methodOpts)
               method);
     end
 
-    methodOpts = namedargs2cell(methodOpts);
-    pos = mexIgraphLayout(method, adj, methodOpts{2:2:end});
+    pos = mexIgraphDispatcher(mfilename(), adj, method, ...
+                              opts.isdirected, methodOpts);
 end
 
 function opts = parseNullOptions(~)

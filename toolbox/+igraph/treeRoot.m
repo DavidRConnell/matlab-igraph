@@ -4,6 +4,7 @@ function root = treeRoot(adj, opts)
 %   If adj is not a tree, returns 0.
 %
 %   See also igraph.istree.
+
     arguments
         adj {mustBeAdj};
         opts.isdirected (1, 1) logical;
@@ -15,5 +16,6 @@ function root = treeRoot(adj, opts)
     end
 
     opts.mode = lower(opts.mode);
-    root = mexIgraphIsTree(adj, opts.isdirected, opts.mode, true);
+    opts.findRoot = true;
+    root = mexIgraphDispatcher("isTree", adj, opts);
 end

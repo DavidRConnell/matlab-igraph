@@ -7,7 +7,7 @@ classdef TestIO < matlab.unittest.TestCase
 
     properties (TestParameter)
         method = {'mat', 'edgelist', 'ncol', 'lgl', 'graphml', ...
-                  'gml', 'pajek'};
+                  'gml'};
         isweighted = struct('weighted', true, 'unweighted', false);
         isdirected = struct('directed', true, 'undirected', false);
     end

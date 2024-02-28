@@ -9,22 +9,22 @@
   mexErrMsgIdAndTxt((id), (msg));		\
   exit(1)
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
+                              mxArray const* prhs[])
 {
-  mxIgraphSetupHook();
-
-  VERIFY_N_INPUTS_EQUAL(5);
+  VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_NO_OUTPUTS;
 
+  mxArray const* adj_options = prhs[3];
   igraph_t graph;
   igraph_vector_t weights;
-  char *filename = mxArrayToString(prhs[1]);
+  char* filename = mxArrayToString(prhs[0]);
   mxIgraphFileFormat_t format = mxIgraphSelectFileFormat(prhs[2]);
-  igraph_bool_t isweighted = mxGetScalar(prhs[3]);
-  igraph_bool_t isdirected = mxGetScalar(prhs[4]);
-  FILE *fptr;
-  igraph_error_t errcode = IGRAPH_SUCCESS;
-  igraph_error_handler_t *oldhandler;
+  igraph_bool_t isweighted = mxIgraphGetBool(adj_options, "isweighted");
+  igraph_bool_t isdirected = mxIgraphGetBool(adj_options, "isdirected");
+  FILE* fptr;
+  igraph_error_t errorcode = IGRAPH_SUCCESS;
+  igraph_error_handler_t* oldhandler;
 
   if (!(fptr = fopen(filename, "w"))) {
     mexErrMsgIdAndTxt("Igraph:IOError", "Could not open file %s for writing.",
@@ -35,7 +35,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     igraph_set_attribute_table(&igraph_cattribute_table);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, isdirected);
+  mxIgraphGetGraph(prhs[1], &graph, &weights, adj_options);
 
   if (isweighted) {
     SETEANV(&graph, "weight", &weights);
@@ -44,20 +44,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   switch (format) {
   case MXIGRAPH_FORMAT_EDGELIST:
-    errcode = igraph_write_graph_edgelist(&graph, fptr);
+    errorcode = igraph_write_graph_edgelist(&graph, fptr);
     break;
   case MXIGRAPH_FORMAT_NCOL:
     if (isweighted) {
-      errcode = igraph_write_graph_ncol(&graph, fptr, NULL, "weight");
+      errorcode = igraph_write_graph_ncol(&graph, fptr, NULL, "weight");
     } else {
-      errcode = igraph_write_graph_ncol(&graph, fptr, NULL, NULL);
+      errorcode = igraph_write_graph_ncol(&graph, fptr, NULL, NULL);
     }
     break;
   case MXIGRAPH_FORMAT_LGL:
     if (isweighted) {
-      errcode = igraph_write_graph_lgl(&graph, fptr, NULL, "weight", true);
+      errorcode = igraph_write_graph_lgl(&graph, fptr, NULL, "weight", true);
     } else {
-      errcode = igraph_write_graph_lgl(&graph, fptr, NULL, NULL, true);
+      errorcode = igraph_write_graph_lgl(&graph, fptr, NULL, NULL, true);
     }
     break;
   case MXIGRAPH_FORMAT_DIMACS:
@@ -70,32 +70,29 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     break;
   case MXIGRAPH_FORMAT_GRAPHML:
     oldhandler = igraph_set_error_handler(igraph_error_handler_ignore);
-    errcode = igraph_write_graph_graphml(&graph, fptr, true);
-    if (errcode == IGRAPH_UNIMPLEMENTED) {
+    errorcode = igraph_write_graph_graphml(&graph, fptr, true);
+    if (errorcode == IGRAPH_UNIMPLEMENTED) {
       mexIgraphError("Igraph:notSupported",
                      "igraph was compiled without GraphML support.");
     }
     igraph_set_error_handler(oldhandler);
     break;
   case MXIGRAPH_FORMAT_GML:
-    errcode = igraph_write_graph_gml(&graph, fptr, IGRAPH_WRITE_GML_DEFAULT_SW, 0,
-                                     NULL);
+    errorcode = igraph_write_graph_gml(&graph, fptr, IGRAPH_WRITE_GML_DEFAULT_SW,
+                                       0, NULL);
     break;
   case MXIGRAPH_FORMAT_PAJEK:
-    errcode = igraph_write_graph_pajek(&graph, fptr);
-    break;
-  case MXIGRAPH_FORMAT_DL:
     mexIgraphError("Igraph:notImplemented",
                    "Upstream igraph does not support writing to dl format.");
     break;
   case MXIGRAPH_FORMAT_DOT:
-    errcode = igraph_write_graph_dot(&graph, fptr);
+    errorcode = igraph_write_graph_dot(&graph, fptr);
     break;
   case MXIGRAPH_FORMAT_LEDA:
     if (isweighted) {
-      errcode = igraph_write_graph_leda(&graph, fptr, NULL, "weight");
+      errorcode = igraph_write_graph_leda(&graph, fptr, NULL, "weight");
     } else {
-      errcode = igraph_write_graph_leda(&graph, fptr, NULL, NULL);
+      errorcode = igraph_write_graph_leda(&graph, fptr, NULL, NULL);
     }
     break;
   default:
@@ -107,11 +104,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     exit(1);
   }
 
-  if (errcode != IGRAPH_SUCCESS) {
-    mexIgraphError("Igraph:internal:IOError",
-                   "Failed to write graph to file.");
-  }
-
   fclose(fptr);
   igraph_destroy(&graph);
+
+  return errorcode;
 }

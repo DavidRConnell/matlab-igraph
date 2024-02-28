@@ -26,5 +26,5 @@ function rng(seed, generator)
                                               'pcg64', 'current'})} = "Current";
     end
 
-    mexIgraphRNG(seed, lower(generator));
+    mexIgraphDispatcher(mfilename(), seed, lower(generator));
 end

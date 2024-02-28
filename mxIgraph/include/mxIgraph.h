@@ -39,7 +39,6 @@ igraph_progress_handler_t mxIgraphProgressHandlerMex;
 igraph_progress_handler_t mxIgraphProgressHandlerIgnoreMex;
 igraph_status_handler_t mxIgraphStatusHandlerMex;
 igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
-void mxIgraphSetupHook();
 
 // mxError
 void mxIgraphErrorNotImplemented(const char *caller, const char *method);

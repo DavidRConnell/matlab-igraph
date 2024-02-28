@@ -20,5 +20,5 @@ function q = optimalModularity(adj)
         adj {mustBeAdj};
     end
 
-    q = mexIgraphOptimalModularity(adj);
+    q = mexIgraphDispatcher(mfilename(), adj);
 end

@@ -1,11 +1,10 @@
 #include "mxIgraph.h"
 #include "utils.h"
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
+                                   mxArray const* prhs[])
 {
-  mxIgraphSetupHook();
-
-  VERIFY_N_INPUTS_EQUAL(7);
+  VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   enum {
@@ -18,7 +17,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     MXIGRAPH_CENTRALITY_N
   };
 
-  const char *methods[MXIGRAPH_CENTRALITY_N] = {
+  const char* methods[MXIGRAPH_CENTRALITY_N] = {
     [MXIGRAPH_CENTRALITY_CLOSENESS] = "closeness",
     [MXIGRAPH_CENTRALITY_HARMONIC] = "harmonic",
     [MXIGRAPH_CENTRALITY_BETWEENNESS] = "betweenness",
@@ -27,6 +26,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     /* [MXIGRAPH_CENTRALITY_EIGENVECTOR] = "eigenvector" */
   };
 
+  mxArray const* opts = prhs[2];
   igraph_integer_t method = mxIgraphSelectMethod(prhs[1], methods,
                             MXIGRAPH_CENTRALITY_N);
   igraph_t graph;
@@ -35,14 +35,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_vector_int_t vertices;
   igraph_vs_t vids;
   igraph_bool_t warning;
-  igraph_neimode_t mode = mxIgraphSelectMode(prhs[3]);
-  igraph_bool_t directed = mxGetScalar(prhs[4]);
-  igraph_bool_t normalized = mxGetScalar(prhs[5]);
-  igraph_real_t damping = mxGetScalar(prhs[6]);
+  igraph_neimode_t mode = mxIgraphSelectMode(opts);
+  igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
+  igraph_bool_t normalized = mxIgraphGetBool(opts, "normalized");
+  igraph_real_t damping = mxIgraphGetReal(opts, "damping");
   igraph_error_t errorcode;
 
   mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
-  mxIgraphGetVectorInt(prhs[2], &vertices);
+  mxIgraphGetVectorInt(opts, "vids", &vertices);
   igraph_vs_vector(&vids, &vertices);
 
   igraph_vector_init(&res, 0);
@@ -87,25 +87,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);
 
-  if (errorcode != IGRAPH_SUCCESS) {
-    switch (errorcode) {
-    case IGRAPH_ENOMEM:
-      mexErrMsgIdAndTxt("Igraph:outOfMemory",
-                        "Failed to generate graph due to insufficient memory.");
-      break;
-    case IGRAPH_EINVAL:
-      mexErrMsgIdAndTxt("Igraph:invalidParameter", "Invalid method parameter.");
-      break;
-    case IGRAPH_EINVVID:
-      mexErrMsgIdAndTxt("Igraph:invalidVertex",
-                        "One or more requested nodes not found in the graph.");
-      break;
-    default:
-      mexErrMsgIdAndTxt("Igraph:internal:generate",
-                        "Failed to rewire graph.");
-    }
-  }
-
-  plhs[0] = mxIgraphCreateVector(&res);
+  plhs[0] = mxIgraphVectorToArray(&res);
   igraph_vector_destroy(&res);
+
+  return errorcode;
 }

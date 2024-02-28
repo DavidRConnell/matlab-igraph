@@ -10,5 +10,5 @@ function verbose(handler, ison)
         ison (1, 1) logical;
     end
 
-    mexIgraphSetHandler(handler, ison);
+    mexIgraphDispatcher(mfilename(), handler, ison);
 end

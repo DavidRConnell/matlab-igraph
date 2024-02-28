@@ -202,56 +202,36 @@ function adj = generate(method, adjOptions, methodOptions)
     end
 
     adjOptions.dtype = lower(adjOptions.dtype);
-    requiredArguments = namedargs2cell(adjOptions);
     methodOptions = namedargs2cell(methodOptions);
-    generatorWrapper = @(varargin) ...
-        mexIgraphGenerate(method, requiredArguments{2:2:end}, varargin{:});
 
     switch method
       case {'star', 'wheel'}
         methodOptions = parseOptionsStar(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, methodOptions.mode, ...
-                               methodOptions.center);
       case 'ring'
         methodOptions = parseOptionsRing(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, methodOptions.isdirected, ...
-                               methodOptions.ismutual, methodOptions.iscircular);
       case 'karytree'
         methodOptions = parseOptionsKaryTree(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, ...
-                               methodOptions.children, methodOptions.mode);
       case 'regulartree'
         methodOptions = parseOptionsRegularTree(methodOptions{:});
-        adj = generatorWrapper(methodOptions.height, methodOptions.degree, ...
-                               methodOptions.mode);
       case 'full'
         methodOptions = parseOptionsFull(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, ...
-                               methodOptions.isdirected, methodOptions.loops);
       case 'citation'
         methodOptions = parseOptionsCitation(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, methodOptions.isdirected);
       case 'prufer'
         methodOptions = parseOptionsPrufer(methodOptions{:});
-        adj = generatorWrapper(methodOptions.prufer);
       case 'atlas'
         methodOptions = parseOptionsAtlas(methodOptions{:});
-        adj = generatorWrapper(methodOptions.atlasId);
       case {'debruijn', 'kautz'}
         methodOptions = parseOptionsKautz(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nLetters, ...
-                               methodOptions.stringLength);
       case 'circulant'
         methodOptions = parseOptionsCirculant(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, methodOptions.shifts, ...
-                               methodOptions.isdirected);
       case 'petersen'
         methodOptions = parseOptionsPetersen(methodOptions{:});
-        adj = generatorWrapper(methodOptions.nNodes, methodOptions.shift);
       otherwise
         error("The method %s has not been implemented.\n\n" + ...
               "Please report an issue or submit a pull request to github.", ...
               method);
     end
 
+    adj = mexIgraphDispatcher(mfilename(), method, adjOptions, methodOptions);
 end

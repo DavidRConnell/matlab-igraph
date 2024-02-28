@@ -9,10 +9,9 @@ enum {
   MXIGRAPH_GENERATOR_N
 };
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
+                            mxArray const *prhs[])
 {
-  mxIgraphSetupHook();
-
   VERIFY_N_INPUTS_EQUAL(2);
   VERIFY_NO_OUTPUTS;
 
@@ -59,4 +58,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     mexErrMsgIdAndTxt("Igraph:internal:improperSeed",
                       "Failed to seed the RNG.");
   }
+
+  return errcode;
 }

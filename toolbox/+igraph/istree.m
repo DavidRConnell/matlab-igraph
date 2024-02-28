@@ -13,5 +13,6 @@ function TF = istree(adj, opts)
     end
 
     opts.mode = lower(opts.mode);
-    TF = mexIgraphIsTree(adj, opts.isdirected, opts.mode, false);
+    opts.findRoot = false;
+    TF = mexIgraphDispatcher(mfilename(), adj, opts);
 end

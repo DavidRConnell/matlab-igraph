@@ -3,10 +3,9 @@
 #include "mxIgraph.h"
 #include "utils.h"
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+igraph_error_t mexIgraphCompare(int nlhs, mxArray* plhs[], int nrhs,
+                                mxArray const* prhs[])
 {
-  mxIgraphSetupHook();
-
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
@@ -15,7 +14,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_community_comparison_t method;
   igraph_real_t res;
 
-  const char *methods[] = {
+  const char* methods[] = {
     [IGRAPH_COMMCMP_VI] = "vi",
     [IGRAPH_COMMCMP_NMI] = "nmi",
     [IGRAPH_COMMCMP_RAND] = "rand",
@@ -30,8 +29,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                       "%s is not a known method.", mxArrayToString(prhs[2]));
   }
 
-  mxIgraphArrayToPartition(prhs[0], &comm1);
-  mxIgraphArrayToPartition(prhs[1], &comm2);
+  mxIgraphMembershipFromArray(prhs[0], &comm1);
+  mxIgraphMembershipFromArray(prhs[1], &comm2);
 
   igraph_reindex_membership(&comm1, NULL, NULL);
   igraph_reindex_membership(&comm2, NULL, NULL);
@@ -41,4 +40,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_vector_int_destroy(&comm2);
 
   plhs[0] = mxCreateDoubleScalar((double)res);
+
+  return IGRAPH_SUCCESS;
 }

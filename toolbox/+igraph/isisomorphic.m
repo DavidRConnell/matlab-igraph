@@ -1,4 +1,4 @@
-function TF = isisomorphic(adj1, adj2, adjOptions)
+function TF = isisomorphic(adj1, adj2, adj1Options, adj2Options)
 %ISISOMORPHIC test if adj1 and adj2 are isomorphic
 %   TF = ISISOMORPHIC(ADJ1, ADJ2) returns true if ADJ1 and ADJ2 are the
 %       equivalent when ignoring the order of nodes.
@@ -10,18 +10,18 @@ function TF = isisomorphic(adj1, adj2, adjOptions)
     arguments
         adj1 {mustBeAdj}
         adj2 {mustBeAdj}
-        adjOptions.adj1isdirected (1, 1) logical = igraph.isdirected(adj1);
-        adjOptions.adj2isdirected (1, 1) logical = igraph.isdirected(adj2);
+        adj1Options.adj1isdirected (1, 1) logical = igraph.isdirected(adj1);
+        adj2Options.adj2isdirected (1, 1) logical = igraph.isdirected(adj2);
     end
 
-    if adjOptions.adj1isdirected ~= adjOptions.adj2isdirected
+    adj1Options.isdirected = adj1Options.adj1isdirected;
+    adj2Options.isdirected = adj2Options.adj2isdirected;
+    if adj1Options.isdirected ~= adj2Options.isdirected
        eid = "igraph:inconsistentProperties";
        msg = "Graphs must both be directed or both be undirected to " + ...
              "test if isomorphic.";
        error(eid, msg);
     end
 
-    TF = mexIgraphIsIsomorphic(adj1, adj2, ...
-                               adjOptions.adj1isdirected, ...
-                               adjOptions.adj2isdirected);
+    TF = mexIgraphDispatcher(mfilename(), adj1, adj2, adj1Options, adj2Options);
 end

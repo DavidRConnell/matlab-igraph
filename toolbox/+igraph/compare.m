@@ -34,7 +34,7 @@ function score = compare(comm1, comm2, method)
         method = 'adjusted_rand';
     end
 
-    score = mexIgraphCompare(comm1, comm2, method);
+    score = mexIgraphDispatcher(mfilename(), comm1, comm2, method);
 end
 
 function mustBeEqualLength(a, b)

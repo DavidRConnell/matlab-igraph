@@ -70,14 +70,10 @@ install(DIRECTORY toolbox
   DESTINATION matlab-igraph
   COMPONENT toolbox)
 
-file(GLOB mex_files mex/*.c)
-foreach(mex_file ${mex_files})
-  get_filename_component(mex_name ${mex_file} NAME_WE)
-  install(TARGETS ${mex_name}
-    DESTINATION matlab-igraph/toolbox/+igraph/private
-    RUNTIME_DEPENDENCY_SET toolbox_deps
-    COMPONENT toolbox)
-endforeach()
+install(TARGETS mexIgraphDispatcher mexIgraphVersion mexIgraphIsDirected
+  DESTINATION matlab-igraph/toolbox/+igraph/private
+  RUNTIME_DEPENDENCY_SET toolbox_deps
+  COMPONENT toolbox)
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
   install(RUNTIME_DEPENDENCY_SET toolbox_deps

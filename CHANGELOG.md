@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Seeding random number generators.
+
 ### Changed
 
 - Update igraph version to 0.10.10.
+- Move to a single C entry point to better preserve state across function calls.
 
 ## [0.1.8] 2024-02-06
 
@@ -32,7 +37,7 @@ Fake update to try to get File Exchange to change the toolbox file it grabs.
 ### Changed
 
 - Post install function deletes itself after being called.
-- Remove OS specific toolboxes to ensure File Exchange gets appropriate toolbox (since it only grabs one and I can specify which).
+- Remove OS specific toolboxes to ensure File Exchange gets appropriate toolbox (since it only grabs one and I can't specify which).
 
 ## [0.1.5] 2024-02-05
 

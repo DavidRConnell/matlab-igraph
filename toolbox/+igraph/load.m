@@ -139,9 +139,7 @@ function adj = load(filename, ioOptions, adjOptions)
        userSetDirectedness = false;
     end
 
-    adj = mexIgraphRead(filename, ioOptions.format, adjOptions.isweighted, ...
-                        adjOptions.isdirected, adjOptions.makeSparse, ...
-                        adjOptions.dtype, ioOptions.index);
+    adj = mexIgraphDispatcher(mfilename(), filename, ioOptions, adjOptions);
 
     if ~userSetDirectedness
         adjOptions.isdirected = igraph.isdirected(adj);

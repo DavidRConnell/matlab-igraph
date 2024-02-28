@@ -1,7 +1,5 @@
 #include "mxIgraph.h"
 
-static igraph_bool_t setup_ran = false;
-
 void mxIgraphErrorHandlerMex(const char *reason, const char *file,
                              int line, igraph_error_t igraph_errno)
 {
@@ -81,15 +79,4 @@ igraph_error_t mxIgraphStatusHandlerIgnoreMex(const char *message, void *data)
   IGRAPH_UNUSED(data);
 
   return IGRAPH_SUCCESS;
-}
-
-void mxIgraphSetupHook()
-{
-  if (!setup_ran) {
-    setup_ran = true;
-    igraph_set_error_handler(mxIgraphErrorHandlerMex);
-    igraph_set_warning_handler(mxIgraphWarningHandlerMex);
-    igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
-    igraph_set_status_handler(mxIgraphStatusHandlerIgnoreMex);
-  }
 }
