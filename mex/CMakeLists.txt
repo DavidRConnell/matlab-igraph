@@ -1,3 +1,8 @@
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/mexIgraphVersion.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/mexIgraphVersion.h
+)
+
 file(GLOB src_files ${CMAKE_CURRENT_SOURCE_DIR}/private/*.c)
 matlab_add_mex(NAME mexIgraphDispatcher
   MODULE
@@ -20,6 +25,9 @@ foreach(func ${top_level_functions})
   )
 
   target_include_directories(${func}
-    PRIVATE ${Matlab_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+    ${Matlab_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
   )
 endforeach()
