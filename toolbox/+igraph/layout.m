@@ -175,7 +175,7 @@ function pos = layout(adj, method, opts, methodOpts)
                                     'lgl', 'reingoldtilford', 'rt', ...
                                      'reingoldtilfordcircular'})};
 
-        opts.directed (1, 1) logical = igraph.isdirected(adj);
+        opts.isdirected (1, 1) logical = igraph.isdirected(adj);
         methodOpts.order;
         methodOpts.center;
         methodOpts.width;
