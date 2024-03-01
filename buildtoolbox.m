@@ -9,6 +9,7 @@ function buildtoolbox(toolboxFolder, outDir, version)
 
     opts.ToolboxName = "matlab-igraph";
     opts.ToolboxVersion = versionNumber;
+    opts.ToolboxImageFile = "images/matlab_igraph_logo.png";
     opts.ToolboxGettingStartedGuide = fullfile(toolboxFolder, ...
                                                "GettingStarted.mlx");
 
