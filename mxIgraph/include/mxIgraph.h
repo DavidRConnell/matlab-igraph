@@ -41,75 +41,76 @@ igraph_status_handler_t mxIgraphStatusHandlerMex;
 igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
 
 // mxError
-void mxIgraphErrorNotImplemented(const char *caller, const char *method);
-void mxIgraphErrorUnknownMethod(const char *caller, const char *method);
+void mxIgraphErrorNotImplemented(const char* caller, const char* method);
+void mxIgraphErrorUnknownMethod(const char* caller, const char* method);
 
 // mxPredicate
-igraph_bool_t mxIgraphIsSquare(const mxArray *p);
-igraph_bool_t mxIgraphIsVector(const mxArray *p);
-igraph_bool_t mxIgraphIsEmpty(const mxArray *p);
-igraph_bool_t mxIgraphIsWeighted(const mxArray *p);
-igraph_bool_t mxIgraphIsDirected(const mxArray *p);
-igraph_bool_t mxIgraphIsTriU(const mxArray *p);
-igraph_bool_t mxIgraphIsTriL(const mxArray *p);
-igraph_bool_t mxIgraphIsSymmetric(const mxArray *p);
+igraph_bool_t mxIgraphIsSquare(const mxArray* p);
+igraph_bool_t mxIgraphIsVector(const mxArray* p);
+igraph_bool_t mxIgraphIsEmpty(const mxArray* p);
+igraph_bool_t mxIgraphIsWeighted(const mxArray* p);
+igraph_bool_t mxIgraphIsDirected(const mxArray* p);
+igraph_bool_t mxIgraphIsTriU(const mxArray* p);
+igraph_bool_t mxIgraphIsTriL(const mxArray* p);
+igraph_bool_t mxIgraphIsSymmetric(const mxArray* p);
 
 // mxPartition
-igraph_integer_t mxIgraphVectorLength(const mxArray *p);
-int mxIgraphMembershipFromArray(const mxArray *p,
-                                igraph_vector_int_t *membership);
-mxArray *mxIgraphMembershipToArray(igraph_vector_int_t const *membership);
+igraph_integer_t mxIgraphVectorLength(const mxArray* p);
+int mxIgraphMembershipFromArray(const mxArray* p,
+                                igraph_vector_int_t* membership);
+mxArray* mxIgraphMembershipToArray(igraph_vector_int_t const* membership);
 
 // mxGraph
-igraph_integer_t mxIgraphVCount(const mxArray *p);
-igraph_integer_t mxIgraphECount(const mxArray *p,
+igraph_integer_t mxIgraphVCount(const mxArray* p);
+igraph_integer_t mxIgraphECount(const mxArray* p,
                                 const igraph_bool_t is_directed);
-void mxIgraphGetGraph(const mxArray *p, igraph_t *graph,
-                      igraph_vector_t *weights, const igraph_bool_t is_directed);
-mxArray *mxIgraphCreateAdj(igraph_t const *graph,
-                           igraph_vector_t const *weights,
-                           mxArray const *adjOptions);
+void mxIgraphGetGraph(const mxArray* p, igraph_t* graph,
+                      igraph_vector_t* weights, const igraph_bool_t is_directed);
+mxArray* mxIgraphCreateAdj(igraph_t const* graph,
+                           igraph_vector_t const* weights,
+                           mxArray const* adjOptions);
 
 // mxStructures
-int mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec);
-mxArray *mxIgraphVectorToArray(const igraph_vector_t *vec);
-int mxIgraphVectorIntFromArray(const mxArray *p, igraph_vector_int_t *vec);
-mxArray *mxIgraphVectorIntToArray(const igraph_vector_int_t *vec);
-int mxIgraphVectorBoolFromArray(const mxArray *p, igraph_vector_bool_t *vec);
-mxArray *mxIgraphVectorBoolToArray(const igraph_vector_bool_t *vec);
-int mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat);
-mxArray *mxIgraphMatrixToArray(const igraph_matrix_t *mat);
-mxArray *mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
+int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec);
+mxArray* mxIgraphVectorToArray(const igraph_vector_t* vec);
+int mxIgraphVectorIntFromArray(const mxArray* p, igraph_vector_int_t* vec);
+mxArray* mxIgraphVectorIntToArray(const igraph_vector_int_t* vec);
+int mxIgraphVectorBoolFromArray(const mxArray* p, igraph_vector_bool_t* vec);
+mxArray* mxIgraphVectorBoolToArray(const igraph_vector_bool_t* vec);
+int mxIgraphMatrixFromArray(const mxArray* p, igraph_matrix_t* mat);
+mxArray* mxIgraphMatrixToArray(const igraph_matrix_t* mat);
+mxArray* mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
     *list);
-mxArray *mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
+mxArray* mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
     *list);
 
 // mxHelpers
-void mxIgraphPrintGraph(const igraph_t *graph,
-                        const igraph_vector_t *weights);
+void mxIgraphPrintGraph(const igraph_t* graph,
+                        const igraph_vector_t* weights);
 
 // mxArgumentParsers
-igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
+igraph_integer_t mxIgraphSelectMethod(const mxArray* p, const char* methods[],
                                       const igraph_integer_t n_methods);
-mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p);
+mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray* p);
 
-mxArray *mxIgraphGetArgument(mxArray const *arg_struct,
+mxArray* mxIgraphGetArgument(mxArray const* arg_struct,
                              char const fieldname[1]);
-mxIgraphDType_t mxIgraphSelectDType(const mxArray *arg_struct);
-igraph_neimode_t mxIgraphSelectMode(const mxArray *arg_struct);
-igraph_integer_t mxIgraphGetInteger(const mxArray *arg_struct,
+mxIgraphDType_t mxIgraphSelectDType(const mxArray* arg_struct);
+igraph_neimode_t mxIgraphSelectMode(const mxArray* arg_struct);
+igraph_integer_t mxIgraphGetInteger(const mxArray* arg_struct,
                                     char const fieldname[1]);
-igraph_real_t mxIgraphGetReal(const mxArray *arg_struct,
+igraph_real_t mxIgraphGetReal(const mxArray* arg_struct,
                               char const fieldname[1]);
-igraph_bool_t mxIgraphGetBool(const mxArray *arg_struct,
+igraph_bool_t mxIgraphGetBool(const mxArray* arg_struct,
                               char const fieldname[1]);
-void mxIgraphGetVector(const mxArray *arg_struct, char const fieldname[1],
-                       igraph_vector_t *vec);
-void mxIgraphGetVectorInt(const mxArray *arg_struct, char const fieldname[1],
-                          igraph_vector_int_t *vec);
-void mxIgraphGetVectorBool(const mxArray *arg_struct, char const fieldname[1],
-                           igraph_vector_bool_t *vec);
-void mxIgraphGetMatrix(const mxArray *arg_struct, char const fieldname[1],
-                       igraph_matrix_t *mat);
+char* mxIgraphGetString(const mxArray* arg_struct, char const fieldname[1]);
+void mxIgraphGetVector(const mxArray* arg_struct, char const fieldname[1],
+                       igraph_vector_t* vec);
+void mxIgraphGetVectorInt(const mxArray* arg_struct, char const fieldname[1],
+                          igraph_vector_int_t* vec);
+void mxIgraphGetVectorBool(const mxArray* arg_struct, char const fieldname[1],
+                           igraph_vector_bool_t* vec);
+void mxIgraphGetMatrix(const mxArray* arg_struct, char const fieldname[1],
+                       igraph_matrix_t* mat);
 
 #endif

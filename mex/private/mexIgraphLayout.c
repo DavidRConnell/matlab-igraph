@@ -139,14 +139,12 @@ static igraph_error_t mxIgraph_bipartite_i(igraph_t const* graph,
 }
 
 static igraph_error_t mxIgraph_fruchterman_reingold_i(igraph_t const* graph,
-    igraph_vector_t const* weights,
-    mxArray const* opts,
-    igraph_matrix_t* pos)
+    igraph_vector_t const* weights, mxArray const* opts, igraph_matrix_t* pos)
 {
   igraph_integer_t n_iter = mxIgraphGetInteger(opts, "nIterations");
   igraph_real_t start_temp = mxIgraphGetReal(opts, "startTemp");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
-  char const* grid_method = mxArrayToString(opts);
+  char const* grid_method = mxIgraphGetString(opts, "grid");
   igraph_layout_grid_t grid;
 
   if (strcmp(grid_method, "auto") == 0) {
@@ -172,7 +170,7 @@ static igraph_error_t mxIgraph_kamada_kawai_i(igraph_t const* graph,
     mxArray const* opts,
     igraph_matrix_t* pos)
 {
-  igraph_integer_t max_iter = mxIgraphGetInteger(opts, "mexIterations");
+  igraph_integer_t max_iter = mxIgraphGetInteger(opts, "maxIterations");
   igraph_real_t epsilon = mxIgraphGetReal(opts, "epsilon");
   igraph_real_t kkconst = mxIgraphGetReal(opts, "constant");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
@@ -299,13 +297,13 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
   igraph_t graph;
   igraph_vector_t weights;
   mxIgraph_layout_t method;
-  igraph_bool_t directed = mxGetScalar(prhs[1]);
-  mxArray const* method_options = prhs[2];
+  igraph_bool_t directed = mxGetScalar(prhs[2]);
+  mxArray const* method_options = prhs[3];
   igraph_matrix_t pos;
   typedef igraph_error_t (*layout_method_t)(igraph_t const*,
       igraph_vector_t const*, mxArray const*, igraph_matrix_t*);
   layout_method_t layout_method;
-  igraph_error_t errorcode;
+  igraph_error_t errorcode = IGRAPH_SUCCESS;
 
   char const* methods[MXIGRAPH_LAYOUT_N] = {
     [MXIGRAPH_LAYOUT_RANDOM] = "random",
@@ -324,7 +322,7 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
     [MXIGRAPH_LAYOUT_REINGOLDTILFORDCIRCULAR] = "reingoldtilfordcircular",
   };
 
-  method = mxIgraphSelectMethod(prhs[0], methods, MXIGRAPH_LAYOUT_N);
+  method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_LAYOUT_N);
 
   if (method == MXIGRAPH_LAYOUT_N) {
     mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
@@ -351,11 +349,11 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
   layout_method = method_table[method];
 
   if (!layout_method) {
-    mxIgraphErrorNotImplemented("Layout", mxArrayToString(prhs[2]));
+    mxIgraphErrorNotImplemented("Layout", mxArrayToString(prhs[1]));
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[1], &graph, &weights, directed);
+  mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
   igraph_matrix_init(&pos, 0, 0);
 
   errorcode = layout_method(&graph, &weights, method_options, &pos);

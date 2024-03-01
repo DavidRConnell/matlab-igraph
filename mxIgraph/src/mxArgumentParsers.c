@@ -122,6 +122,11 @@ igraph_bool_t mxIgraphGetBool(const mxArray* arg_struct,
   return mxGetScalar(mxIgraphGetArgument(arg_struct, fieldname));
 }
 
+char* mxIgraphGetString(mxArray const* arg_struct, char const fieldname[1])
+{
+  return mxArrayToString(mxIgraphGetArgument(arg_struct, fieldname));
+}
+
 void mxIgraphGetVector(const mxArray* arg_struct, char const fieldname[1],
                        igraph_vector_t* vec)
 {

@@ -38,8 +38,7 @@ static igraph_error_t mxIgraph_spinglass_i(igraph_t const* graph,
   igraph_real_t start_temp = mxIgraphGetReal(opts, "tempStart");
   igraph_real_t end_temp = mxIgraphGetReal(opts, "tempEnd");
   igraph_real_t cool_factor = mxIgraphGetReal(opts, "coolingFactor");
-  char const* update_rule_str = mxArrayToString(
-                                  mxIgraphGetArgument(opts, "updateRule"));
+  char const* update_rule_str = mxIgraphGetString(opts, "updateRule");
   igraph_spincomm_update_t update_rule;
   igraph_real_t gamma = mxIgraphGetReal(opts, "resolution");
   igraph_real_t gamma_minus = mxIgraphGetReal(opts, "negResolution");
@@ -151,8 +150,7 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const* graph,
   igraph_vector_t node_weights;
   igraph_vector_t* node_weights_ptr = NULL;
   igraph_integer_t n_iterations = mxIgraphGetInteger(opts, "nIterations");
-  igraph_bool_t use_modularity = strcmp(mxArrayToString(
-                                          mxIgraphGetArgument(opts, "metric")),
+  igraph_bool_t use_modularity = strcmp(mxIgraphGetString(opts, "metric"),
                                         "modularity") == 0;
   igraph_vector_int_t init;
   igraph_error_t errcode;
