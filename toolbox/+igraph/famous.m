@@ -11,9 +11,9 @@ function adj = famous(name, adjOptions)
 %       'smallestcyclicgroup', 'tetrahedral', 'tetrahedron', 'thomassen',
 %       'tutte', 'uniquely3colorable', 'walther', 'zachary'.
 %
-%   ADJ = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) there are
-%       parameters for specifying the how the resulting ADJ is represented.
-%       These follow the same conventions as the rest of matlab-igraph.
+%   ADJ = FAMOUS(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) there are parameters
+%       for specifying the how the resulting ADJ is represented. These follow
+%       the same conventions as the rest of matlab-igraph.
 %
 %        Name           Description
 %       --------------------------------------------------------------------
