@@ -30,7 +30,7 @@ jobs:
           sudo apt install cmake ninja-build gcc-10 g++-10 libxml2-dev libbison-dev libfl-dev
 
       - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v1
+        uses: matlab-actions/setup-matlab@v2
 
       - name: Build toolbox
         run: |
@@ -45,7 +45,7 @@ jobs:
           ctest --test-dir . --output-on-failure --parallel $(nproc)
 
       - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
         with:
           files: build/tests/test_*.xml
 
@@ -57,16 +57,14 @@ jobs:
         run: cmake --build build --target package_source
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
-          path: build/matlab-igraph_${{ github.ref_name }}*.tar.gz
+          path: build/matlab-igraph_*.tar.gz
 
   build-windows:
     name: Build Windows toolbox
     runs-on: windows-latest
-    env:
-      matlab-release: R2023b
 
     defaults:
       run:
@@ -93,19 +91,13 @@ jobs:
           location: D:\
 
       - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v1
-        with:
-          release: ${{ env.matlab-release }}
+        uses: matlab-actions/setup-matlab@v2
 
-      # For some reason CMake's findMatlab is not succeeding so explicitly
-      # passing the Matlab root. The path depends on the Matlab release so need
-      # to keep up-to-date.
       - name: Build toolbox
         run: |
           cmake -B build . \
             -G Ninja \
             -DIGRAPH_OPENMP_SUPPORT=ON \
-            -DMatlab_ROOT_DIR="C:/Program Files/MATLAB/${{ env.matlab-release }}" \
             -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
           cmake --build build
 
@@ -116,7 +108,7 @@ jobs:
           ctest --test-dir . --output-on-failure --parallel $(nproc)
 
       - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
         with:
           files: build/tests/test_*.xml
 
@@ -124,10 +116,10 @@ jobs:
         run: cmake --build build --target package
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
-          path: build/matlab-igraph_${{ github.ref_name }}*.zip
+          path: build/matlab-igraph_*.zip
 
   build-macos:
     name: Build macOS toolbox
@@ -145,7 +137,7 @@ jobs:
         run: brew install ninja autoconf automake libtool
 
       - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v1
+        uses: matlab-actions/setup-matlab@v2
 
       - name: Build toolbox
         run: |
@@ -160,7 +152,7 @@ jobs:
           ctest --test-dir . --output-on-failure --parallel $(sysctl -n hw.ncpu)
 
       - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
         with:
           files: build/tests/test_*.xml
 
@@ -168,10 +160,10 @@ jobs:
         run: cmake --build build --target package
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: matlab-igraph-${{ runner.os }}-${{ github.sha }}
-          path: build/matlab-igraph_${{ github.ref_name }}*.tar.gz
+          path: build/matlab-igraph_*.tar.gz
 
   release:
     name: Release new version
@@ -182,7 +174,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Collect OS specific toolboxes
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -197,7 +189,7 @@ jobs:
           cd ..
 
       - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v1
+        uses: matlab-actions/setup-matlab@v2
 
       - name: Make toolboxes
         uses: matlab-actions/run-command@v1
