@@ -13,7 +13,7 @@ permissions:
 jobs:
   build-linux:
     name: Build Linux toolbox
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       CC: gcc-10
       CXX: g++-10
