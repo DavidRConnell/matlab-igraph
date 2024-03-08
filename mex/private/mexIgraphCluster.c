@@ -223,7 +223,7 @@ static igraph_error_t mxIgraph_infomap_i(igraph_t const* graph,
   igraph_real_t codelength = 0;
   igraph_error_t errcode;
 
-  mxIgraphGetVector(opts, "node_weights", &v_weights);
+  mxIgraphGetVector(opts, "nodeWeights", &v_weights);
 
   errcode = igraph_community_infomap(graph, weights, &v_weights, n_trials,
                                      membership, &codelength);
@@ -245,7 +245,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
   mxIgraph_cluster_t method;
   igraph_t graph;
   igraph_vector_t weights;
-  igraph_bool_t directed = mxIgraphGetBool(method_options, "isdirected");
+  igraph_bool_t directed = mxIgraphGetBool(adj_options, "isdirected");
   igraph_vector_int_t membership;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
   typedef igraph_error_t (*cluster_method_t)(igraph_t const*,
@@ -266,7 +266,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
     [MXIGRAPH_CLUSTER_INFOMAP] = "infomap",
   };
 
-  method = mxIgraphSelectMethod(prhs[0], methods, MXIGRAPH_CLUSTER_N);
+  method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_CLUSTER_N);
 
   if (method == MXIGRAPH_CLUSTER_N) {
     mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
@@ -294,7 +294,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[1], &graph, &weights, directed);
+  mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
   igraph_vector_int_init(&membership, igraph_vcount(&graph));
 
   errorcode = cluster_method(&graph, &weights, method_options, &membership);
