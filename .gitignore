@@ -2,3 +2,4 @@ build/
 dist/
 *.o
 *.mexa64
+docs/public/

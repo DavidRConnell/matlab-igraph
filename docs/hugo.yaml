@@ -24,6 +24,16 @@ menu:
       params:
         icon: github
 
+params:
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: images/matlab_igraph_logo.svg
+      dark: images/matlab_igraph_logo_dark.svg
+      width: 40
+      height: 40
+
 markup:
   goldmark:
     renderer:
