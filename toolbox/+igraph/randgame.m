@@ -47,7 +47,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %   ADJ = GAME('BarabasiPsumTree', ...)
 %   ADJ = GAME('BarabasiPsumTreeMultiple', ...)
 %   ADJ = GAME('BarabasiBag', ...) Generate graphs using a Barabàsi Albert
-%       model. Produces a graph where each node is initially connects to
+%       model. Produces a graph where each node is initially connected to
 %       nConnections other nodes. Nodes are added one at a time and the
 %       probability a new node matches with another node is related to the
 %       number of edges the other node has made. There are three variants of
