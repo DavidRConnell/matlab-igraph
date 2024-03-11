@@ -17,9 +17,9 @@ function q = modularity(adj, membership, options)
     arguments
         adj {mustBeAdj};
         membership {mustBePartition};
-        opts.resolution (1, 1) {mustBeNonnegative} = 1;
-        opts.isdirected (1, 1) logical = igraph.isdirected(adj);
+        options.resolution (1, 1) {mustBeNonnegative} = 1;
+        options.isdirected (1, 1) logical = igraph.isdirected(adj);
     end
 
-    q = mexIgraphDispatcher(mfilename(), adj, membership, opts);
+    q = mexIgraphDispatcher(mfilename(), adj, membership, options);
 end
