@@ -6,6 +6,8 @@
 typedef igraph_error_t (*mexIgraphFunction_t)(int nlhs, mxArray* plhs[],
     int nrhs, mxArray const* prhs[]);
 
+igraph_error_t mexIgraphBenchmark(int nlhs, mxArray* plhs[], int nrhs,
+                                  mxArray const* prhs[]);
 igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
                                    mxArray const* prhs[]);
 igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,

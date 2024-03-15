@@ -4,7 +4,8 @@
 static igraph_bool_t setup_ran = false;
 
 typedef enum {
-  MXIGRAPH_FUNC_CENTRALITY = 0,
+  MXIGRAPH_FUNC_BENCHMARK = 0,
+  MXIGRAPH_FUNC_CENTRALITY,
   MXIGRAPH_FUNC_CLUSTER,
   MXIGRAPH_FUNC_COMPARE,
   MXIGRAPH_FUNC_CORRELATEWITH,
@@ -46,6 +47,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
   igraph_error_t error = IGRAPH_SUCCESS;
 
   const char* function_names[MXIGRAPH_FUNC_N] = {
+    [MXIGRAPH_FUNC_BENCHMARK] = "benchmark",
     [MXIGRAPH_FUNC_CENTRALITY] = "centrality",
     [MXIGRAPH_FUNC_CLUSTER] = "cluster",
     [MXIGRAPH_FUNC_COMPARE] = "compare",
@@ -75,6 +77,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
   }
 
   mexIgraphFunction_t function_table[MXIGRAPH_FUNC_N] = {
+    [MXIGRAPH_FUNC_BENCHMARK] = mexIgraphBenchmark,
     [MXIGRAPH_FUNC_CENTRALITY] = mexIgraphCentrality,
     [MXIGRAPH_FUNC_CLUSTER] = mexIgraphCluster,
     [MXIGRAPH_FUNC_COMPARE] = mexIgraphCompare,
@@ -104,5 +107,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
   }
 
   // prhs[0] is function name, do not need to pass it on.
-  error = function(nlhs, plhs, nrhs - 1, prhs + 1);
+  if ((error = function(nlhs, plhs, nrhs - 1, prhs + 1))) {
+    mexErrMsgIdAndTxt("igraph:error", igraph_strerror(error));
+  };
 }

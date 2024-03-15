@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Logo
+- Logo.
+- Add benchmark generator.
 
 ## [0.1.10] 2024-03-07
 

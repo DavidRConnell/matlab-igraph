@@ -456,7 +456,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'pIn'         Within island edge probability (default 0.75).
 %        'nInterEdges' The number of edges between two islands (default 4).
 %
-%   See also igraph.famous, igraph.generate, igraph.rewire, igraph.rng.
+%   See also igraph.benchmark, igraph.famous, igraph.generate, igraph.rng.
 
     arguments
         method (1, :) char ...
