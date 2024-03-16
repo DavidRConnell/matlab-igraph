@@ -222,6 +222,12 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                           distribution of length NTYPES).
 %        'preference'       NTYPES X NTYPES connection preference matrix
 %                           (default uniform distribution).
+%        'mixingParam'      Generates a uniform preference matrix with
+%                           MIXINGPARAM as the probability a node in one type
+%                           connects to a node in a different type and (1 -
+%                           MIXINGPARAM) as the probability a node connects
+%                           with a node in the same type. Only one of
+%                           PREFERENCE and MIXINGPARAM can be set.
 %        'isdirected'       Whether graph should be directed (default false
 %                           unless preference is specified and non-symmetric).
 %
@@ -243,6 +249,12 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'blockSizes'       Number of nodes in each type (block) (no default).
 %        'preference'       NTYPES X NTYPES connection preference matrix
 %                           (default uniform distribution).
+%        'mixingParam'      Generates a uniform preference matrix with
+%                           MIXINGPARAM as the probability a node in one type
+%                           connects to a node in a different type and (1 -
+%                           MIXINGPARAM) as the probability a node connects
+%                           with a node in the same type. Only one of
+%                           PREFERENCE and MIXINGPARAM can be set.
 %        'isdirected'       Whether graph should be directed (default false
 %                           unless preference is specified and non-symmetric).
 %        'loops'            Whether to allow self-loop edges (default false).
@@ -527,6 +539,7 @@ function adj = randgame(method, adjOptions, methodOptions)
         methodOptions.degreeCoef;
         methodOptions.ageCoef;
         methodOptions.preference;
+        methodOptions.mixingParam;
         methodOptions.types;
         methodOptions.blockSizes;
         methodOptions.clusterSizes;
@@ -913,6 +926,7 @@ function opts = parseOptionsCallawayTraits(opts)
         opts.nTypes (1, :) {mustBeInteger, mustBePositive};
         opts.typeDistribution (1, :) {mustBeNonnegative, mustBeNumeric};
         opts.preference (:, :) {mustBeNonnegative, mustBeNumeric};
+        opts.mixingParam (1, 1) {mustBeInRange(opts.mixingParam, 0, 1)};
         opts.isdirected (1, 1) logical;
     end
 
@@ -929,6 +943,16 @@ function opts = parseOptionsCallawayTraits(opts)
 
     if ~isoptionset(opts, "typeDistribution")
        opts.typeDistribution = ones(1, opts.nTypes) / opts.nTypes;
+    end
+
+    if isoptionset(opts, "preference") && isoptionset(opts, "mixingParam")
+        throwAsCaller(MException("Igraph:overConstrained", ...
+                                 'Arguments "preference" and ' + ...
+                                 '"mixingParam" cannot both be set.'));
+    end
+
+    if isoptionset(opts, "mixingParam")
+        opts.preference = generatePreference(opts.nTypes, opts.mixingParam);
     end
 
     if ~isoptionset(opts, "preference")
@@ -966,6 +990,7 @@ function opts = parseOptionsPreference(opts)
         opts.typeDistribution (1, :) {mustBeNonnegative, mustBeNumeric};
         opts.blockSizes (1, :) {mustBeNonnegative, mustBeNumeric};
         opts.preference (:, :) {mustBeNonnegative, mustBeNumeric};
+        opts.mixingParam (1, 1) {mustBeInRange(opts.mixingParam, 0, 1)};
         opts.isdirected (1, 1) logical;
         opts.loops (1, 1) logical = false;
     end
@@ -1008,6 +1033,16 @@ function opts = parseOptionsPreference(opts)
 
     if ~isoptionset(opts, "typeDistribution")
        opts.typeDistribution = ones(1, opts.nTypes) / opts.nTypes;
+    end
+
+    if isoptionset(opts, "preference") && isoptionset(opts, "mixingParam")
+        throwAsCaller(MException("Igraph:overConstrained", ...
+                                 'Arguments "preference" and ' + ...
+                                 '"mixingParam" cannot both be set.'));
+    end
+
+    if isoptionset(opts, "mixingParam")
+        opts.preference = generatePreference(opts.nTypes, opts.mixingParam);
     end
 
     if ~isoptionset(opts, "preference")
