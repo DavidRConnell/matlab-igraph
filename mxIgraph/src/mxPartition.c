@@ -1,7 +1,7 @@
 #include "mxIgraph.h"
 
 /* Return the length of the vector pointed to by p. */
-igraph_integer_t mxIgraphVectorLength(const mxArray *p)
+igraph_integer_t mxIgraphVectorLength(const mxArray* p)
 {
   mwSize n = mxGetN(p);
   mwSize m = mxGetM(p);
@@ -14,8 +14,8 @@ igraph_integer_t mxIgraphVectorLength(const mxArray *p)
   return n > m ? n : m;
 }
 
-static int mxIgraphGetPartitionFromDouble(const mxArray *p,
-    igraph_vector_int_t *membership)
+static int mxIgraphGetPartitionFromDouble(const mxArray* p,
+    igraph_vector_int_t* membership)
 {
   if (!(mxIgraphIsVector(p))) {
     mexErrMsgIdAndTxt("Igraph:NotVector", "Partition must be a vector.");
@@ -31,8 +31,8 @@ static int mxIgraphGetPartitionFromDouble(const mxArray *p,
 
    Membership should be uninitialized, but it's the callers responsibility to
    destroy it when done.*/
-int mxIgraphMembershipFromArray(const mxArray *p,
-                                igraph_vector_int_t *membership)
+int mxIgraphMembershipFromArray(const mxArray* p,
+                                igraph_vector_int_t* membership)
 {
   int rc = EXIT_FAILURE;
 
@@ -65,11 +65,11 @@ int mxIgraphMembershipFromArray(const mxArray *p,
    membership partition.
 
    Increments igraph partition so that the smallest node id is 1 instead of 0.*/
-mxArray *mxIgraphMembershipToArray(igraph_vector_int_t const *membership)
+mxArray* mxIgraphMembershipToArray(igraph_vector_int_t const* membership)
 {
   igraph_integer_t n_nodes = igraph_vector_int_size(membership);
-  mxArray *p = mxCreateDoubleMatrix(1, n_nodes, mxREAL);
-  double *mxMembership = mxGetDoubles(p);
+  mxArray* p = mxCreateDoubleMatrix(1, n_nodes, mxREAL);
+  double* mxMembership = mxGetDoubles(p);
 
   for (igraph_integer_t i = 0; i < n_nodes; i++) {
     mxMembership[(mwIndex)i] = (double)VECTOR(*membership)[i] + 1;

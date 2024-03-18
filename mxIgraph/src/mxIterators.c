@@ -1,6 +1,6 @@
 #include "mxIterators.h"
 
-static void mxIgraph_eit_sparse_create(const mxArray *p, mxIgraph_eit *eit,
+static void mxIgraph_eit_sparse_create(const mxArray* p, mxIgraph_eit* eit,
                                        const igraph_bool_t directed)
 {
   eit->ir = mxGetIr(p);
@@ -25,7 +25,7 @@ static void mxIgraph_eit_sparse_create(const mxArray *p, mxIgraph_eit *eit,
   }
 }
 
-static void mxIgraph_eit_full_create(const mxArray *p, mxIgraph_eit *eit,
+static void mxIgraph_eit_full_create(const mxArray* p, mxIgraph_eit* eit,
                                      const igraph_bool_t directed)
 {
   eit->ir = NULL;
@@ -44,7 +44,7 @@ static void mxIgraph_eit_full_create(const mxArray *p, mxIgraph_eit *eit,
   }
 }
 
-void mxIgraph_eit_create(const mxArray *p, mxIgraph_eit *eit,
+void mxIgraph_eit_create(const mxArray* p, mxIgraph_eit* eit,
                          const igraph_bool_t directed)
 {
   eit->n_nodes = mxIgraphVCount(p);

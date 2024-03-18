@@ -7,7 +7,6 @@ igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
   VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mexPrintf("HERE\n");
   mxArray const* adj1Options = prhs[2];
   mxArray const* adj2Options = prhs[3];
   igraph_bool_t adj1IsDirected = mxIgraphGetBool(adj1Options, "isdirected");
@@ -18,9 +17,7 @@ igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
   mxIgraphGetGraph(prhs[0], &graph1, NULL, adj1IsDirected);
   mxIgraphGetGraph(prhs[1], &graph2, NULL, adj2IsDirected);
 
-  mexPrintf("ISO\n");
   igraph_isomorphic(&graph1, &graph2, &flag);
-  mexPrintf("Ran\n");
   igraph_destroy(&graph1);
   igraph_destroy(&graph2);
 

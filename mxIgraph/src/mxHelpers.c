@@ -2,8 +2,8 @@
 
 #include "mxIgraph.h"
 
-void mxIgraphPrintGraph(const igraph_t *graph,
-                        const igraph_vector_t *weights)
+void mxIgraphPrintGraph(const igraph_t* graph,
+                        const igraph_vector_t* weights)
 {
   igraph_eit_t eit;
   igraph_integer_t eid;

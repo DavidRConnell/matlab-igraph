@@ -1,9 +1,9 @@
 #include "mxIgraph.h"
 
-void mxIgraphErrorHandlerMex(const char *reason, const char *file,
+void mxIgraphErrorHandlerMex(const char* reason, const char* file,
                              int line, igraph_error_t igraph_errno)
 {
-  const char *errmsg = igraph_strerror(igraph_errno);
+  const char* errmsg = igraph_strerror(igraph_errno);
   /* May be an issue in multi-threaded code when a different thread tries to
   call a freed object before the current thread can send the error. */
   IGRAPH_FINALLY_FREE();
@@ -11,7 +11,7 @@ void mxIgraphErrorHandlerMex(const char *reason, const char *file,
                     file, line);
 }
 
-void mxIgraphWarningHandlerMex(const char *reason, const char *file, int line)
+void mxIgraphWarningHandlerMex(const char* reason, const char* file, int line)
 {
   int strmax = 512;
   char msg[strmax];
@@ -20,7 +20,7 @@ void mxIgraphWarningHandlerMex(const char *reason, const char *file, int line)
   mexWarnMsgTxt(msg);
 }
 
-void mxIgraphWarningHandlerIgnoreMex(const char *reason, const char *file,
+void mxIgraphWarningHandlerIgnoreMex(const char* reason, const char* file,
                                      int line)
 {
   IGRAPH_UNUSED(reason);
@@ -28,9 +28,9 @@ void mxIgraphWarningHandlerIgnoreMex(const char *reason, const char *file,
   IGRAPH_UNUSED(line);
 }
 
-igraph_error_t mxIgraphProgressHandlerMex(const char *message,
+igraph_error_t mxIgraphProgressHandlerMex(const char* message,
     igraph_real_t percent,
-    void *data)
+    void* data)
 {
   IGRAPH_UNUSED(message);
   IGRAPH_UNUSED(data);
@@ -54,9 +54,9 @@ igraph_error_t mxIgraphProgressHandlerMex(const char *message,
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mxIgraphProgressHandlerIgnoreMex(const char *message,
+igraph_error_t mxIgraphProgressHandlerIgnoreMex(const char* message,
     igraph_real_t percent,
-    void *data)
+    void* data)
 {
   IGRAPH_UNUSED(message);
   IGRAPH_UNUSED(percent);
@@ -65,7 +65,7 @@ igraph_error_t mxIgraphProgressHandlerIgnoreMex(const char *message,
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mxIgraphStatusHandlerMex(const char *message, void *data)
+igraph_error_t mxIgraphStatusHandlerMex(const char* message, void* data)
 {
   IGRAPH_UNUSED(data);
 
@@ -73,7 +73,7 @@ igraph_error_t mxIgraphStatusHandlerMex(const char *message, void *data)
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mxIgraphStatusHandlerIgnoreMex(const char *message, void *data)
+igraph_error_t mxIgraphStatusHandlerIgnoreMex(const char* message, void* data)
 {
   IGRAPH_UNUSED(message);
   IGRAPH_UNUSED(data);

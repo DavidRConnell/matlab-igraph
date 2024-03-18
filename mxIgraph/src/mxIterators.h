@@ -11,9 +11,9 @@ typedef struct {
   mwIndex col_idx;
   mwIndex flat_idx; // index for the 1d C array view of the 2d matrix
   mwIndex n_nodes;
-  mwIndex *ir;
-  mwIndex *jc;
-  void *weight;
+  mwIndex* ir;
+  mwIndex* jc;
+  void* weight;
   bool is_bool;
   bool row_start_at_col;
   bool row_stop_at_col;
@@ -89,7 +89,7 @@ the diagonal. */
 
 #define MXIGRAPH_EIT_END(eit) (eit).stop
 
-void mxIgraph_eit_create(const mxArray *p, mxIgraph_eit *eit,
+void mxIgraph_eit_create(const mxArray* p, mxIgraph_eit* eit,
                          const igraph_bool_t directed);
 
 #endif

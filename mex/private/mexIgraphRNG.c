@@ -9,8 +9,8 @@ enum {
   MXIGRAPH_GENERATOR_N
 };
 
-igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
-                            mxArray const *prhs[])
+igraph_error_t mexIgraphRNG(int nlhs, mxArray* plhs[], int nrhs,
+                            mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(2);
   VERIFY_NO_OUTPUTS;
@@ -20,7 +20,7 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
   igraph_rng_t new_rng;
   igraph_error_t errcode = IGRAPH_SUCCESS;
 
-  const char *generators[MXIGRAPH_GENERATOR_N] = {
+  const char* generators[MXIGRAPH_GENERATOR_N] = {
     [MXIGRAPH_GENERATOR_MT19937] = "mt19937",
     [MXIGRAPH_GENERATOR_GLIBC2] = "glibc2",
     [MXIGRAPH_GENERATOR_PCG32] = "pcg32",
