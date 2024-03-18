@@ -79,6 +79,8 @@ int mxIgraphVectorBoolFromArray(const mxArray* p, igraph_vector_bool_t* vec);
 mxArray* mxIgraphVectorBoolToArray(const igraph_vector_bool_t* vec);
 int mxIgraphMatrixFromArray(const mxArray* p, igraph_matrix_t* mat);
 mxArray* mxIgraphMatrixToArray(const igraph_matrix_t* mat);
+int mxIgraphMatrixIntFromArray(const mxArray* p, igraph_matrix_int_t* mat);
+mxArray* mxIgraphMatrixIntToArray(const igraph_matrix_int_t* mat);
 mxArray* mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
     *list);
 mxArray* mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
