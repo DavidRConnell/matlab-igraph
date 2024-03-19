@@ -70,7 +70,7 @@ static igraph_error_t mxIgraph_leading_eigenvector_i(igraph_t const* graph,
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init);
+  mxIgraphGetVectorInt(opts, "initial", &init, false);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
     VECTOR(*membership)[i] = VECTOR(init)[i];
   }
@@ -155,7 +155,7 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const* graph,
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init);
+  mxIgraphGetVectorInt(opts, "initial", &init, false);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
     VECTOR(*membership)[i] = VECTOR(init)[i];
   }
@@ -201,8 +201,8 @@ static igraph_error_t mxIgraph_label_propagation_i(igraph_t const* graph,
   igraph_vector_bool_t fixed;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &initial);
-  mxIgraphGetVectorBool(opts, "fixed", &fixed);
+  mxIgraphGetVectorInt(opts, "initial", &initial, false);
+  mxIgraphGetVectorBool(opts, "fixed", &fixed, false);
 
   errcode = igraph_community_label_propagation(graph, membership, mode, weights,
             &initial, &fixed);
@@ -223,7 +223,7 @@ static igraph_error_t mxIgraph_infomap_i(igraph_t const* graph,
   igraph_real_t codelength = 0;
   igraph_error_t errcode;
 
-  mxIgraphGetVector(opts, "nodeWeights", &v_weights);
+  mxIgraphGetVector(opts, "nodeWeights", &v_weights, false);
 
   errcode = igraph_community_infomap(graph, weights, &v_weights, n_trials,
                                      membership, &codelength);

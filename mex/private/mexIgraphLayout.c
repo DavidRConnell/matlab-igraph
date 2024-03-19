@@ -31,7 +31,7 @@ static igraph_bool_t set_pos_i(mxArray const* opts, igraph_matrix_t* pos)
 
   igraph_matrix_t init;
   igraph_integer_t n_nodes = mxGetM(p);
-  mxIgraphMatrixFromArray(p, &init);
+  mxIgraphMatrixFromArray(p, &init, false);
   igraph_matrix_resize(pos, n_nodes, 2);
   for (igraph_integer_t j = 0; j < 2; j++) {
     for (igraph_integer_t i = 0; i < n_nodes; i++) {
@@ -128,7 +128,7 @@ static igraph_error_t mxIgraph_bipartite_i(igraph_t const* graph,
   igraph_real_t max_iterations = mxIgraphGetInteger(opts, "");
   igraph_error_t errcode;
 
-  mxIgraphGetVectorBool(opts, "types", &types);
+  mxIgraphGetVectorBool(opts, "types", &types, false);
 
   errcode = igraph_layout_bipartite(graph, &types, pos, hgap, vgap,
                                     max_iterations);
@@ -229,7 +229,7 @@ static igraph_error_t mxIgraph_mds_i(igraph_t const* graph,
   igraph_error_t errcode;
 
   if (!mxIgraphIsEmpty(opts)) {
-    mxIgraphMatrixFromArray(opts, &distance);
+    mxIgraphMatrixFromArray(opts, &distance, false);
     distance_ptr = &distance;
   }
 
@@ -360,7 +360,7 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
   igraph_destroy(&graph);
   igraph_vector_destroy(&weights);
 
-  plhs[0] = mxIgraphMatrixToArray(&pos);
+  plhs[0] = mxIgraphMatrixToArray(&pos, false);
   igraph_matrix_destroy(&pos);
 
   return errorcode;

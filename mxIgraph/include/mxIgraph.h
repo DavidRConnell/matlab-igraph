@@ -71,20 +71,30 @@ mxArray* mxIgraphCreateAdj(igraph_t const* graph,
                            mxArray const* adjOptions);
 
 // mxStructures
-int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec);
-mxArray* mxIgraphVectorToArray(const igraph_vector_t* vec);
-int mxIgraphVectorIntFromArray(const mxArray* p, igraph_vector_int_t* vec);
-mxArray* mxIgraphVectorIntToArray(const igraph_vector_int_t* vec);
-int mxIgraphVectorBoolFromArray(const mxArray* p, igraph_vector_bool_t* vec);
-mxArray* mxIgraphVectorBoolToArray(const igraph_vector_bool_t* vec);
-int mxIgraphMatrixFromArray(const mxArray* p, igraph_matrix_t* mat);
-mxArray* mxIgraphMatrixToArray(const igraph_matrix_t* mat);
-int mxIgraphMatrixIntFromArray(const mxArray* p, igraph_matrix_int_t* mat);
-mxArray* mxIgraphMatrixIntToArray(const igraph_matrix_int_t* mat);
+int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec,
+                            igraph_bool_t const shift_start);
+mxArray* mxIgraphVectorToArray(const igraph_vector_t* vec,
+                               igraph_bool_t const shift_start);
+int mxIgraphVectorIntFromArray(const mxArray* p, igraph_vector_int_t* vec,
+                               igraph_bool_t const shift_start);
+mxArray* mxIgraphVectorIntToArray(const igraph_vector_int_t* vec,
+                                  igraph_bool_t const shift_start);
+int mxIgraphVectorBoolFromArray(const mxArray* p, igraph_vector_bool_t* vec,
+                                igraph_bool_t const shift_start);
+mxArray* mxIgraphVectorBoolToArray(const igraph_vector_bool_t* vec,
+                                   igraph_bool_t const shift_start);
+int mxIgraphMatrixFromArray(const mxArray* p, igraph_matrix_t* mat,
+                            igraph_bool_t const shift_start);
+mxArray* mxIgraphMatrixToArray(const igraph_matrix_t* mat,
+                               igraph_bool_t const shift_start);
+int mxIgraphMatrixIntFromArray(const mxArray* p, igraph_matrix_int_t* mat,
+                               igraph_bool_t const shift_start);
+mxArray* mxIgraphMatrixIntToArray(const igraph_matrix_int_t* mat,
+                                  igraph_bool_t const shift_start);
 mxArray* mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
-    *list);
+    *list, igraph_bool_t const shift_start);
 mxArray* mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
-    *list);
+    *list, igraph_bool_t const shift_start);
 
 // mxHelpers
 void mxIgraphPrintGraph(const igraph_t* graph,
@@ -107,12 +117,14 @@ igraph_bool_t mxIgraphGetBool(const mxArray* arg_struct,
                               char const fieldname[1]);
 char* mxIgraphGetString(const mxArray* arg_struct, char const fieldname[1]);
 void mxIgraphGetVector(const mxArray* arg_struct, char const fieldname[1],
-                       igraph_vector_t* vec);
+                       igraph_vector_t* vec, igraph_bool_t const shift_start);
 void mxIgraphGetVectorInt(const mxArray* arg_struct, char const fieldname[1],
-                          igraph_vector_int_t* vec);
+                          igraph_vector_int_t* vec,
+                          igraph_bool_t const shift_start);
 void mxIgraphGetVectorBool(const mxArray* arg_struct, char const fieldname[1],
-                           igraph_vector_bool_t* vec);
+                           igraph_vector_bool_t* vec,
+                           igraph_bool_t const shift_start);
 void mxIgraphGetMatrix(const mxArray* arg_struct, char const fieldname[1],
-                       igraph_matrix_t* mat);
+                       igraph_matrix_t* mat, igraph_bool_t const shift_start);
 
 #endif

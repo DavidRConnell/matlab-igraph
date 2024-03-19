@@ -128,25 +128,31 @@ char* mxIgraphGetString(mxArray const* arg_struct, char const fieldname[1])
 }
 
 void mxIgraphGetVector(const mxArray* arg_struct, char const fieldname[1],
-                       igraph_vector_t* vec)
+                       igraph_vector_t* vec, igraph_bool_t const shift_start)
 {
-  mxIgraphVectorFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec);
+  mxIgraphVectorFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec,
+                          shift_start);
 }
 
 void mxIgraphGetVectorInt(const mxArray* arg_struct, char const fieldname[1],
-                          igraph_vector_int_t* vec)
+                          igraph_vector_int_t* vec,
+                          igraph_bool_t const shift_start)
 {
-  mxIgraphVectorIntFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec);
+  mxIgraphVectorIntFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec,
+                             shift_start);
 }
 
 void mxIgraphGetVectorBool(const mxArray* arg_struct, char const fieldname[1],
-                           igraph_vector_bool_t* vec)
+                           igraph_vector_bool_t* vec,
+                           igraph_bool_t const shift_start)
 {
-  mxIgraphVectorBoolFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec);
+  mxIgraphVectorBoolFromArray(mxIgraphGetArgument(arg_struct, fieldname), vec,
+                              shift_start);
 }
 
 void mxIgraphGetMatrix(const mxArray* arg_struct, char const fieldname[1],
-                       igraph_matrix_t* mat)
+                       igraph_matrix_t* mat, igraph_bool_t const shift_start)
 {
-  mxIgraphMatrixFromArray(mxIgraphGetArgument(arg_struct, fieldname), mat);
+  mxIgraphMatrixFromArray(mxIgraphGetArgument(arg_struct, fieldname), mat,
+                          shift_start);
 }

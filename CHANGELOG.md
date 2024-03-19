@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Integer matrix converters for mxIgraph.
 
+### Changed
+
+- Add a `shift_start` parameter to data converters that allow changing between
+  0 and 1-based indexing.
+
 ## [0.1.12] 2024-03-15
 
 ### Added
@@ -48,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `igraph.version` provides version for both toolbox and C library.
 - Update igraph version to 0.10.10.
-- Move to a single C entry point to better preserve state across function calls.
+- Move to a single C entry point to better preserve state across function
+  calls.
 
 ## [0.1.8] 2024-02-06
 
@@ -71,7 +77,8 @@ Fake update to try to get File Exchange to change the toolbox file it grabs.
 ### Changed
 
 - Post install function deletes itself after being called.
-- Remove OS specific toolboxes to ensure File Exchange gets appropriate toolbox (since it only grabs one and I can't specify which).
+- Remove OS specific toolboxes to ensure File Exchange gets appropriate toolbox
+  (since it only grabs one and I can't specify which).
 
 ## [0.1.5] 2024-02-05
 

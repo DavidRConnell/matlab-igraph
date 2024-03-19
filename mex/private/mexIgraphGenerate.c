@@ -148,7 +148,7 @@ static igraph_error_t mxIgraph_prufer_i(mxArray const* opts, igraph_t* graph)
   igraph_vector_int_t prufer;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "prufer", &prufer);
+  mxIgraphGetVectorInt(opts, "prufer", &prufer, false);
 
   errcode = igraph_from_prufer(graph, &prufer);
   igraph_vector_int_destroy(&prufer);
@@ -188,7 +188,7 @@ static igraph_error_t mxIgraph_circulant_i(mxArray const* opts,
   igraph_bool_t is_directed = mxIgraphGetBool(opts, "isdirected");
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "shifts", &shifts);
+  mxIgraphGetVectorInt(opts, "shifts", &shifts, false);
 
   errcode = igraph_circulant(graph, n_nodes, &shifts, is_directed);
   igraph_vector_int_destroy(&shifts);

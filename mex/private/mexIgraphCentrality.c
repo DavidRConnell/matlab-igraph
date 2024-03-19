@@ -42,7 +42,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
   igraph_error_t errorcode;
 
   mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
-  mxIgraphGetVectorInt(opts, "vids", &vertices);
+  mxIgraphGetVectorInt(opts, "vids", &vertices, false);
   igraph_vs_vector(&vids, &vertices);
 
   igraph_vector_init(&res, 0);
@@ -87,7 +87,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);
 
-  plhs[0] = mxIgraphVectorToArray(&res);
+  plhs[0] = mxIgraphVectorToArray(&res, false);
   igraph_vector_destroy(&res);
 
   return errorcode;

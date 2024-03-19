@@ -21,7 +21,6 @@ static int mxIgraphGetPartitionFromDouble(const mxArray* p,
     mexErrMsgIdAndTxt("Igraph:NotVector", "Partition must be a vector.");
   }
 
-  return mxIgraphVectorIntFromArray(p, membership);
 }
 
 /* Copy a matlab partition to an igraph vector.
@@ -46,17 +45,7 @@ int mxIgraphMembershipFromArray(const mxArray* p,
                       "Expected partition to be a double vector.");
   }
 
-  if ((rc = mxIgraphGetPartitionFromDouble(p, membership))) {
-    mexErrMsgIdAndTxt("Igraph:NotPartition",
-                      "Value not a valid partition format.");
-  }
-
-  igraph_integer_t min_id = igraph_vector_int_min(membership);
-  if (min_id != 0) {
-    for (igraph_integer_t i = 0; i < igraph_vector_int_size(membership); i++) {
-      VECTOR(*membership)[i] -= min_id;
-    }
-  }
+  mxIgraphVectorIntFromArray(p, membership, true);
 
   return rc;
 }
