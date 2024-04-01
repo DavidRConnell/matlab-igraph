@@ -86,7 +86,7 @@ function adj = load(filename, ioOptions, adjOptions)
 %   of a directed and undirected adjacency matrix. These options only impact
 %   assumptions made while reading the files.
 %
-%   See also IGRAPH.SAVE, IGRAPH.ISDIRECTED.
+%   See also IGRAPH.SAVE, IGRAPH.CONVERT, IGRAPH.ISDIRECTED.
 
     arguments
         filename char {mustBeVector}
@@ -97,6 +97,10 @@ function adj = load(filename, ioOptions, adjOptions)
         adjOptions.dtype char {mustBeMember(adjOptions.dtype, ...
                                             {'double', 'logical'})};
         adjOptions.makeSparse (1, 1) logical = true;
+    end
+
+    if ~exist(filename, 'file')
+        error("igraph:fileNotFound", "No graph found at '%s'.", filename);
     end
 
     if ~strcmp(ioOptions.format, 'graphml') && ioOptions.index ~= 0

@@ -10,11 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Integer matrix converters for mxIgraph.
+- Conversion method for graph file formats.
 
 ### Changed
 
 - Add a `shift_start` parameter to data converters that allow changing between
   0 and 1-based indexing.
+- Prevent save from overwriting files by default.
 
 ## [0.1.12] 2024-03-15
 

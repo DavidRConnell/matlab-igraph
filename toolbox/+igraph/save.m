@@ -50,14 +50,27 @@ function save(filename, adj, ioOptions, adjOptions)
 %       A(j, i) will be stored for all i,j in adjacency matrix A, even if A is
 %       symmetric.
 %
-%   See also IGRAPH.LOAD, IGRAPH.ISWEIGHTED, IGRAPH.ISDIRECTED.
+%       The 'overwrite' flag determines if SAVE should continue when a file
+%       already exists at the provide path or error. By default SAVE will not
+%       write over a file. When OVERWRITE is set to true, write over a file
+%       already saved at FILENAME.
+%
+%   See also IGRAPH.LOAD, IGRAPH.CONVERT, IGRAPH.ISWEIGHTED, IGRAPH.ISDIRECTED.
 
     arguments
         filename char {mustBeVector}
         adj {mustBeAdj}
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
+        ioOptions.overwrite (1, 1) logical = false;
         adjOptions.isweighted (1, 1) logical = igraph.isweighted(adj);
         adjOptions.isdirected (1, 1) logical = igraph.isdirected(adj);
+    end
+
+    if ~ioOptions.overwrite && exist(filename, 'file')
+        error("igraph:fileExists", "A file already exists at '%s'.\n\n" + ...
+              "Change the 'overwrite' name-value pair to true to write " + ...
+              "over the old file or choose a new filename.", ...
+             filename);
     end
 
     switch ioOptions.format
