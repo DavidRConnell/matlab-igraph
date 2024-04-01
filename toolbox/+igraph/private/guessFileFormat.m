@@ -22,7 +22,7 @@ function type = guessFileFormat(filename)
         end
 
         fclose(fid);
-      case {".tsv", ".csv"}
+      case {".tsv", ".csv", ".edges"}
         type = "edgelist";
       case ".dl"
         type = "dl";
