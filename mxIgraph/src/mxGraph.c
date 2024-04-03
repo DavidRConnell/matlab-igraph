@@ -4,12 +4,7 @@
 /* Return the number of nodes in the adjacency matrix pointed to by p. */
 igraph_integer_t mxIgraphVCount(const mxArray* p)
 {
-  if (mxIgraphIsSquare(p)) {
-    return (igraph_integer_t)mxGetM(p);
-  } else {
-    // Bipartite case.
-    return (igraph_integer_t)(mxGetM(p) + mxGetN(p));
-  }
+  return (igraph_integer_t)mxGetM(p);
 }
 
 /* Returns the number of edges in the matrix pointed to by p.
@@ -44,6 +39,10 @@ void mxIgraphGetGraph(const mxArray* p, igraph_t* graph,
                       igraph_vector_t* weights,
                       const igraph_bool_t is_directed)
 {
+  if (!mxIgraphIsSquare(p)) {
+    mexErrMsgIdAndTxt("Igraph:notSquare", "Adjacency matrix must be square.");
+  }
+
   igraph_integer_t n_nodes = mxIgraphVCount(p);
   igraph_integer_t n_edges = mxIgraphECount(p, is_directed);
   igraph_vector_int_t edges;

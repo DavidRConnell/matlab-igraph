@@ -10,8 +10,7 @@ typedef struct {
   mwIndex row_idx;
   mwIndex col_idx;
   mwIndex flat_idx; // index for the 1d C array view of the 2d matrix
-  mwIndex n_row;
-  mwIndex n_col;
+  mwIndex n_nodes;
   mwIndex* ir;
   mwIndex* jc;
   void* weight;
@@ -43,35 +42,35 @@ the diagonal. */
 
 #define _MXIGRAPH_EIT_FULL_NEXT(eit)					\
   if (((eit).row_stop_at_col && ((eit).row_idx < (eit).col_idx)) ||	\
-      ((eit).row_idx < ((eit).n_row - 1))) {				\
+      ((eit).row_idx < ((eit).n_nodes - 1))) {				\
     (eit).row_idx++;							\
-  } else if ((eit).col_idx < ((eit).n_col - 1)) {			\
+  } else if ((eit).col_idx < ((eit).n_nodes - 1)) {			\
     (eit).col_idx++;							\
     (eit).row_idx = ((eit).row_start_at_col ? (eit).col_idx : 0);	\
   } else {								\
     (eit).stop = true;							\
   }									\
-  (eit).flat_idx = (eit).row_idx + ((eit).col_idx * (eit).n_row)
+  (eit).flat_idx = (eit).row_idx + ((eit).col_idx * (eit).n_nodes)
 
 #define _MXIGRAPH_SPARSE_FIND_COL(eit)					\
   while ((((eit).flat_idx >= (eit).jc[(eit).col_idx + 1]) ||		\
 	   ((eit).jc[(eit).col_idx] == (eit).jc[(eit).col_idx + 1])) &&	\
-	  ((eit).col_idx < ((eit).n_col - 1))) (eit).col_idx++	\
+	  ((eit).col_idx < ((eit).n_nodes - 1))) (eit).col_idx++	\
 
 #define _MXIGRAPH_EIT_SPARSE_NEXT(eit)					\
   do {									\
-     if (!((eit).flat_idx < ((eit).jc[(eit).n_col] - 1))) {		\
+     if (!((eit).flat_idx < ((eit).jc[(eit).n_nodes] - 1))) {		\
        (eit).stop = true;						\
      }									\
 									\
-     if ((eit).flat_idx < ((eit).jc[(eit).n_col] - 1)) {		\
+     if ((eit).flat_idx < ((eit).jc[(eit).n_nodes] - 1)) {		\
        (eit).flat_idx++;						\
        (eit).row_idx = (eit).ir[(eit).flat_idx];			\
        _MXIGRAPH_SPARSE_FIND_COL((eit));				\
      }									\
 									\
      while ((eit).row_stop_at_col && ((eit).row_idx > (eit).col_idx) &&	\
-	    ((eit).col_idx < ((eit).n_col) - 1)) {			\
+	    ((eit).col_idx < ((eit).n_nodes) - 1)) {			\
        (eit).col_idx++;							\
        while ((eit).jc[(eit).col_idx] ==				\
 	      (eit).jc[(eit).col_idx + 1]) (eit).col_idx++;		\
