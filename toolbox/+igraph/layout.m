@@ -475,7 +475,7 @@ function opts = parseLglOptions(adj, opts)
         opts.area (1, 1) {mustBeNonnegative} = length(adj) ^ 2;
         opts.coolExp (1, 1) double = 1.5;
         opts.repulseRadius (1, 1) {mustBePositive} = length(adj) ^ 3;
-        opts.cellsize (1, 1) {mustBePositive} = sqrt(length(adj));
+        opts.cellSize (1, 1) {mustBePositive} = sqrt(length(adj));
         opts.root (1, 1) {mustBePositive} = randi([1, length(adj)]);
     end
 end
