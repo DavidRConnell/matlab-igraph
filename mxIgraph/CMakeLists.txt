@@ -1,4 +1,4 @@
-file(GLOB src_files ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
+file(GLOB src_files CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 add_library(mxIgraph
   OBJECT
   ${src_files}

@@ -3,7 +3,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/mexIgraphVersion.h
 )
 
-file(GLOB src_files ${CMAKE_CURRENT_SOURCE_DIR}/private/*.c)
+file(GLOB src_files CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/private/*.c)
 matlab_add_mex(NAME mexIgraphDispatcher
   MODULE
   SRC ${src_files} mexIgraphDispatcher.c
