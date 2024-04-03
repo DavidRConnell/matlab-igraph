@@ -36,6 +36,8 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
                                  mxArray const* prhs[]);
 igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
                              mxArray const* prhs[]);
+igraph_error_t mexIgraphReindexMembership(int nlhs, mxArray* plhs[], int nrhs,
+    mxArray const* prhs[]);
 igraph_error_t mexIgraphRewire(int nlhs, mxArray* plhs[], int nrhs,
                                mxArray const* prhs[]);
 igraph_error_t mexIgraphRNG(int nlhs, mxArray* plhs[], int nrhs,

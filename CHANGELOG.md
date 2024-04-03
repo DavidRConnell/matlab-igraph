@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Reindex membership.
+
 ### Changed
 
 - Bump igraph version to 0.10.11.
