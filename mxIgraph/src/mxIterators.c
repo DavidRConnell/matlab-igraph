@@ -8,7 +8,7 @@ static void mxIgraph_eit_sparse_create(const mxArray* p, mxIgraph_eit* eit,
 
   mwIndex col_idx = 0;
   while (eit->jc[col_idx] == eit->jc[col_idx + 1]) col_idx++;
-  if (col_idx >= eit->n_nodes) {
+  if (col_idx >= eit->n_col) {
     // Empty graph
     col_idx = 0;
   }
@@ -47,8 +47,9 @@ static void mxIgraph_eit_full_create(const mxArray* p, mxIgraph_eit* eit,
 void mxIgraph_eit_create(const mxArray* p, mxIgraph_eit* eit,
                          const igraph_bool_t directed)
 {
-  eit->n_nodes = mxIgraphVCount(p);
-  eit->stop = eit->n_nodes == 0;
+  eit->n_row = mxGetN(p);
+  eit->n_col = mxGetM(p);
+  eit->stop = eit->n_row == 0;
 
   if (mxIsSparse(p)) {
     mxIgraph_eit_sparse_create(p, eit, directed);

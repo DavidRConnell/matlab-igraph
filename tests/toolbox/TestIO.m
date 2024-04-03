@@ -74,7 +74,7 @@ classdef TestIO < matlab.unittest.TestCase
 
             name = testCase.filename(method);
             expected = testCase.getAdj(isweighted, isdirected);
-            igraph.save(name, expected);
+            igraph.save(name, expected, 'overwrite', true);
             actual = igraph.load(name, isweighted=isweighted, ...
                                  isdirected=isdirected, makeSparse=false);
 
