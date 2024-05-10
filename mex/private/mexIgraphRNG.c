@@ -27,6 +27,8 @@ enum {
   MXIGRAPH_GENERATOR_N
 };
 
+igraph_rng_t mxIgraph_rng;
+
 igraph_error_t mexIgraphRNG(int nlhs, mxArray* plhs[], int nrhs,
                             mxArray const* prhs[])
 {
@@ -35,7 +37,6 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray* plhs[], int nrhs,
 
   igraph_integer_t seed = mxGetScalar(prhs[0]);
   igraph_integer_t generator;
-  igraph_rng_t new_rng;
   igraph_error_t errcode = IGRAPH_SUCCESS;
 
   const char* generators[MXIGRAPH_GENERATOR_N] = {
@@ -48,21 +49,21 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray* plhs[], int nrhs,
 
   switch (generator) {
   case MXIGRAPH_GENERATOR_MT19937:
-    errcode = igraph_rng_init(&new_rng, &igraph_rngtype_mt19937);
+    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_mt19937);
     break;
   case MXIGRAPH_GENERATOR_GLIBC2:
-    errcode = igraph_rng_init(&new_rng, &igraph_rngtype_glibc2);
+    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_glibc2);
     break;
   case MXIGRAPH_GENERATOR_PCG32:
-    errcode = igraph_rng_init(&new_rng, &igraph_rngtype_pcg32);
+    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg32);
     break;
   case MXIGRAPH_GENERATOR_PCG64:
-    errcode = igraph_rng_init(&new_rng, &igraph_rngtype_pcg64);
+    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg64);
     break;
   }
 
   if (generator < MXIGRAPH_GENERATOR_N) {
-    igraph_rng_set_default(&new_rng);
+    igraph_rng_set_default(&mxIgraph_rng);
   }
 
   if (errcode != IGRAPH_SUCCESS) {
