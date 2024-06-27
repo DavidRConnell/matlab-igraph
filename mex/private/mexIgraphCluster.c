@@ -1,6 +1,10 @@
 #include <string.h>
-#include "mxIgraph.h"
-#include "utils.h"
+
+#include <mxIgraph.h>
+#include <utils.h>
+
+#include <igraph_community.h>
+#include <igraph_structural.h>
 
 typedef enum {
   MXIGRAPH_CLUSTER_OPTIMAL = 0,

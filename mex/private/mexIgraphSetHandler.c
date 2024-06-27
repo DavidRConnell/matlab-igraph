@@ -1,5 +1,5 @@
-#include "mxIgraph.h"
-#include "utils.h"
+#include <mxIgraph.h>
+#include <utils.h>
 
 igraph_error_t mexIgraphSetHandler(int nlhs, mxArray* UNUSED(plhs[]),
                                    int nrhs, mxArray const* prhs[])

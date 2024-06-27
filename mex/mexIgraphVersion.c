@@ -1,7 +1,10 @@
 #include <string.h>
-#include "mxIgraph.h"
-#include "utils.h"
-#include "mexIgraphVersion.h"
+
+#include <mxIgraph.h>
+#include <utils.h>
+#include <mexIgraphVersion.h>
+
+#include <igraph_version.h>
 
 void mexFunction(int UNUSED(nlhs), mxArray* plhs[], int nrhs,
                  mxArray const* prhs[])

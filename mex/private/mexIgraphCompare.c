@@ -1,7 +1,9 @@
 #include <string.h>
 
-#include "mxIgraph.h"
-#include "utils.h"
+#include <mxIgraph.h>
+#include <utils.h>
+
+#include <igraph_community.h>
 
 igraph_error_t mexIgraphCompare(int nlhs, mxArray* plhs[], int nrhs,
                                 mxArray const* prhs[])

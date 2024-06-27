@@ -1,7 +1,9 @@
 #include <string.h>
 
-#include "mxIgraph.h"
-#include "utils.h"
+#include <mxIgraph.h>
+#include <utils.h>
+
+#include <igraph_games.h>
 
 igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray* plhs[], int nrhs,
                                       const mxArray* prhs[])

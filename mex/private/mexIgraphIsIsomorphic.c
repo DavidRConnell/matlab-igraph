@@ -1,5 +1,7 @@
-#include "mxIgraph.h"
-#include "utils.h"
+#include <mxIgraph.h>
+#include <utils.h>
+
+#include <igraph_topology.h>
 
 igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
                                      mxArray const* prhs[])

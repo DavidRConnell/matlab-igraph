@@ -1,4 +1,3 @@
-#include "mxIgraph.h"
 #include "mexIgraphFunctions.h"
 
 static igraph_bool_t setup_ran = false;

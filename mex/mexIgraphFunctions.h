@@ -1,7 +1,7 @@
 #ifndef MEXIGRAPHFUNCTIONS_H
 #define MEXIGRAPHFUNCTIONS_H
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 
 typedef igraph_error_t (*mexIgraphFunction_t)(int nlhs, mxArray* plhs[],
     int nrhs, mxArray const* prhs[]);

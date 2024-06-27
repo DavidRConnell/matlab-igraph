@@ -1,5 +1,7 @@
-#include "mxIgraph.h"
-#include "utils.h"
+#include <mxIgraph.h>
+#include <utils.h>
+
+#include <igraph_games.h>
 
 typedef enum {
   MXIGRAPH_GAME_GRG = 0,
