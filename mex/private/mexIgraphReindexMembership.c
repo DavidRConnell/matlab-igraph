@@ -1,5 +1,5 @@
-#include <mxIgraph.h>
-#include <utils.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 static void mxIgraph_reindex_membership_i(igraph_vector_int_t* memb)
 {

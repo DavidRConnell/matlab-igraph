@@ -1,9 +1,6 @@
 #include <string.h>
-
-#include <mxIgraph.h>
-#include <utils.h>
-
-#include <igraph_layout.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 typedef enum {
   MXIGRAPH_LAYOUT_RANDOM = 0,

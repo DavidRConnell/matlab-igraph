@@ -1,7 +1,5 @@
-#include <mxIgraph.h>
-#include <utils.h>
-
-#include <igraph_constructors.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 typedef enum {
   MXIGRAPH_GENERATOR_STAR = 0,

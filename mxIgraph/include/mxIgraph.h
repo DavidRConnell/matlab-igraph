@@ -7,12 +7,7 @@
 #  define printf(...) __attribute__((format(mexPrintf, ...)))
 #endif
 
-#include <igraph_interface.h>
-#include <igraph_vector.h>
-#include <igraph_vector_list.h>
-#include <igraph_matrix.h>
-#include <igraph_progress.h>
-#include <igraph_statusbar.h>
+#include "igraph.h"
 
 // types
 typedef enum {

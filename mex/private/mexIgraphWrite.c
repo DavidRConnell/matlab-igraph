@@ -1,10 +1,7 @@
 #include <stdio.h>
 
-#include <mxIgraph.h>
-#include <utils.h>
-
-#include <igraph_foreign.h>
-#include <igraph_attributes.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 #define mexIgraphError(id, msg)			\
   fclose(fptr);					\

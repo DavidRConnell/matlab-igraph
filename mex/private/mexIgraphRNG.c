@@ -1,7 +1,5 @@
-#include <mxIgraph.h>
-#include <utils.h>
-
-#include <igraph_random.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 enum {
   MXIGRAPH_GENERATOR_MT19937 = 0,

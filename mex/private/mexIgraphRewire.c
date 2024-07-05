@@ -1,8 +1,5 @@
-#include <mxIgraph.h>
-#include <utils.h>
-
-#include <igraph_games.h>
-#include <igraph_operators.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 igraph_error_t mexIgraphRewire(int nlhs, mxArray* plhs[], int nrhs,
                                mxArray const* prhs[])

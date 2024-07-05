@@ -1,7 +1,5 @@
-#include <mxIgraph.h>
-#include <utils.h>
-
-#include <igraph_structural.h>
+#include "mxIgraph.h"
+#include "utils.h"
 
 igraph_error_t mexIgraphIsTree(int nlhs, mxArray* plhs[], int nrhs,
                                mxArray const* prhs[])
