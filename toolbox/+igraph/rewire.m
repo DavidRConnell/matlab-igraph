@@ -27,16 +27,16 @@ function adj = rewire(adj, adjOptions, methodOptions)
 %             igraph.correlatedPair.
 
     arguments
-        adj {mustBeAdj};
+        adj {igraph.args.mustBeGraph};
         adjOptions.makeSparse (1, 1) logical = issparse(adj);
         adjOptions.dtype (1, :) char ...
-            {mustBeMemberi(adjOptions.dtype, {'logical', 'double'})};
+            {igraph.args.mustBeMemberi(adjOptions.dtype, {'logical', 'double'})};
         methodOptions.isdirected (1, 1) logical = igraph.isdirected(adj);
         methodOptions.probability (1, 1) ...
             {mustBeInRange(methodOptions.probability, 0, 1)} = 0;
         methodOptions.nRewires (1, 1) {mustBeNonnegative, mustBeInteger} = 0;
         methodOptions.preserveDegree (1, 1) logical = true;
-        methodOptions.mode (1, :) char {mustBeMode} = 'all';
+        methodOptions.mode (1, :) char {igraph.args.mustBeMode} = 'all';
         methodOptions.loops (1, 1) logical = false;
     end
 
@@ -68,7 +68,7 @@ function adj = rewire(adj, adjOptions, methodOptions)
         methodOptions.probability = methodOptions.nRewires / nnz(adj);
     end
 
-    if ~isoptionset(adjOptions, 'dtype')
+    if ~igraph.args.isoptionset(adjOptions, 'dtype')
         if islogical(adj)
             adjOptions.dtype = 'logical';
         else

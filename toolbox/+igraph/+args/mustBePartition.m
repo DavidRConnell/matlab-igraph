@@ -3,21 +3,13 @@ function mustBePartition(membership)
 
     eid = "Igraph:NotMembershipVector";
     msg = "";
-    if ~((isnumeric(membership) || islogical(membership)))
+    if ~isnumeric(membership)
         msg = "Membership vector must be numeric or logical";
     end
 
-    if ~(isreal(membership))
+    if ~isreal(membership)
         msg = "Membership vector must be real";
     end
-
-    % TODO: Reconsider, should be able to handle multiple partitions in a
-    % single matrix such that each row is a partition. This is useful for
-    % partitions that are closely related such as hierarchical community
-    % structure.
-    % if ~(isvector(membership))
-    %     msg = "Membership vector must be a vector";
-    % end
 
     if ~strcmp(msg, "")
         msg = "Value must be a membership vector\n\n" + msg;

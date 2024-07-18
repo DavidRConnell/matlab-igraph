@@ -8,8 +8,8 @@ function TF = isisomorphic(adj1, adj2, adj1Options, adj2Options)
 %       the same (both directed or both undirected) an error is triggered.
 
     arguments
-        adj1 {mustBeAdj}
-        adj2 {mustBeAdj}
+        adj1 {igraph.args.mustBeGraph}
+        adj2 {igraph.args.mustBeGraph}
         adj1Options.adj1isdirected (1, 1) logical = igraph.isdirected(adj1);
         adj2Options.adj2isdirected (1, 1) logical = igraph.isdirected(adj2);
     end

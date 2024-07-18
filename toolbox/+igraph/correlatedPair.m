@@ -61,7 +61,7 @@ end
 
 function adj2 = correlateWith(adj, adjOptions, methodOptions)
     arguments
-        adj = {mustBeAdj}
+        adj = {igraph.args.mustBeGraph}
         adjOptions.makeSparse = issparse(adj);
         adjOptions.dtype;
         methodOptions.correlation;
@@ -69,7 +69,7 @@ function adj2 = correlateWith(adj, adjOptions, methodOptions)
         methodOptions.isdirected = igraph.isdirected(adj);
     end
 
-    if ~isoptionset(adjOptions, "dtype")
+    if ~igraph.args.isoptionset(adjOptions, "dtype")
         if islogical(adj)
             adjOptions.dtype = 'logical';
         else

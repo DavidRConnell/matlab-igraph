@@ -472,7 +472,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 
     arguments
         method (1, :) char ...
-            {mustBeMemberi(method, ...
+            {igraph.args.mustBeMemberi(method, ...
                            {'grg', 'GeneratorRandomGraph' 'BarabasiBag', ...
                             'BarabasiPsumtree', ...
                             'BarabasiPsumtreeMultiple', 'ErdosRenyi', ...
@@ -495,7 +495,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 
         adjOptions.makeSparse (1, 1) logical = true;
         adjOptions.dtype (1, :) char ...
-            {mustBeMemberi(adjOptions.dtype, {'logical', 'double'})} = 'double';
+            {igraph.args.mustBeMemberi(adjOptions.dtype, {'logical', 'double'})} = 'double';
 
         methodOptions.nNodes;
         methodOptions.radius;
@@ -576,7 +576,7 @@ function adj = randgame(method, adjOptions, methodOptions)
         methodOptions = parseOptionsBarabasi(method, methodOptions{:});
       case 'erdosrenyi'
         methodOptions = parseOptionsErdosRenyi(methodOptions{:});
-        if isoptionset(methodOptions, "probability")
+        if igraph.args.isoptionset(methodOptions, "probability")
             methodOptions.useEdges = false;
         else
             methodOptions.useEdges = true;
@@ -651,10 +651,10 @@ function opts = parseOptionsBarabasi(method, opts)
         opts.outPreference (1, 1) logical = false;
         opts.attractiveness (1, 1) {mustBeNumeric} = 1;
         opts.isdirected (1, 1) logical;
-        opts.startFrom {mustBeAdj} = [];
+        opts.startFrom {igraph.args.mustBeGraph} = [];
     end
 
-    if isoptionset(opts, "nNodes")
+    if igraph.args.isoptionset(opts, "nNodes")
         if (length(opts.nConnections) > 1) && ...
            ((length(opts.nConnections)) ~= opts.nNodes)
             eid = "Igraph:invalidVectorLength";
@@ -688,7 +688,7 @@ function opts = parseOptionsBarabasi(method, opts)
                                  "when out preference is false."))
     end
 
-    if ~isoptionset(opts, "isdirected")
+    if ~igraph.args.isoptionset(opts, "isdirected")
        if isempty(opts.startFrom)
            opts.isdirected = false;
        else
@@ -707,6 +707,7 @@ function opts = parseOptionsErdosRenyi(opts)
         opts.loops (1, 1) logical = false;
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if (~isoptionset(opts, "nEdges")) && (~isoptionset(opts, "probability"))
         opts.nEdges = 10;
     elseif (isoptionset(opts, "nEdges") && (isoptionset(opts, "probability")))
@@ -735,6 +736,7 @@ function opts = parseOptionsDegSeq(opts)
         opts.inDegree (1, :) {mustBeNonnegative, mustBeInteger};
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if isoptionset(opts, "degree") && ...
             (isoptionset(opts, "outDegree") || isoptionset(opts, "inDegree"))
         throwAsCaller(MException("Igraph:badArgument", ...
@@ -794,6 +796,7 @@ function opts = parseOptionsStaticFitness(opts)
         opts.loops (1, 1) logical = false;
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if isoptionset(opts, "fitness") && ...
             (isoptionset(opts, "outFitness") || isoptionset(opts, "inFitness"))
         throwAsCaller(MException("Igraph:badArgument", ...
@@ -848,6 +851,7 @@ function opts = parseOptionsStaticPowerLaw(opts)
         opts.finiteSizeCorrection (1, 1) logical = false;
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if isoptionset(opts, "exponent") && ...
             (isoptionset(opts, "outExponent") || ...
              isoptionset(opts, "inExponent"))
@@ -930,6 +934,7 @@ function opts = parseOptionsCallawayTraits(opts)
         opts.isdirected (1, 1) logical;
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if ~isoptionset(opts, "nTypes")
         if ~(isoptionset(opts, "typeDistribution") || ...
              isoptionset(opts, "preference"))
@@ -995,6 +1000,7 @@ function opts = parseOptionsPreference(opts)
         opts.loops (1, 1) logical = false;
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if isoptionset(opts, "typeDistribution") && isoptionset(opts, "blockSizes")
         throwAsCaller(MException("Igraph:overConstrained", ...
                                  "typeDistribution and blockSizes " + ...
@@ -1082,6 +1088,7 @@ function opts = parseOptionsAsymmetricPreference(opts)
         opts.loops (1, 1) logical = false;
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if ~isoptionset(opts, "nOutTypes")
         if ~(isoptionset(opts, "typeDistribution") || ...
              isoptionset(opts, "preference"))
@@ -1141,7 +1148,7 @@ function opts = parseOptionsRecentDegree(opts)
         opts.isdirected (1, 1) logical = false;
     end
 
-    if ~isoptionset(opts, "nNodes")
+    if ~igraph.args.isoptionset(opts, "nNodes")
         if length(opts.edgesPerStep) > 1
             opts.nNodes = length(opts.edgesPerStep);
         else
@@ -1217,11 +1224,11 @@ function opts = parseOptionsLastCit(opts)
         opts.isdirected (1, 1) logical = false;
     end
 
-    if ~isoptionset(opts, "agingBins")
+    if ~igraph.args.isoptionset(opts, "agingBins")
         opts.agingBins = opts.nNodes;
     end
 
-    if ~isoptionset(opts, "preference")
+    if ~igraph.args.isoptionset(opts, "preference")
         opts.preference = ones(1, opts.agingBins + 1);
     end
 
@@ -1241,7 +1248,7 @@ function opts = parseOptionsCitedType(opts)
 
     opts.nNodes = length(opts.types);
 
-    if ~isoptionset(opts, "preference")
+    if ~igraph.args.isoptionset(opts, "preference")
         opts.preference = ones(1, max(opts.types));
     end
 
@@ -1264,7 +1271,7 @@ function opts = parseOptionsCitingCitedType(opts)
 
     opts.nNodes = length(opts.types);
 
-    if ~isoptionset(opts, "preference")
+    if ~igraph.args.isoptionset(opts, "preference")
         opts.preference = ones(max(opts.types), max(opts.types));
     end
 
@@ -1287,7 +1294,7 @@ function opts = parseOptionsSBM(opts)
         opts.loops (1, 1) logical = false;
     end
 
-    if ~isoptionset(opts, "preference")
+    if ~igraph.args.isoptionset(opts, "preference")
         opts.preference = ones(length(opts.blockSizes)) / ...
             (length(opts.blockSizes) ^ 2);
     end
@@ -1311,7 +1318,7 @@ function opts = parseOptionsHSBM(opts)
         opts.pOut (1, 1) {mustBeInRange(opts.pOut, 0, 1)} = 0.3;
     end
 
-    if ~isoptionset(opts, "preference")
+    if ~igraph.args.isoptionset(opts, "preference")
         opts.preference = ones(length(opts.rho));
     end
 end

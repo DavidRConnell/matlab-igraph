@@ -20,13 +20,13 @@ function values = centrality(adj, method, opts)
 %   See also igraph.isdirected.
 
     arguments
-       adj {mustBeAdj};
+       adj {igraph.args.mustBeGraph};
        method (1, :) char ...
-           {mustBeMemberi(method, ...
-                          {'closeness', 'harmonic', 'betweenness', ...
-                           'pagerank', 'burt', 'constraint'})};
+           {igraph.args.mustBeMemberi(method, ...
+                                      {'closeness', 'harmonic', 'betweenness', ...
+                                       'pagerank', 'burt', 'constraint'})};
        opts.vids (1, :) {mustBePositive, mustBeInteger} = 1:length(adj);
-       opts.mode (1, :) char {mustBeMode} = 'all';
+       opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
        opts.directed (1, 1) logical = igraph.isdirected(adj);
        opts.normalized (1, 1) logical = true;
        opts.damping (1, 1) {mustBeInRange(opts.damping, 0, 1)} = 0.85;

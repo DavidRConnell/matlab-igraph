@@ -144,9 +144,9 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %   See also igraph.modularity, igraph.compare.
 
     arguments
-        adj {mustBeAdj};
+        adj {igraph.args.mustBeGraph};
         method (1, :) char ...
-            {mustBeMemberi(method, ...
+            {igraph.args.mustBeMemberi(method, ...
                            {'optimal', 'spinglass', 'leadingeigenvector', ...
                             'walktrap', 'edgebetweenness', 'fastgreedy', ...
                             'multilevel', 'louvain', 'leiden', ...
@@ -223,14 +223,15 @@ end
 
 function opts = parseSpinglassOptions(adj, opts)
     arguments
-        adj
+        adj %#ok<INUSA>
         opts.nSpins (1, 1) {mustBePositive, mustBeInteger} = 4;
         opts.parallel (1, 1) logical = min(adj) > 0;
         opts.tempStart (1, 1) {mustBeNumeric} = 1;
         opts.tempEnd (1, 1) {mustBeNumeric} = 0.01;
         opts.coolingFactor (1, 1) {mustBeNumeric} = 0.99;
         opts.updateRule (1, :) ...
-            {mustBeMemberi(opts.updateRule, {'simple', 'config'})} = 'simple';
+            {igraph.args.mustBeMemberi(opts.updateRule, ...
+                                       {'simple', 'config'})} = 'simple';
         opts.resolution (1, 1) {mustBeNumeric} = 0.8;
         opts.negResolution (1, 1) {mustBeNumeric} = 0.1;
     end
@@ -240,7 +241,7 @@ end
 
 function opts = parseLeadingEigenvectorOptions(adj, opts)
     arguments
-        adj
+        adj %#ok<INUSA>
         opts.maxSteps (1, 1) {mustBePositive, mustBeInteger} = 5;
         opts.initial (1, :) {mustBePartition} = 1:length(adj)
     end
@@ -257,7 +258,7 @@ end
 
 function opts = parseEdgeBetweenness(adj, opts)
     arguments
-        adj
+        adj %#ok<INUSA>
         opts.isweighted (1, 1) logical = igraph.isweighted(adj);
     end
 end
@@ -271,14 +272,14 @@ end
 
 function opts = parseLeidenOptions(adj, opts)
     arguments
-        adj
+        adj  %#ok<INUSA>
         opts.resolution (1, 1) {mustBeNumeric} = 1;
         opts.randomness (1, 1) {mustBePositive} = 0.01;
         opts.nIterations (1, 1) {mustBeInteger} = -1;
         opts.metric (1, :) char ...
-            {mustBeMemberi(opts.metric, ...
-                           {'modularity', 'cpm', ...
-                           'constantpottsmodel'})} = 'cpm';
+            {igraph.args.mustBeMemberi(opts.metric, ...
+                                       {'modularity', 'cpm', ...
+                                        'constantpottsmodel'})} = 'cpm';
         opts.initial (1, :) {mustBePartition} = 1:length(adj);
     end
 
@@ -299,8 +300,8 @@ end
 
 function opts = parseLabelPropagationOptions(adj, opts)
     arguments
-        adj
-        opts.mode (1, :) char {mustBeMode} = 'all';
+        adj %#ok<INUSA>
+        opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
         opts.initial (1, :) {mustBePartition} = 1:length(adj);
         opts.fixed (1, :) logical = false(1, length(adj));
     end

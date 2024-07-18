@@ -59,7 +59,7 @@ function save(filename, adj, ioOptions, adjOptions)
 
     arguments
         filename char {mustBeVector}
-        adj {mustBeAdj}
+        adj {igraph.args.mustBeGraph}
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
         ioOptions.overwrite (1, 1) logical = false;
         adjOptions.isweighted (1, 1) logical = igraph.isweighted(adj);

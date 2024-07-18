@@ -165,15 +165,16 @@ function pos = layout(adj, method, opts, methodOpts)
 % See also igraph.layout3d, igraph.plot, igraph.rng
 
     arguments
-        adj {mustBeAdj};
+        adj {igraph.args.mustBeGraph};
         method (1, :) char ...
-            {mustBeMemberi(method, {'random', 'circle', 'star', 'grid', ...
-                                    'graphopt', 'bipartite', ...
-                                    'fruchtermanreingold', 'fr', ...
-                                    'kamadakawai', 'kk', 'gem', ...
-                                    'davidsonharel', 'dh', 'mds', ...
-                                    'lgl', 'reingoldtilford', 'rt', ...
-                                     'reingoldtilfordcircular'})};
+            {igraph.args.mustBeMemberi(method, ...
+                                       {'random', 'circle', 'star', 'grid', ...
+                                        'graphopt', 'bipartite', ...
+                                        'fruchtermanreingold', 'fr', ...
+                                        'kamadakawai', 'kk', 'gem', ...
+                                        'davidsonharel', 'dh', 'mds', ...
+                                        'lgl', 'reingoldtilford', 'rt', ...
+                                        'reingoldtilfordcircular'})};
 
         opts.isdirected (1, 1) logical = igraph.isdirected(adj);
         methodOpts.order;
@@ -363,7 +364,7 @@ function opts = parseFruchtermanReingoldOptions(adj, opts)
         end
     end
 
-    if ~isoptionset(opts, 'grid')
+    if ~igraph.args.isoptionset(opts, 'grid')
         opts.grid = 'auto';
     elseif opts.grid
         opts.grid = 'grid';
@@ -434,21 +435,21 @@ function opts = parseDavidsonharelOptions(adj, opts)
         end
     end
 
-    if ~isoptionset(opts, 'weightEdgeLen') || ...
-            ~isoptionset(opts, 'weightEdgeCross') || ...
-            ~isoptionset(opts, 'weightNodeEdgeDist')
+    if ~igraph.args.isoptionset(opts, 'weightEdgeLen') || ...
+            ~igraph.args.isoptionset(opts, 'weightEdgeCross') || ...
+            ~igraph.args.isoptionset(opts, 'weightNodeEdgeDist')
         density = nnz(adj + adj') / (length(adj) ^ 2);
     end
 
-    if ~isoptionset(opts, 'weightEdgeLen')
+    if ~igraph.args.isoptionset(opts, 'weightEdgeLen')
         opts.weightEdgeLen = density / 10;
     end
 
-    if ~isoptionset(opts, 'weightEdgeCross')
+    if ~igraph.args.isoptionset(opts, 'weightEdgeCross')
         opts.weightEdgeCross = 1 - sqrt(density);
     end
 
-    if ~isoptionset(opts, 'weightNodeEdgeDist')
+    if ~igraph.args.isoptionset(opts, 'weightNodeEdgeDist')
         opts.weightNodeEdgeDist = 1 - (density / 5);
     end
 end
@@ -483,7 +484,7 @@ end
 function opts = parseReingoldTilfordOptions(adj, opts)
     arguments
         adj;
-        opts.mode (1, :) char {mustBeMode} = 'all';
+        opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
         opts.root (1, :) {mustBePositive, mustBeInteger} = [];
         opts.circular (1, 1) logical = false;
     end

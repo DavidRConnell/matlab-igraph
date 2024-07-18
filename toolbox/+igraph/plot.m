@@ -19,7 +19,7 @@ function plot(adj, layout, options, layoutOpts)
 %   See also igraph.layout, igraph.plot3d.
 
     arguments
-        adj {mustBeAdj};
+        adj {igraph.args.mustBeGraph};
         layout;
         options.membership (1, :) {mustBePartition} = [];
         options.size (1, :) = 100;

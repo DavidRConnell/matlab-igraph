@@ -17,11 +17,12 @@ function score = compare(comm1, comm2, method)
 %   See also IGRAPH.CLUSTER for estimating a graph's membership vector.
 
     arguments
-        comm1 {mustBePartition}
-        comm2 {mustBePartition,mustBeEqualLength(comm1,comm2)}
-        method (1, :) char {mustBeMemberi(method,...
-                                          {'vi','nmi','splitjoin','rand',...
-                                           'adjustedrand','ari'})} = 'nmi'
+        comm1 {igraph.args.mustBePartition}
+        comm2 {igraph.args.mustBePartition, mustBeEqualLength(comm1,comm2)}
+        method (1, :) char ...
+            {igraph.args.mustBeMemberi(method,...
+                                       {'vi','nmi','splitjoin','rand',...
+                                        'adjustedrand','ari'})} = 'nmi'
     end
 
     method = lower(method);

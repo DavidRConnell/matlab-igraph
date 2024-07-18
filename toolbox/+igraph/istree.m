@@ -3,12 +3,12 @@ function TF = istree(adj, opts)
 %   TF = ISTREE(ADJ) checks if the adjacency matrix ADJ is a tree graph.
 %   See also igraph.treeRoot
     arguments
-        adj {mustBeAdj};
+        adj {igraph.args.mustBeGraph};
         opts.isdirected (1, 1) logical;
-        opts.mode (1, :) char {mustBeMode} = 'all';
+        opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
     end
 
-    if ~isoptionset(opts, "isdirected")
+    if ~igraph.args.isoptionset(opts, "isdirected")
        opts.isdirected = ~issymmetric(adj) || opts.mode ~= "all";
     end
 

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bump igraph version to 0.10.12.
+- Move argument parsers into namespace below igraph to expose them igraph users to writing igraph to functions in extension toolboxes.
 
 ## [0.1.13] 2024-04-01
 

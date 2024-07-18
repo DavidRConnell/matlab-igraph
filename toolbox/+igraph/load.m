@@ -114,6 +114,7 @@ function adj = load(filename, ioOptions, adjOptions)
         return
     end
 
+    isoptionset = @igraph.args.isoptionset;
     if ~isoptionset(adjOptions, 'dtype')
         if isoptionset(adjOptions, 'isweighted') && ~adjOptions.isweighted
             adjOptions.dtype = 'logical';

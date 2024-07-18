@@ -17,7 +17,7 @@ function q = optimalModularity(adj)
 %   See also igraph.modularity, igraph.cluster.
 
     arguments
-        adj {mustBeAdj};
+        adj {igraph.args.mustBeGraph};
     end
 
     q = mexIgraphDispatcher(mfilename(), adj);
