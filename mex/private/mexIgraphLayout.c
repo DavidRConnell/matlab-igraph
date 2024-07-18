@@ -1,5 +1,5 @@
 #include <string.h>
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 typedef enum {

@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 igraph_error_t mexIgraphOptimalModularity(int nlhs, mxArray* plhs[], int nrhs,

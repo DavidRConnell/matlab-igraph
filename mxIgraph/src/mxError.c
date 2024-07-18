@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 
 void mxIgraphErrorNotImplemented(const char* caller, const char* method)
 {

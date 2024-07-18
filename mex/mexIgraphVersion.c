@@ -1,5 +1,6 @@
 #include <string.h>
-#include "mxIgraph.h"
+#include <mxIgraph.h>
+
 #include "utils.h"
 #include "mexIgraphVersion.h"
 

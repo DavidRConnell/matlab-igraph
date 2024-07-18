@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "mxIterators.h"
 
 /* Return the number of nodes in the adjacency matrix pointed to by p. */

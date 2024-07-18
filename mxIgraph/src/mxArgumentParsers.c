@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 
 /* Generic string selector.
    Find which of a predefined set of strings an input value matches.

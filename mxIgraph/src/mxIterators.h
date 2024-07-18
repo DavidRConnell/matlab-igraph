@@ -4,7 +4,7 @@ definations depend on various predicates. */
 #ifndef MXITERATORS_H
 #define MXITERATORS_H
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 
 typedef struct {
   mwIndex row_idx;
