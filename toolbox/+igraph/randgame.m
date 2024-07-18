@@ -1,6 +1,6 @@
-function adj = randgame(method, adjOptions, methodOptions)
-%RANDGAME create an adjacency matrix with a stochastic game generator
-%   ADJ = GAME(METHOD) use METHOD to generate a random adjacency matrix.
+function graph = randgame(method, graphOpts, methodOpts)
+%RANDGAME create graph with a stochastic game generator
+%   GRAPH = GAME(METHOD) use METHOD to generate a random graph.
 %       Results can be reproduced by setting the random generator using
 %       IGRAPH.RNG. Each method has its own set of optional arguments, see
 %       below for more information on a specific method. All resulting graphs
@@ -19,9 +19,9 @@ function adj = randgame(method, adjOptions, methodOptions)
 %       Note: The method name is case insensitive, for example, 'barabasibag',
 %       'barabasiBag', and 'BarabasiBag', are all allowed.
 %
-%   ADJ = GAME(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
+%   GRAPH = GAME(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
 %       method specific parameters, there are parameters for specifying how the
-%       resulting ADJ is represented common to all methods. These follow the
+%       resulting GRAPH is represented common to all methods. These follow the
 %       same conventions as the rest of matlab-igraph.
 %
 %        Name           Description
@@ -33,8 +33,8 @@ function adj = randgame(method, adjOptions, methodOptions)
 %       Note: The default values for most method options are chosen somewhat
 %       randomly primarily for demonstration purposes.
 %
-%   ADJ = GAME('GeneratorRandomGraph', ...)
-%   ADJ = GAME('grg', ...) Creates a graph by randomly placing points on a
+%   GRAPH = GAME('GeneratorRandomGraph', ...)
+%   GRAPH = GAME('grg', ...) Creates a graph by randomly placing points on a
 %       square and connecting those within radius distance of each other.
 %
 %        Name       Description
@@ -44,9 +44,9 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                   (default 0.1).
 %        'torus'    Whether boundaries wrap (true) or not (false, default).
 %
-%   ADJ = GAME('BarabasiPsumTree', ...)
-%   ADJ = GAME('BarabasiPsumTreeMultiple', ...)
-%   ADJ = GAME('BarabasiBag', ...) Generate graphs using a Barabàsi Albert
+%   GRAPH = GAME('BarabasiPsumTree', ...)
+%   GRAPH = GAME('BarabasiPsumTreeMultiple', ...)
+%   GRAPH = GAME('BarabasiBag', ...) Generate graphs using a Barabàsi Albert
 %       model. Produces a graph where each node is initially connected to
 %       nConnections other nodes. Nodes are added one at a time and the
 %       probability a new node matches with another node is related to the
@@ -77,7 +77,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'startFrom'      A graph to use as the starting point (a NCONNECTIONS
 %                         clique by default).
 %
-%   ADJ = GAME('RenyiErdos', ...) Generate graphs with a fixed number of
+%   GRAPH = GAME('RenyiErdos', ...) Generate graphs with a fixed number of
 %       edges or a constant probability of an edge existing. Either select the
 %       number of edges or the probability any given edge exists. Cannot select
 %       both NEDGES and PROBABILITY.
@@ -92,8 +92,8 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                       undirected (false, default).
 %        'loops'        Whether to allow loops (true). Defaults to false.
 %
-%   ADJ = GAME('SmallWorld', ...)
-%   ADJ = GAME('WattsStrogatz', ...) Uses the Watts-Strogatz model to generate
+%   GRAPH = GAME('SmallWorld', ...)
+%   GRAPH = GAME('WattsStrogatz', ...) Uses the Watts-Strogatz model to generate
 %       a graph with small-world properties. This method rewires a lattice
 %       graph.
 %
@@ -111,11 +111,11 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'probability'  Probability of each edge is rewired (defaults to 0.2).
 %        'loops'        Whether to allow loops (true). Defaults to false.
 %
-%   ADJ = GAME('DegSeqConfiguration', ...)
-%   ADJ = GAME('DegSeqConfigurationSimple', ...)
-%   ADJ = GAME('DegSeqFastHuerSimple', ...)
-%   ADJ = GAME('DegSeqEdgeSwitchingSimple', ...)
-%   ADJ = GAME('DegSeqVl', ...) Create a graph with the provided degree
+%   GRAPH = GAME('DegSeqConfiguration', ...)
+%   GRAPH = GAME('DegSeqConfigurationSimple', ...)
+%   GRAPH = GAME('DegSeqFastHuerSimple', ...)
+%   GRAPH = GAME('DegSeqEdgeSwitchingSimple', ...)
+%   GRAPH = GAME('DegSeqVl', ...) Create a graph with the provided degree
 %       sequence.
 %
 %       For creating directed graphs both INDEGREE and OUTDEGREE must be
@@ -129,7 +129,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'outDegree'  Degree sequence for edges leaving the nodes (no default).
 %        'inDegree'   Degree sequence for edges entering the nodes (no default).
 %
-%   ADJ = GAME('kRegular', ...) Generate a graph where each node has the same
+%   GRAPH = GAME('kRegular', ...) Generate a graph where each node has the same
 %       degree.
 %
 %        Name          Description
@@ -139,7 +139,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'isdirected'  Whether graph should be directed (true) or undirected
 %                      (false, default).
 %
-%   ADJ = GAME('StaticFitness', ...) Use node fitness scores to determine edge
+%   GRAPH = GAME('StaticFitness', ...) Use node fitness scores to determine edge
 %       probabilities.
 %
 %       When creating a directed graph, both INFITNESS and OUTFITNESS must be
@@ -154,7 +154,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'outFitness'  The in fitness vector for directed graphs(no default).
 %        'loops'       Whether to allow self-loop edges (default false).
 %
-%   ADJ = GAME('StaticPowerLaw', ...) Generate a graph a power-law node degree
+%   GRAPH = GAME('StaticPowerLaw', ...) Generate a graph a power-law node degree
 %       distribution
 %
 %       When creating a directed graph, both INEXPONENT and OUTEXPONENT must be
@@ -177,7 +177,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                               false).
 %        'finiteSizeCorrection' Whether to use sie correction (default false).
 %
-%   ADJ = GAME('ForestFire', ...) Create a graph with the forest fire model.
+%   GRAPH = GAME('ForestFire', ...) Create a graph with the forest fire model.
 %
 %        Name                 Description
 %       --------------------------------------------------------------------
@@ -188,7 +188,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'nAmbassadors'       Number of ambassador vertices (default 3).
 %        'isdirected'         Whether graph should be directed (default false).
 %
-%   ADJ = GAME('GrowingRandom', ...) Grow a graph by randomly adding a nodes
+%   GRAPH = GAME('GrowingRandom', ...) Grow a graph by randomly adding a nodes
 %       one at a time.
 %
 %        Name           Description
@@ -199,8 +199,8 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'citation'     Whether all new edges start from the most recent node
 %                       (default false).
 %
-%   ADJ = GAME('CallawayTraits', ...)
-%   ADJ = GAME('establishment', ...) Randomly add nodes of different types and
+%   GRAPH = GAME('CallawayTraits', ...)
+%   GRAPH = GAME('establishment', ...) Randomly add nodes of different types and
 %        connect them based the preference for that type to connect to another.
 %
 %        For CALLAWAYTRAITS, EDGESPERSTEP new edges are made each time step.
@@ -231,7 +231,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'isdirected'       Whether graph should be directed (default false
 %                           unless preference is specified and non-symmetric).
 %
-%   ADJ = GAME('preference', ...) Like CALLAWAYTRAITS and ESTABLISHMENT but all
+%   GRAPH = GAME('preference', ...) Like CALLAWAYTRAITS and ESTABLISHMENT but all
 %       nodes are generated first, then an attempt to make an edge is made for
 %       all node pairs. Success is dependent on the preference matrix and the
 %       type of each node pair.
@@ -259,7 +259,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                           unless preference is specified and non-symmetric).
 %        'loops'            Whether to allow self-loop edges (default false).
 %
-%   ADJ = GAME('AsymmetricPreference', ...) Like preference but each node is
+%   GRAPH = GAME('AsymmetricPreference', ...) Like preference but each node is
 %       given two node types, an ingoing and outgoing.
 %
 %       Graph is always directed.
@@ -278,7 +278,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                           (default uniform distribution).
 %        'loops'            Whether to allow self-loop edges (default false).
 %
-%   ADJ = GAME('RecentDegree', ...) Randomly add edges to nodes proportional to
+%   GRAPH = GAME('RecentDegree', ...) Randomly add edges to nodes proportional to
 %       the number of edges the the node has recently gained.
 %
 %        Name            Description
@@ -303,7 +303,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'isdirected'    Whether graph should be directed (default false unless
 %                        preference is specified and non-symmetric).
 %
-%   ADJ = GAME('BarabasiAging', ...) Similar to RECENTDEGREE but adds in an age
+%   GRAPH = GAME('BarabasiAging', ...) Similar to RECENTDEGREE but adds in an age
 %       component such that older nodes are preferred. Unlike RECENTDEGREE all
 %       edges are taken into consideration, not just recent edges. One node is
 %       added every timestep.
@@ -334,7 +334,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                           (default 1).
 %        'isdirected'       Whether graph should be directed (default false).
 %
-%   ADJ = GAME('RecentDegreeAging', ...) RECENTDEGREE with aging component.
+%   GRAPH = GAME('RecentDegreeAging', ...) RECENTDEGREE with aging component.
 %
 %        Name            Description
 %       --------------------------------------------------------------------
@@ -359,7 +359,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                        be less than NNODES.)
 %        'isdirected'    Whether graph should be directed (default false).
 %
-%   ADJ = GAME('LastCit', ...) Simulation that makes edges proportional to how
+%   GRAPH = GAME('LastCit', ...) Simulation that makes edges proportional to how
 %       recently a node was last cited. Nodes are binned based on the last time
 %       they were cited. Note: this is different than other methods which use
 %       node creation as age.
@@ -374,7 +374,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                       for each age bin (default ONES(1, AGINGBINS + 1)).
 %        'isdirected'   Whether graph should be directed (default false).
 %
-%   ADJ = GAME('CitedType', ...) Create a network one node at a time and add
+%   GRAPH = GAME('CitedType', ...) Create a network one node at a time and add
 %       edges with other nodes with preference based on node types
 %
 %        Name           Description
@@ -387,7 +387,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                       (default ONES(1, MAX(TYPES))).
 %        'isdirected'   Whether graph should be directed (default false).
 %
-%   ADJ = GAME('CitingCitedType', ...) Generate a graph by adding edges with
+%   GRAPH = GAME('CitingCitedType', ...) Generate a graph by adding edges with
 %       probability given by the preference matrix and the types of both the
 %       nodes being wired.
 %
@@ -401,8 +401,8 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                       MAX(TYPES). (default ONES(MAX(TYPES), MAX(TYPES)).)
 %        'isdirected'   Whether graph should be directed (default false).
 %
-%   ADJ = GAME('StochasticBlockModel', ...)
-%   ADJ = GAME('sbm', ...) Create a block graph where edges are created with
+%   GRAPH = GAME('StochasticBlockModel', ...)
+%   GRAPH = GAME('sbm', ...) Create a block graph where edges are created with
 %       probability dependent on which block each node is a member of.
 %
 %        Name         Description
@@ -417,8 +417,8 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'isdirected' Whether graph should be directed (default false).
 %        'loops'      Whether to allow self-loop edges (default false).
 %
-%   ADJ = GAME('HierarchicalStochasticBlockMethod', ...)
-%   ADJ = GAME('hsbm', ...) Generate a hierarchical graph with the
+%   GRAPH = GAME('HierarchicalStochasticBlockMethod', ...)
+%   GRAPH = GAME('hsbm', ...) Generate a hierarchical graph with the
 %       hierarchical stochastic block method.
 %
 %       NOTE: NNODES, BLOCKSIZES, and RHO are all dependent on each other, so
@@ -437,7 +437,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'pOut'       Probability a node in one block connects with a node in
 %                     a different block (default 0.3).
 %
-%   ADJ = GAME('DotProduct', ...) Create a graph where the probability an edge
+%   GRAPH = GAME('DotProduct', ...) Create a graph where the probability an edge
 %       exists is the dot product between the two nodes latent positions.
 %
 %        Name         Description
@@ -446,8 +446,8 @@ function adj = randgame(method, adjOptions, methodOptions)
 %                     the position of a node (default ONES(3, 10) / 3).
 %        'isdirected' Whether graph should be directed (default false).
 %
-%   ADJ = GAME('TreePrufer', ...)
-%   ADJ = GAME('TreeLERW', ...) Generate random tree graphs.
+%   GRAPH = GAME('TreePrufer', ...)
+%   GRAPH = GAME('TreeLERW', ...) Generate random tree graphs.
 %
 %       Graphs can be made with two methods, Prufer and loop-erased random
 %       walk. For Prufer, ISDIRECTED must be false.
@@ -457,7 +457,7 @@ function adj = randgame(method, adjOptions, methodOptions)
 %        'nNodes'     The number of nodes in the graph (default 10).
 %        'isdirected' Whether graph should be directed (default false).
 %
-%   ADJ = GAME('SimpleInterConnectedIslands', ...) Create a network with
+%   GRAPH = GAME('SimpleInterConnectedIslands', ...) Create a network with
 %       islands, where nodes within an island are more likely to connect than
 %       nodes between an island.
 %
@@ -493,62 +493,62 @@ function adj = randgame(method, adjOptions, methodOptions)
                             'DotProduct', 'treeLERW', 'treePrufer', ...
                             'SimpleInterconnectedIslands'})}
 
-        adjOptions.makeSparse (1, 1) logical = true;
-        adjOptions.dtype (1, :) char ...
-            {igraph.args.mustBeMemberi(adjOptions.dtype, {'logical', 'double'})} = 'double';
+        graphOpts.makeSparse (1, 1) logical = true;
+        graphOpts.dtype (1, :) char ...
+            {igraph.args.mustBeMemberi(graphOpts.dtype, {'logical', 'double'})} = 'double';
 
-        methodOptions.nNodes;
-        methodOptions.radius;
-        methodOptions.torus;
-        methodOptions.power;
-        methodOptions.nConnections;
-        methodOptions.outPreference;
-        methodOptions.attractiveness;
-        methodOptions.isdirected;
-        methodOptions.startFrom;
-        methodOptions.nEdges;
-        methodOptions.loops;
-        methodOptions.probability;
-        methodOptions.dim;
-        methodOptions.size;
-        methodOptions.degree;
-        methodOptions.outDegree;
-        methodOptions.inDegree;
-        methodOptions.fitness;
-        methodOptions.outFitness;
-        methodOptions.inFitness;
-        methodOptions.outExponent;
-        methodOptions.inExponent;
-        methodOptions.finiteSizeCorrection;
-        methodOptions.forwardProbability;
-        methodOptions.backwardFactor;
-        methodOptions.nAmbassadors;
-        methodOptions.citation;
-        methodOptions.nTypes;
-        methodOptions.edgesPerStep;
-        methodOptions.typeDistribution;
-        methodOptions.nOutTypes;
-        methodOptions.nInTypes;
-        methodOptions.timeWindow;
-        methodOptions.zeroAppeal;
-        methodOptions.degreeExp;
-        methodOptions.ageExp;
-        methodOptions.agingBins;
-        methodOptions.zeroDegreeAppeal;
-        methodOptions.zeroAgeAppeal;
-        methodOptions.degreeCoef;
-        methodOptions.ageCoef;
-        methodOptions.preference;
-        methodOptions.mixingParam;
-        methodOptions.types;
-        methodOptions.blockSizes;
-        methodOptions.clusterSizes;
-        methodOptions.pOut;
-        methodOptions.positions;
-        methodOptions.nIslands;
-        methodOptions.islandSize;
-        methodOptions.pIn;
-        methodOptions.nInterEdges;
+        methodOpts.nNodes;
+        methodOpts.radius;
+        methodOpts.torus;
+        methodOpts.power;
+        methodOpts.nConnections;
+        methodOpts.outPreference;
+        methodOpts.attractiveness;
+        methodOpts.isdirected;
+        methodOpts.startFrom;
+        methodOpts.nEdges;
+        methodOpts.loops;
+        methodOpts.probability;
+        methodOpts.dim;
+        methodOpts.size;
+        methodOpts.degree;
+        methodOpts.outDegree;
+        methodOpts.inDegree;
+        methodOpts.fitness;
+        methodOpts.outFitness;
+        methodOpts.inFitness;
+        methodOpts.outExponent;
+        methodOpts.inExponent;
+        methodOpts.finiteSizeCorrection;
+        methodOpts.forwardProbability;
+        methodOpts.backwardFactor;
+        methodOpts.nAmbassadors;
+        methodOpts.citation;
+        methodOpts.nTypes;
+        methodOpts.edgesPerStep;
+        methodOpts.typeDistribution;
+        methodOpts.nOutTypes;
+        methodOpts.nInTypes;
+        methodOpts.timeWindow;
+        methodOpts.zeroAppeal;
+        methodOpts.degreeExp;
+        methodOpts.ageExp;
+        methodOpts.agingBins;
+        methodOpts.zeroDegreeAppeal;
+        methodOpts.zeroAgeAppeal;
+        methodOpts.degreeCoef;
+        methodOpts.ageCoef;
+        methodOpts.preference;
+        methodOpts.mixingParam;
+        methodOpts.types;
+        methodOpts.blockSizes;
+        methodOpts.clusterSizes;
+        methodOpts.pOut;
+        methodOpts.positions;
+        methodOpts.nIslands;
+        methodOpts.islandSize;
+        methodOpts.pIn;
+        methodOpts.nInterEdges;
     end
 
     method = lower(method);
@@ -562,76 +562,76 @@ function adj = randgame(method, adjOptions, methodOptions)
       case 'hierarchicalstochasticblockmethod'
         method = 'hsbm';
       case {'treelerw', 'treeprufer'}
-        methodOptions.method = method(length('tree')+1:end);
+        methodOpts.method = method(length('tree')+1:end);
         method = 'tree';
     end
 
-    adjOptions.dtype = lower(adjOptions.dtype);
-    methodOptions = namedargs2cell(methodOptions);
+    graphOpts.dtype = lower(graphOpts.dtype);
+    methodOpts = namedargs2cell(methodOpts);
 
     switch method
       case 'grg'
-        methodOptions = parseOptionsGrg(methodOptions{:});
+        methodOpts = parseOptionsGrg(methodOpts{:});
       case {'barabasibag', 'barabasipsumtree', 'barabasipsumtreemultiple'}
-        methodOptions = parseOptionsBarabasi(method, methodOptions{:});
+        methodOpts = parseOptionsBarabasi(method, methodOpts{:});
       case 'erdosrenyi'
-        methodOptions = parseOptionsErdosRenyi(methodOptions{:});
-        if igraph.args.isoptionset(methodOptions, "probability")
-            methodOptions.useEdges = false;
+        methodOpts = parseOptionsErdosRenyi(methodOpts{:});
+        if igraph.args.isoptionset(methodOpts, "probability")
+            methodOpts.useEdges = false;
         else
-            methodOptions.useEdges = true;
+            methodOpts.useEdges = true;
         end
       case 'wattsstrogatz'
-        methodOptions = parseOptionsWattsStrogatz(methodOptions{:});
+        methodOpts = parseOptionsWattsStrogatz(methodOpts{:});
       case {'degseqconfiguration', 'degseqconfigurationsimple', ...
             'degseqfastheursimple', 'degseqedgeswitchingsimple', 'degseqvl'}
-        methodOptions = parseOptionsDegSeq(methodOptions{:});
+        methodOpts = parseOptionsDegSeq(methodOpts{:});
       case 'kregular'
-        methodOptions = parseOptionsKRegular(methodOptions{:});
+        methodOpts = parseOptionsKRegular(methodOpts{:});
       case 'staticfitness'
-        methodOptions = parseOptionsStaticFitness(methodOptions{:});
+        methodOpts = parseOptionsStaticFitness(methodOpts{:});
       case 'staticpowerlaw'
-        methodOptions = parseOptionsStaticPowerLaw(methodOptions{:});
+        methodOpts = parseOptionsStaticPowerLaw(methodOpts{:});
       case 'forestfire'
-        methodOptions = parseOptionsForestFire(methodOptions{:});
+        methodOpts = parseOptionsForestFire(methodOpts{:});
       case 'growingrandom'
-        methodOptions = parseOptionsGrowingRandom(methodOptions{:});
+        methodOpts = parseOptionsGrowingRandom(methodOpts{:});
       case {'callawaytraits', 'establishment'}
-        methodOptions = parseOptionsCallawayTraits(methodOptions{:});
+        methodOpts = parseOptionsCallawayTraits(methodOpts{:});
       case 'preference'
-        methodOptions = parseOptionsPreference(methodOptions{:});
+        methodOpts = parseOptionsPreference(methodOpts{:});
       case 'asymmetricpreference'
-        methodOptions = parseOptionsAsymmetricPreference(methodOptions{:});
+        methodOpts = parseOptionsAsymmetricPreference(methodOpts{:});
       case 'recentdegree'
-        methodOptions = parseOptionsRecentDegree(methodOptions{:});
+        methodOpts = parseOptionsRecentDegree(methodOpts{:});
       case 'barabasiaging'
-        methodOptions = parseOptionsBarabasiAging(methodOptions{:});
+        methodOpts = parseOptionsBarabasiAging(methodOpts{:});
       case 'recentdegreeaging'
-        methodOptions = parseOptionsRecentDegreeAging(methodOptions{:});
+        methodOpts = parseOptionsRecentDegreeAging(methodOpts{:});
       case 'lastcit'
-        methodOptions = parseOptionsLastCit(methodOptions{:});
+        methodOpts = parseOptionsLastCit(methodOpts{:});
       case 'citedtype'
-        methodOptions = parseOptionsCitedType(methodOptions{:});
+        methodOpts = parseOptionsCitedType(methodOpts{:});
       case 'citingcitedtype'
-        methodOptions = parseOptionsCitingCitedType(methodOptions{:});
+        methodOpts = parseOptionsCitingCitedType(methodOpts{:});
       case 'sbm'
-        methodOptions = parseOptionsSBM(methodOptions{:});
+        methodOpts = parseOptionsSBM(methodOpts{:});
       case 'hsbm'
-        methodOptions = parseOptionsHSBM(methodOptions{:});
+        methodOpts = parseOptionsHSBM(methodOpts{:});
       case 'dotproduct'
-        methodOptions = parseOptionsDotProduct(methodOptions{:});
+        methodOpts = parseOptionsDotProduct(methodOpts{:});
       case 'tree'
-        methodOptions = parseOptionsTree(methodOptions{:});
+        methodOpts = parseOptionsTree(methodOpts{:});
       case 'simpleinterconnectedislands'
-        methodOptions = ...
-            parseOptionsSimpleInterconnectedIslands(methodOptions{:});
+        methodOpts = ...
+            parseOptionsSimpleInterconnectedIslands(methodOpts{:});
       otherwise
         error("The method ""%s"" has not been implemented.\n\n" + ...
               "Please report an issue or submit a pull request to github.", ...
               method);
     end
 
-    adj = mexIgraphDispatcher(mfilename(), method, adjOptions, methodOptions);
+    graph = mexIgraphDispatcher(mfilename(), method, graphOpts, methodOpts);
 end
 
 function opts = parseOptionsGrg(opts)

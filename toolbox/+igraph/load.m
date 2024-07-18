@@ -1,9 +1,9 @@
-function adj = load(filename, ioOptions, adjOptions)
+function graph = load(filename, ioOptions, graphOpts)
 %LOAD read a graph from file
-%   ADJ = LOAD(FILE) read FILE representing a graph into MATLAB. The file's
+%   GRAPH = LOAD(FILE) read FILE representing a graph into MATLAB. The file's
 %       storage format will be guessed based on the file's extension.
 %
-%   ADJ = LOAD(FILE, 'FORMAT', FORMAT) use FORMAT to read the file instead of
+%   GRAPH = LOAD(FILE, 'FORMAT', FORMAT) use FORMAT to read the file instead of
 %       guessing the value from the file extension. In some cases, it may read
 %       in part of a file to differentiate between types with the same
 %       extension.
@@ -25,7 +25,7 @@ function adj = load(filename, ioOptions, adjOptions)
 %      'pajek'      '.net'                  Pajek format
 %      'dl'         {'.txt', '.dl'}         UCINET's DL format.
 %
-%   ADJ = LOAD(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to the
+%   GRAPH = LOAD(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to the
 %   'FORMAT' the folliwing
 %
 %       Parameter        Value
@@ -54,11 +54,11 @@ function adj = load(filename, ioOptions, adjOptions)
 %                        of the saved adjacency matrix in the undirected case.
 %                        This *should* not impact other igraph calculations. To
 %                        prevent this, if ISDIRECTED is left unset,
-%                        IGRAPH.ISDIRECTED will be used after loading the ADJ
+%                        IGRAPH.ISDIRECTED will be used after loading the GRAPH
 %                        and the lower triangle will be return if it appears to
 %                        be undirected.
 %
-%        'dtype'         Set the returned ADJ's datatype. By default, the data
+%        'dtype'         Set the returned GRAPH's datatype. By default, the data
 %                        type will be determined by the value of ISWEIGHTED
 %                        ('logical' if false, 'double' otherwise). Allowed data
 %                        types are 'double' and 'logical'. If DTYPE is set to
@@ -66,7 +66,7 @@ function adj = load(filename, ioOptions, adjOptions)
 %                        this will cause an error since a logical adjacency
 %                        matrix cannot store weights.
 %
-%        'makeSparse'    Whether the resulting ADJ should use a full matrix
+%        'makeSparse'    Whether the resulting GRAPH should use a full matrix
 %                        representation (false) or a sparse representation
 %                        (true, default). This should have little impact on
 %                        performance since the performance bottlenecks usually
@@ -92,11 +92,11 @@ function adj = load(filename, ioOptions, adjOptions)
         filename char {mustBeVector}
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
         ioOptions.index (1, 1) double {mustBeInteger, mustBeNonnegative} = 0;
-        adjOptions.isweighted (1, 1) logical
-        adjOptions.isdirected (1, 1) logical;
-        adjOptions.dtype char {mustBeMember(adjOptions.dtype, ...
-                                            {'double', 'logical'})};
-        adjOptions.makeSparse (1, 1) logical = true;
+        graphOpts.isweighted (1, 1) logical
+        graphOpts.isdirected (1, 1) logical;
+        graphOpts.dtype char {igraph.args.mustBeMemberi(graphOpts.dtype, ...
+                                                         {'double', 'logical'})};
+        graphOpts.makeSparse (1, 1) logical = true;
     end
 
     if ~exist(filename, 'file')
@@ -110,69 +110,69 @@ function adj = load(filename, ioOptions, adjOptions)
 
     if strcmp(ioOptions.format, 'mat')
         out = load(filename);
-        adj = out.adj;
+        graph = out.graph;
         return
     end
 
     isoptionset = @igraph.args.isoptionset;
-    if ~isoptionset(adjOptions, 'dtype')
-        if isoptionset(adjOptions, 'isweighted') && ~adjOptions.isweighted
-            adjOptions.dtype = 'logical';
+    if ~isoptionset(graphOpts, 'dtype')
+        if isoptionset(graphOpts, 'isweighted') && ~graphOpts.isweighted
+            graphOpts.dtype = 'logical';
         else
-            adjOptions.dtype = 'double';
+            graphOpts.dtype = 'double';
         end
     end
 
-    if ~isoptionset(adjOptions, 'isweighted')
-        if strcmp(adjOptions.dtype, 'logical')
-            adjOptions.isweighted = false;
+    if ~isoptionset(graphOpts, 'isweighted')
+        if strcmp(graphOpts.dtype, 'logical')
+            graphOpts.isweighted = false;
         else
-            % Assuming a truly unweighted adj is weighted does not alter the
+            % Assuming a truly unweighted graph is weighted does not alter the
             % representation, so it's always safe to assume it's weighted.
-            adjOptions.isweighted = true;
+            graphOpts.isweighted = true;
         end
     end
 
-    if strcmp(adjOptions.dtype, 'logical') && adjOptions.isweighted
+    if strcmp(graphOpts.dtype, 'logical') && graphOpts.isweighted
         error("Igraph:badDataType", "Cannot use a logical adjacency " + ...
-                   "matrix to represent weighted graph.");
+              "matrix to represent weighted graph.");
     end
 
     userSetDirectedness = true;
-    if ~isoptionset(adjOptions, 'isdirected')
-       adjOptions.isdirected = true;
-       userSetDirectedness = false;
+    if ~isoptionset(graphOpts, 'isdirected')
+        graphOpts.isdirected = true;
+        userSetDirectedness = false;
     end
 
-    adj = mexIgraphDispatcher(mfilename(), filename, ioOptions, adjOptions);
+    graph = mexIgraphDispatcher(mfilename(), filename, ioOptions, graphOpts);
 
     if ~userSetDirectedness
-        adjOptions.isdirected = igraph.isdirected(adj);
+        graphOpts.isdirected = igraph.isdirected(graph);
     end
 
-    if ~adjOptions.isweighted && ~islogical(adj)
-        adj = double(adj ~= 0);
+    if ~graphOpts.isweighted && ~islogical(graph)
+        graph = double(graph ~= 0);
     end
 
-    if ~adjOptions.isdirected
-        if igraph.isdirected(adj)
+    if ~graphOpts.isdirected
+        if igraph.isdirected(graph)
             warning("Forcing a non-triangular, asymmetric adjacency " + ...
                     "matrix to be undirected. Summing edges A(i, j) " + ...
                     "and A(j, i) for all i and j.")
-        elseif issymmetric(adj)
-            adj = tril(adj);
-        elseif istriu(adj)
+        elseif issymmetric(graph)
+            graph = tril(graph);
+        elseif istriu(graph)
             % For undirected graphs, igraph may flip the edges (see
             % igraph_edge()), causing a lower triangle to be written as an
             % upper and vice-versa. So stick to a standard of always using
             % lower triangles to prevent unexpected behavior.
-            adj = adj';
+            graph = graph';
         end
 
-        if islogical(adj)
-            adj = tril(adj) | triu(adj, 1)';
+        if islogical(graph)
+            graph = tril(graph) | triu(graph, 1)';
         else
-            adj = tril(adj) + triu(adj, 1)';
+            graph = tril(graph) + triu(graph, 1)';
         end
     end
 end

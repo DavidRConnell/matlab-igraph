@@ -1,9 +1,9 @@
-function adj = generate(method, adjOptions, methodOptions)
-%GENERATE create an adjacency matrix with a deterministic generator
-%   ADJ = GENERATE(METHOD) use METHOD to generate a deterministic adjacency
-%       matrix. Each method has its own set of optional arguments, see below
-%       for more information on a specific method. All resulting graphs are
-%       unweighted. METHOD can be one of the following:
+function graph = generate(method, graphOpts, methodOpts)
+%GENERATE create a graph with a deterministic generator
+%   GRAPH = GENERATE(METHOD) use METHOD to generate a deterministic graph. Each
+%       method has its own set of optional arguments, see below for more
+%       information on a specific method. All resulting graphs are unweighted.
+%       METHOD can be one of the following:
 %
 %       'star', 'wheel', 'ring', 'KaryTree', 'RegularTree', 'full',
 %       'citation', 'prufer', 'atlas', 'DeBruijn', 'kautz', 'circulant',
@@ -12,9 +12,9 @@ function adj = generate(method, adjOptions, methodOptions)
 %       Method names are matched case insensitively so 'karytree', 'KaryTree',
 %       'karyTree', etc are all acceptable.
 %
-%   ADJ = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
+%   GRAPH = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
 %       method specific parameters, there are parameters for specifying how the
-%       resulting ADJ is represented common to all methods. These follow the
+%       resulting GRAPH is represented common to all methods. These follow the
 %       same conventions as the rest of matlab-igraph.
 %
 %        Name           Description
@@ -23,7 +23,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'dtype'        The data type to use, either 'double' (default) or
 %                       'logical'.
 %
-%   ADJ = GENERATE('star', ...) Creates a graph where every node connects to
+%   GRAPH = GENERATE('star', ...) Creates a graph where every node connects to
 %       only the center node.
 %
 %        Name       Description
@@ -32,7 +32,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'mode'     One of {'out', 'in', 'mutual', 'undirected' (default)}.
 %        'center'   The index of the center node (defaults to 1).
 %
-%   ADJ = GENERATE('wheel', ...) Creates a circular graph with a center node
+%   GRAPH = GENERATE('wheel', ...) Creates a circular graph with a center node
 %       all other edges connect to (i.e. a wheel with spokes). See also ring
 %       and star generators.
 %
@@ -42,7 +42,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'mode'     One of {'out', 'in', 'mutual', 'undirected' (default)}.
 %        'center'   The index of the center node (defaults to 1).
 %
-%   ADJ = GENERATE('ring', ...) Creates a circular graph where every node has
+%   GRAPH = GENERATE('ring', ...) Creates a circular graph where every node has
 %       an edge with the next node (and consequently the previous node). If
 %       circular the final node connects to the first node. See also circulant
 %       and petersen generators.
@@ -56,7 +56,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %                      must be directed.
 %        'iscircular'  Whether to close the ring or not (default).
 %
-%   ADJ = GENERATE('kary_tree', ...) Creates a tree graph where every node has
+%   GRAPH = GENERATE('kary_tree', ...) Creates a tree graph where every node has
 %       the same number of children.
 %
 %        Name        Description
@@ -65,7 +65,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'children'  The number of children for each nodes (defaults to 3).
 %        'mode'      One of {'out', 'in', 'undirected' (default)}.
 %
-%   ADJ = GENERATE('regular_tree', ...) Creates a tree graph where all nodes
+%   GRAPH = GENERATE('regular_tree', ...) Creates a tree graph where all nodes
 %       have the same degree.
 %
 %        Name       Description
@@ -74,7 +74,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'degree'   Degree of the nodes of the tree (defaults to 3).
 %        'mode'     One of {'out', 'in', 'undirected' (default)}
 %
-%   ADJ = GENERATE('full', ...) Creates a full graph where every possible edge
+%   GRAPH = GENERATE('full', ...) Creates a full graph where every possible edge
 %       exists. If undirected and no loops, this produces a 'citation' graph.
 %
 %        Name          Description
@@ -85,7 +85,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'loops'       Whether to include loops (diagonal edges) or not
 %                      (default)
 %
-%   ADJ = GENERATE('citation', ...) Creates a graph where every edge for the
+%   GRAPH = GENERATE('citation', ...) Creates a graph where every edge for the
 %       source id < destination id is present. This always produces a lower
 %       triangle.
 %
@@ -94,7 +94,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'nNodes'      Number of nodes (defaults to 10).
 %        'isdirected'  Whether to return a directed graph or not (default).
 %
-%   ADJ = GENERATE('prufer', ...) Creates a tree graph from a Prufer sequence.
+%   GRAPH = GENERATE('prufer', ...) Creates a tree graph from a Prufer sequence.
 %
 %        Name       Description
 %       --------------------------------------------------------------------
@@ -103,7 +103,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %                   in the sequence. All elements must be <= n + 2. (defaults
 %                   to 1:10).
 %
-%   ADJ = GENERATE('atlas', ...) Return a graph from the graph atlas.
+%   GRAPH = GENERATE('atlas', ...) Return a graph from the graph atlas.
 %       only the center node. Params:
 %
 %        Name        Description
@@ -111,7 +111,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'atlasId'   The index of the atlas graph to return (defaults to 1).
 %                    Max index is 1253.
 %
-%   ADJ = GENERATE('de_bruijn', ...) Creates a de Bruijn graph. There's an edge
+%   GRAPH = GENERATE('de_bruijn', ...) Creates a de Bruijn graph. There's an edge
 %        for all unique strings of length STRINGLENGTH that can be made with
 %        NLETTERS. Edges are made between nodes if shifting the string of one
 %        node to the right 1 produces the other nodes strings.
@@ -121,7 +121,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'nLetters'      Number of letters in the alphabet (defaults to 3).
 %        'stringLength'  Length of the strings (defaults to 2).
 %
-%   ADJ = GENERATE('kautz', ...) Creates a Kautz graph. There's an edge for all
+%   GRAPH = GENERATE('kautz', ...) Creates a Kautz graph. There's an edge for all
 %       unique strings of length STRINGLENGTH + 1 that can be made with
 %       NLETTERS + 1, where no two consecutive letters are the same. Edges are
 %       made between nodes if shifting the string of one node to the right 1
@@ -132,7 +132,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %        'nLetters'      Number of letters in the alphabet (defaults to 3).
 %        'stringLength'  Length of the strings (defaults to 2).
 %
-%   ADJ = GENERATE('circulant', ...) Creates a circular graph where each node
+%   GRAPH = GENERATE('circulant', ...) Creates a circular graph where each node
 %       is connected to a node some shift nodes away. If there are more than
 %       one shifts, each node has a connection for each shift.
 %
@@ -144,7 +144,7 @@ function adj = generate(method, adjOptions, methodOptions)
 %                      (defaults to [1]).
 %        'isdirected'  Whether to consider the graph directed or not (default).
 %
-%   ADJ = GENERATE('petersen', ...) Creates a graph with an outer and inner
+%   GRAPH = GENERATE('petersen', ...) Creates a graph with an outer and inner
 %       ring. The inner ring has connections between nodes some shift away in
 %       the inner ring (similar to 'circulant'). In addition there's one
 %       connection between each outer ring node in a corresponding inner ring
@@ -161,37 +161,37 @@ function adj = generate(method, adjOptions, methodOptions)
 
     arguments
         method (1, :) char {igraph.args.mustBeMemberi(method, ...
-                                          {'star', 'wheel', 'SquareLattice', ...
-                                           'TriangularLattice', ...
-                                           'hexagonallattice', 'ring', ...
-                                           'karytree', 'symmetrictree', ...
-                                           'RegularTree', 'full', ...
-                                           'FullCitation', 'citation', ...
-                                           'FullMultipartite', 'multipartite', ...
-                                           'turan', 'RealizeDegreeSequence', ...
-                                           'prufer', 'atlas', 'DeBruijn', ...
-                                           'kautz', 'circulant', 'petersen', ...
-                                           'ChordalRing'})}
-        adjOptions.makeSparse (1, 1) logical = true;
-        adjOptions.dtype (1, :) char ...
-            {igraph.args.mustBeMemberi(adjOptions.dtype, ...
+                                                      {'star', 'wheel', 'SquareLattice', ...
+                                                       'TriangularLattice', ...
+                                                       'hexagonallattice', 'ring', ...
+                                                       'karytree', 'symmetrictree', ...
+                                                       'RegularTree', 'full', ...
+                                                       'FullCitation', 'citation', ...
+                                                       'FullMultipartite', 'multipartite', ...
+                                                       'turan', 'RealizeDegreeSequence', ...
+                                                       'prufer', 'atlas', 'DeBruijn', ...
+                                                       'kautz', 'circulant', 'petersen', ...
+                                                       'ChordalRing'})}
+        graphOpts.makeSparse (1, 1) logical = true;
+        graphOpts.dtype (1, :) char ...
+            {igraph.args.mustBeMemberi(graphOpts.dtype, ...
                                        {'logical', 'double'})} = 'double';
-        methodOptions.nNodes;
-        methodOptions.mode;
-        methodOptions.center;
-        methodOptions.isdirected;
-        methodOptions.ismutual;
-        methodOptions.iscircular;
-        methodOptions.children;
-        methodOptions.height;
-        methodOptions.degree;
-        methodOptions.loops;
-        methodOptions.prufer;
-        methodOptions.atlasId;
-        methodOptions.nLetters;
-        methodOptions.stringLength;
-        methodOptions.shifts;
-        methodOptions.shift;
+        methodOpts.nNodes;
+        methodOpts.mode;
+        methodOpts.center;
+        methodOpts.isdirected;
+        methodOpts.ismutual;
+        methodOpts.iscircular;
+        methodOpts.children;
+        methodOpts.height;
+        methodOpts.degree;
+        methodOpts.loops;
+        methodOpts.prufer;
+        methodOpts.atlasId;
+        methodOpts.nLetters;
+        methodOpts.stringLength;
+        methodOpts.shifts;
+        methodOpts.shift;
     end
 
     method = lower(method);
@@ -201,47 +201,47 @@ function adj = generate(method, adjOptions, methodOptions)
         method = 'multipartite';
     end
 
-    adjOptions.dtype = lower(adjOptions.dtype);
-    methodOptions = namedargs2cell(methodOptions);
+    graphOpts.dtype = lower(graphOpts.dtype);
+    methodOpts = namedargs2cell(methodOpts);
 
     switch method
       case {'star', 'wheel'}
-        methodOptions = parseOptionsStar(methodOptions{:});
+        methodOpts = parseOptionsStar(methodOpts{:});
       case 'ring'
-        methodOptions = parseOptionsRing(methodOptions{:});
+        methodOpts = parseOptionsRing(methodOpts{:});
       case 'karytree'
-        methodOptions = parseOptionsKaryTree(methodOptions{:});
+        methodOpts = parseOptionsKaryTree(methodOpts{:});
       case 'regulartree'
-        methodOptions = parseOptionsRegularTree(methodOptions{:});
+        methodOpts = parseOptionsRegularTree(methodOpts{:});
       case 'full'
-        methodOptions = parseOptionsFull(methodOptions{:});
+        methodOpts = parseOptionsFull(methodOpts{:});
       case 'citation'
-        methodOptions = parseOptionsCitation(methodOptions{:});
+        methodOpts = parseOptionsCitation(methodOpts{:});
       case 'prufer'
-        methodOptions = parseOptionsPrufer(methodOptions{:});
+        methodOpts = parseOptionsPrufer(methodOpts{:});
       case 'atlas'
-        methodOptions = parseOptionsAtlas(methodOptions{:});
+        methodOpts = parseOptionsAtlas(methodOpts{:});
       case {'debruijn', 'kautz'}
-        methodOptions = parseOptionsKautz(methodOptions{:});
+        methodOpts = parseOptionsKautz(methodOpts{:});
       case 'circulant'
-        methodOptions = parseOptionsCirculant(methodOptions{:});
+        methodOpts = parseOptionsCirculant(methodOpts{:});
       case 'petersen'
-        methodOptions = parseOptionsPetersen(methodOptions{:});
+        methodOpts = parseOptionsPetersen(methodOpts{:});
       otherwise
         error("The method %s has not been implemented.\n\n" + ...
               "Please report an issue or submit a pull request to github.", ...
               method);
     end
 
-    adj = mexIgraphDispatcher(mfilename(), method, adjOptions, methodOptions);
+    graph = mexIgraphDispatcher(mfilename(), method, graphOpts, methodOpts);
 end
 
 function opts = parseOptionsStar(opts)
     arguments
         opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
         opts.mode (1, :) char {igraph.args.mustBeMemberi(opts.mode, ...
-                                             {'out', 'in', 'mutual', ...
-                                              'undirected'})} = 'undirected';
+                                                         {'out', 'in', 'mutual', ...
+                                                          'undirected'})} = 'undirected';
         opts.center (1, 1) {mustBePositive, mustBeInteger} = 1;
     end
 
@@ -272,7 +272,7 @@ function opts = parseOptionsRing(opts)
     if opts.ismutual && ~opts.isdirected
         error("Igraph:generateRing", ...
               "Cannot create mutual edges when graph is not directed. " + ...
-             "ismutual can only be true when isdirected is true.")
+              "ismutual can only be true when isdirected is true.")
     end
 end
 
@@ -281,8 +281,8 @@ function opts = parseOptionsKaryTree(opts)
         opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
         opts.children (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
         opts.mode (1, :) char {igraph.args.mustBeMemberi(opts.mode, ...
-                                             {'out', 'in', 'undirected'})} = ...
-                                             'undirected';
+                                                         {'out', 'in', 'undirected'})} = ...
+                                                         'undirected';
     end
 
     opts.mode = lower(opts.mode);
@@ -293,8 +293,8 @@ function opts = parseOptionsRegularTree(opts)
         opts.height (1, 1) {mustBeNonnegative, mustBeInteger} = 4;
         opts.degree (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
         opts.mode (1, :) char {igraph.args.mustBeMemberi(opts.mode, ...
-                                             {'out', 'in', 'undirected'})} = ...
-                                             'undirected';
+                                                         {'out', 'in', 'undirected'})} = ...
+                                                         'undirected';
     end
 
     opts.mode = lower(opts.mode);
@@ -353,7 +353,7 @@ function opts = parseOptionsPetersen(opts)
     end
 
     if opts.nNodes < 3
-       error("nNodes must be at least 3.");
+        error("nNodes must be at least 3.");
     end
 
     if opts.shift > (opts.nNodes / 2)

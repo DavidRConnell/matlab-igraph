@@ -1,7 +1,7 @@
-function q = optimalModularity(adj)
+function q = optimalModularity(graph)
 %OPTIMALMODULARITY return the maximum modularity for the graph
-%   Q = OPTIMALMODULARITY(ADJ) finds the community structure that maximizes the
-%       modularity of the graph then returns the resulting modularity.
+%   Q = OPTIMALMODULARITY(GRAPH) finds the community structure that maximizes
+%       the modularity of the graph then returns the resulting modularity.
 %
 %   This is a slow algorithm with exponential time-complexity. According to the
 %   igraph documentation, you probably don't want to run on a graph with more
@@ -12,13 +12,13 @@ function q = optimalModularity(adj)
 %   membership structure.
 %
 %   To get the community structure that maximizes modularity use
-%   igraph.cluster.
+%   IGRAPH.CLUSTER.
 %
-%   See also igraph.modularity, igraph.cluster.
+%   See also IGRAPH.MODULARITY, IGRAPH.CLUSTER.
 
     arguments
-        adj {igraph.args.mustBeGraph};
+        graph {igraph.args.mustBeGraph};
     end
 
-    q = mexIgraphDispatcher(mfilename(), adj);
+    q = mexIgraphDispatcher(mfilename(), graph);
 end

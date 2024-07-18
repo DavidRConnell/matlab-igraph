@@ -1,11 +1,11 @@
-function values = centrality(adj, method, opts)
+function values = centrality(graph, method, opts)
 %CENTRALITY calculate centrality measure in a graph
-%   VALUES = CENTRALITY(ADJ, METHOD) calculate the centrality for all nodes
-%      in ADJ using METHOD. METHOD can be one of 'closeness', 'harmonic',
+%   VALUES = CENTRALITY(GRAPH, METHOD) calculate the centrality for all nodes
+%      in GRAPH using METHOD. METHOD can be one of 'closeness', 'harmonic',
 %      'betweenness', 'pagerank', 'burt' (equivalently 'constraint').
-%   VALUES = CENTRALITY(ADJ, METHOD, ..., 'VIDS', NODES) select a subset of
+%   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'VIDS', NODES) select a subset of
 %      nodes in the graph to calculate centrality on.
-%   VALUES = CENTRALITY(ADJ, METHOD, ..., 'directed', TF) if true, treat the
+%   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'directed', TF) if true, treat the
 %      graph is directed (defaults to IGRAPH.ISDIRECTED).
 %
 %   Method specific arguments:
@@ -17,17 +17,17 @@ function values = centrality(adj, method, opts)
 %       NOTE: Method specific arguments will be silently ignored if supplied
 %       but not needed for the given method.
 %
-%   See also igraph.isdirected.
+%   See also IGRAPH.ISDIRECTED.
 
     arguments
-       adj {igraph.args.mustBeGraph};
+       graph {igraph.args.mustBeGraph};
        method (1, :) char ...
            {igraph.args.mustBeMemberi(method, ...
                                       {'closeness', 'harmonic', 'betweenness', ...
                                        'pagerank', 'burt', 'constraint'})};
-       opts.vids (1, :) {mustBePositive, mustBeInteger} = 1:length(adj);
+       opts.vids (1, :) {mustBePositive, mustBeInteger} = 1:length(graph);
        opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
-       opts.directed (1, 1) logical = igraph.isdirected(adj);
+       opts.directed (1, 1) logical = igraph.isdirected(graph);
        opts.normalized (1, 1) logical = true;
        opts.damping (1, 1) {mustBeInRange(opts.damping, 0, 1)} = 0.85;
     end
@@ -38,5 +38,5 @@ function values = centrality(adj, method, opts)
     end
 
     opts.vids = opts.vids - 1;
-    values = mexIgraphDispatcher(mfilename(), adj, method, opts);
+    values = mexIgraphDispatcher(mfilename(), graph, method, opts);
 end

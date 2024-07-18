@@ -1,11 +1,12 @@
-function plot(adj, layout, options, layoutOpts)
+function plot(graph, layout, options, layoutOpts)
 %PLOT draw a graph
-%   PLOT(ADJ, LAYOUT) use LAYOUT to plot the vertices of ADJ. LAYOUT can either
-%       be a matrix of coordinates (nNodes x 2), such as a layout produced with
-%       IGRAPH.LAYOUT, or the name of a method accepted by IGRAPH.LAYOUT.
+%   PLOT(GRAPH, LAYOUT) use LAYOUT to plot the vertices of GRAPH. LAYOUT can
+%       either be a matrix of coordinates (nNodes x 2), such as a layout
+%       produced with IGRAPH.LAYOUT, or the name of a method accepted by
+%       IGRAPH.LAYOUT.
 %
-%   PLOT(..., "MEMBERSHIP", C) Color the nodes based on the communities of
-%       C. C should be a vector with a community label for each node (such as a
+%   PLOT(..., "MEMBERSHIP", C) Color the nodes based on the communities of C. C
+%       should be a vector with a community label for each node (such as a
 %       membership vector produced by IGRAPH.CLUSTER).
 %
 %   PLOT(..., "SIZE", SZ) Adjust the size of the plot markers. This can be
@@ -19,7 +20,7 @@ function plot(adj, layout, options, layoutOpts)
 %   See also igraph.layout, igraph.plot3d.
 
     arguments
-        adj {igraph.args.mustBeGraph};
+        graph {igraph.args.mustBeGraph};
         layout;
         options.membership (1, :) {mustBePartition} = [];
         options.size (1, :) = 100;
@@ -67,12 +68,12 @@ function plot(adj, layout, options, layoutOpts)
 
     if isstring(layout) || ischar(layout)
         layoutOpts = namedargs2cell(layoutOpts);
-        layout = igraph.layout(adj, layout, layoutOpts{:});
+        layout = igraph.layout(graph, layout, layoutOpts{:});
     end
 
-    if size(layout, 1) ~= length(adj)
+    if size(layout, 1) ~= length(graph)
         error("igraph:wrongSize", "Layout must have exactly one row for " + ...
-              "each node in the adj.");
+              "each node in the graph.");
     end
 
     if size(layout, 2) ~= 2
@@ -80,16 +81,16 @@ function plot(adj, layout, options, layoutOpts)
     end
 
     if isempty(options.membership)
-        options.membership = ones(1, length(adj));
+        options.membership = ones(1, length(graph));
     end
 
-    if length(options.membership) ~= length(adj)
+    if length(options.membership) ~= length(graph)
         error("igraph:wrongSize", "Membership must have exactly " + ...
-              "one element for each node in the adj.");
+              "one element for each node in the graph.");
     end
 
     if isscalar(options.size)
-        options.size = zeros(1, length(adj)) + options.size;
+        options.size = zeros(1, length(graph)) + options.size;
     elseif min(options.size) <= 0
         % Scaling the size vector to attempt to ensure a good spread of sizes.
         % May need tweaking.
@@ -106,7 +107,7 @@ function plot(adj, layout, options, layoutOpts)
         ax = subplot(1, 1, 1);
     end
 
-    [from, to] = find(adj);
+    [from, to] = find(graph);
     options.edgeColor = validatecolor(options.edgeColor);
     options.edgeColor(4) = options.edgeAlpha;
     plot(ax, ...

@@ -1,7 +1,7 @@
-function membership = cluster(adj, method, adjOptions, methodOptions)
+function membership = cluster(graph, method, graphOpts, methodOpts)
 %CLUSTER perform community detection on a graph
-%   MEMBERSHIP = CLUSTER(ADJ, METHOD) use METHOD to find a community structure
-%       for the graph. See below for method specific options.
+%   MEMBERSHIP = CLUSTER(GRAPH, METHOD) use METHOD to find a community
+%       structure for the graph. See below for method specific options.
 %
 %   The allowed methods are: 'optimal', 'SpinGlass', 'LeadingEigenvector',
 %   'walktrap', 'EdgeBetweenness', 'FastGreedy', 'multilevel', 'louvain',
@@ -17,16 +17,16 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %   Additionally, Leiden can optimize with the constant Potts model (default)
 %   instead of modularity which may be a better metric to optimize off of (see:
 %   Santo Fortunato & Marc Barthélemy (2007) Resolution Limit in Community
-%   Detection, Proceedings of the National Academy of Sciences. and
-%   V. A. Traag, P. Van Dooren & Y. Nesterov (2011) Narrow Scope for
+%   Detection, Proceedings of the National Academy of Sciences. and V. A.
+%   Traag, P. Van Dooren & Y. Nesterov (2011) Narrow Scope for
 %   Resolution-Limit-Free Community Detection, Physical Review E.).
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'optimal') Find the community structure that
+%   MEMBERSHIP = CLUSTER(GRAPH, 'optimal') Find the community structure that
 %       maximizes Newman's modularity. This algorithm is slow for larger graphs
-%       and likely unfeasible for graphs beyond ~100 nodes.
-%       See igraph.optimalModularity to find only the modularity.
+%       and likely unfeasible for graphs beyond ~100 nodes. See
+%       igraph.optimalModularity to find only the modularity.
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'SpinGlass', ...) Use the spinglass clustering
+%   MEMBERSHIP = CLUSTER(GRAPH, 'SpinGlass', ...) Use the spinglass clustering
 %       algorithm. Additional arguments:
 %
 %        Name             Description
@@ -50,16 +50,16 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %        'negResolution'  Resolution parameter for negative weights, if there
 %                         are any (default 0.1).
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'LeadingEigenvector') Not implemented.
+%   MEMBERSHIP = CLUSTER(GRAPH, 'LeadingEigenvector') Not implemented.
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'walktrap') A random walker based community
+%   MEMBERSHIP = CLUSTER(GRAPH, 'walktrap') A random walker based community
 %       detection algorithm.
 %
 %        Name      Description
 %       --------------------------------------------------------------------
 %        'nSteps'  The length of random walks (default 4);
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'edgebetweenness') Community detection based on
+%   MEMBERSHIP = CLUSTER(GRAPH, 'edgebetweenness') Community detection based on
 %       separating communities by removing heavily traveled edges until
 %       isolated islands forms. This assumes communities are well separated
 %       except for a few hub edges that allow for cross-community
@@ -70,11 +70,11 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %        'isweighted'  Whether to treat the graphs as weighted or not (defaults
 %                      result of IGRAPH.ISWEIGHTED).
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'fastgreedy') A fast approximation of the
+%   MEMBERSHIP = CLUSTER(GRAPH, 'fastgreedy') A fast approximation of the
 %       community structure that maximizes Newman's modularity.
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'multilevel')
-%   MEMBERSHIP = CLUSTER(ADJ, 'louvain') Run the 'multilevel' community
+%   MEMBERSHIP = CLUSTER(GRAPH, 'multilevel')
+%   MEMBERSHIP = CLUSTER(GRAPH, 'louvain') Run the 'multilevel' community
 %       detection algorithm, often referred to as 'Louvain'.
 %
 %        Name          Description
@@ -82,7 +82,7 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %        'resolution'  Larger resolutions favor smaller communities (default 1,
 %                      the original multilevel definition).
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'leiden') A community detection algorithm based
+%   MEMBERSHIP = CLUSTER(GRAPH, 'leiden') A community detection algorithm based
 %       off multilevel to improve some known weaknesses in the multilevel
 %       algorithm. By default it uses the Constant Potts Model (CPM) instead of
 %       modularity for optimizing. If unsure, Leiden is a good choice for an
@@ -103,7 +103,7 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %                      each node in its own community. Community labels should
 %                      start with 1.
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'fluidcommunities') A community detection
+%   MEMBERSHIP = CLUSTER(GRAPH, 'fluidcommunities') A community detection
 %       algorithm based on simulating interacting fluids flowing through the
 %       graph. Edge weights will be ignored for this method.
 %
@@ -112,7 +112,7 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %        'nCommunities' Number of communities to define (default 4). This value
 %                       should be changed to something sensible for the graph.
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'labelpropagation') Cluster nodes based on the
+%   MEMBERSHIP = CLUSTER(GRAPH, 'labelpropagation') Cluster nodes based on the
 %       labels of their neighbors.
 %
 %        Name      Description
@@ -131,7 +131,7 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %                  equal to the number of nodes in the graph. Defaults to all
 %                  false (all nodes can be relabeled freely).
 %
-%   MEMBERSHIP = CLUSTER(ADJ, 'infomap') The infomap community detection
+%   MEMBERSHIP = CLUSTER(GRAPH, 'infomap') The infomap community detection
 %       algorithm.
 %
 %        Name          Description
@@ -144,35 +144,35 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
 %   See also igraph.modularity, igraph.compare.
 
     arguments
-        adj {igraph.args.mustBeGraph};
+        graph {igraph.args.mustBeGraph};
         method (1, :) char ...
             {igraph.args.mustBeMemberi(method, ...
-                           {'optimal', 'spinglass', 'leadingeigenvector', ...
-                            'walktrap', 'edgebetweenness', 'fastgreedy', ...
-                            'multilevel', 'louvain', 'leiden', ...
-                            'fluidcommunities', 'labelpropagation', ...
-                            'infomap'})};
+                                       {'optimal', 'spinglass', 'leadingeigenvector', ...
+                                        'walktrap', 'edgebetweenness', 'fastgreedy', ...
+                                        'multilevel', 'louvain', 'leiden', ...
+                                        'fluidcommunities', 'labelpropagation', ...
+                                        'infomap'})};
 
-        adjOptions.isdirected (1, 1) logical = igraph.isdirected(adj);
-        methodOptions.nSpins;
-        methodOptions.parallel;
-        methodOptions.tempStart;
-        methodOptions.tempEnd;
-        methodOptions.coolingFactor;
-        methodOptions.updateRule;
-        methodOptions.resolution;
-        methodOptions.negResolution;
-        methodOptions.initial;
-        methodOptions.maxSteps;
-        methodOptions.nSteps;
-        methodOptions.isweighted;
-        methodOptions.randomness;
-        methodOptions.nIterations;
-        methodOptions.metric;
-        methodOptions.fixed;
-        methodOptions.mode;
-        methodOptions.nTrials;
-        methodOptions.nodeWeights;
+        graphOpts.isdirected (1, 1) logical = igraph.isdirected(graph);
+        methodOpts.nSpins;
+        methodOpts.parallel;
+        methodOpts.tempStart;
+        methodOpts.tempEnd;
+        methodOpts.coolingFactor;
+        methodOpts.updateRule;
+        methodOpts.resolution;
+        methodOpts.negResolution;
+        methodOpts.initial;
+        methodOpts.maxSteps;
+        methodOpts.nSteps;
+        methodOpts.isweighted;
+        methodOpts.randomness;
+        methodOpts.nIterations;
+        methodOpts.metric;
+        methodOpts.fixed;
+        methodOpts.mode;
+        methodOpts.nTrials;
+        methodOpts.nodeWeights;
     end
 
     method = lower(method);
@@ -180,37 +180,37 @@ function membership = cluster(adj, method, adjOptions, methodOptions)
         method = 'multilevel';
     end
 
-    methodOptions = namedargs2cell(methodOptions);
+    methodOpts = namedargs2cell(methodOpts);
     switch method
       case 'optimal'
-        methodOptions = parseNullOptions(adj, methodOptions{:});
+        methodOpts = parseNullOptions(graph, methodOpts{:});
       case 'spinglass'
-        methodOptions = parseSpinglassOptions(adj, methodOptions{:});
+        methodOpts = parseSpinglassOptions(graph, methodOpts{:});
       case 'leadingeigenvector'
         % Currently crashing Matlab with an memalloc error.
         error("igraph:notImplemented", ...
               "LeadingEigenvector currently not implemented.");
-        methodOptions = parseLeadingEigenvectorOptions(adj, methodOptions{:});
+        methodOpts = parseLeadingEigenvectorOptions(graph, methodOpts{:});
       case 'walktrap'
-        methodOptions = parseWalktrapOptions(adj, methodOptions{:});
+        methodOpts = parseWalktrapOptions(graph, methodOpts{:});
       case 'edgebetweenness'
-        methodOptions = parseEdgeBetweenness(adj, methodOptions{:});
+        methodOpts = parseEdgeBetweenness(graph, methodOpts{:});
       case 'fastgreedy'
-        methodOptions = parseNullOptions(adj, methodOptions{:});
+        methodOpts = parseNullOptions(graph, methodOpts{:});
       case 'multilevel'
-        methodOptions = parseMultilevelOptions(adj, methodOptions{:});
+        methodOpts = parseMultilevelOptions(graph, methodOpts{:});
       case 'leiden'
-        methodOptions = parseLeidenOptions(adj, methodOptions{:});
+        methodOpts = parseLeidenOptions(graph, methodOpts{:});
       case 'fluidcommunities'
-        methodOptions = parseFluidCommunitiesOptions(adj, methodOptions{:});
+        methodOpts = parseFluidCommunitiesOptions(graph, methodOpts{:});
       case 'labelpropagation'
-        methodOptions = parseLabelPropagationOptions(adj, methodOptions{:});
+        methodOpts = parseLabelPropagationOptions(graph, methodOpts{:});
       case 'infomap'
-        methodOptions = parseInfomapOptions(adj, methodOptions{:});
+        methodOpts = parseInfomapOptions(graph, methodOpts{:});
     end
 
-    membership = mexIgraphDispatcher(mfilename(), adj, method, adjOptions, ...
-                                     methodOptions);
+    membership = mexIgraphDispatcher(mfilename(), graph, method, graphOpts, ...
+                                     methodOpts);
 end
 
 function opts = parseNullOptions(~)
@@ -221,11 +221,11 @@ function opts = parseNullOptions(~)
     opts = struct();
 end
 
-function opts = parseSpinglassOptions(adj, opts)
+function opts = parseSpinglassOptions(graph, opts)
     arguments
-        adj %#ok<INUSA>
+        graph %#ok<INUSA>
         opts.nSpins (1, 1) {mustBePositive, mustBeInteger} = 4;
-        opts.parallel (1, 1) logical = min(adj) > 0;
+        opts.parallel (1, 1) logical = min(graph) > 0;
         opts.tempStart (1, 1) {mustBeNumeric} = 1;
         opts.tempEnd (1, 1) {mustBeNumeric} = 0.01;
         opts.coolingFactor (1, 1) {mustBeNumeric} = 0.99;
@@ -239,11 +239,11 @@ function opts = parseSpinglassOptions(adj, opts)
     opts.updateRule = lower(opts.updateRule);
 end
 
-function opts = parseLeadingEigenvectorOptions(adj, opts)
+function opts = parseLeadingEigenvectorOptions(graph, opts)
     arguments
-        adj %#ok<INUSA>
+        graph %#ok<INUSA>
         opts.maxSteps (1, 1) {mustBePositive, mustBeInteger} = 5;
-        opts.initial (1, :) {mustBePartition} = 1:length(adj)
+        opts.initial (1, :) {mustBePartition} = 1:length(graph)
     end
 
     opts.initial = opts.initial - 1;
@@ -256,10 +256,10 @@ function opts = parseWalktrapOptions(~, opts)
     end
 end
 
-function opts = parseEdgeBetweenness(adj, opts)
+function opts = parseEdgeBetweenness(graph, opts)
     arguments
-        adj %#ok<INUSA>
-        opts.isweighted (1, 1) logical = igraph.isweighted(adj);
+        graph %#ok<INUSA>
+        opts.isweighted (1, 1) logical = igraph.isweighted(graph);
     end
 end
 
@@ -270,9 +270,9 @@ function opts = parseMultilevelOptions(~, opts)
     end
 end
 
-function opts = parseLeidenOptions(adj, opts)
+function opts = parseLeidenOptions(graph, opts)
     arguments
-        adj  %#ok<INUSA>
+        graph  %#ok<INUSA>
         opts.resolution (1, 1) {mustBeNumeric} = 1;
         opts.randomness (1, 1) {mustBePositive} = 0.01;
         opts.nIterations (1, 1) {mustBeInteger} = -1;
@@ -280,7 +280,7 @@ function opts = parseLeidenOptions(adj, opts)
             {igraph.args.mustBeMemberi(opts.metric, ...
                                        {'modularity', 'cpm', ...
                                         'constantpottsmodel'})} = 'cpm';
-        opts.initial (1, :) {mustBePartition} = 1:length(adj);
+        opts.initial (1, :) {mustBePartition} = 1:length(graph);
     end
 
     opts.initial = opts.initial - 1;
@@ -298,12 +298,12 @@ function opts = parseFluidCommunitiesOptions(~, opts)
     end
 end
 
-function opts = parseLabelPropagationOptions(adj, opts)
+function opts = parseLabelPropagationOptions(graph, opts)
     arguments
-        adj %#ok<INUSA>
+        graph %#ok<INUSA>
         opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
-        opts.initial (1, :) {mustBePartition} = 1:length(adj);
-        opts.fixed (1, :) logical = false(1, length(adj));
+        opts.initial (1, :) {mustBePartition} = 1:length(graph);
+        opts.fixed (1, :) logical = false(1, length(graph));
     end
 
     opts.initial = opts.initial - 1;
@@ -315,14 +315,14 @@ function opts = parseLabelPropagationOptions(adj, opts)
     end
 end
 
-function opts = parseInfomapOptions(adj, opts)
+function opts = parseInfomapOptions(graph, opts)
     arguments
-        adj
+        graph
         opts.nTrials (1, 1) {mustBePositive,mustBeInteger} = 1;
-        opts.nodeWeights (1, :) {mustBePositive} = ones(1, length(adj));
+        opts.nodeWeights (1, :) {mustBePositive} = ones(1, length(graph));
     end
 
-    if length(opts.nodeWeights) ~= length(adj)
+    if length(opts.nodeWeights) ~= length(graph)
         throwAsCaller(MException("Igraph:wrongLength", ...
                                  "The length of node weights must be" + ...
                                  " equal to the number of nodes in the" + ...

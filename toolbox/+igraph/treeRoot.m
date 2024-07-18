@@ -1,21 +1,21 @@
-function root = treeRoot(adj, opts)
+function root = treeRoot(graph, opts)
 %TREEROOT find the root node of the tree graph.
-%   ROOT = TREEROOT(ADJ) return the vertex id of the tree root.
-%   If adj is not a tree, returns 0.
+%   ROOT = TREEROOT(GRAPH) return the vertex id of the tree root.
+%   If graph is not a tree, returns 0.
 %
 %   See also igraph.istree.
 
     arguments
-        adj {igraph.args.mustBeGraph};
+        graph {igraph.args.mustBeGraph};
         opts.isdirected (1, 1) logical;
         opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
     end
 
     if ~igraph.args.isoptionset(opts, "isdirected")
-       opts.isdirected = ~issymmetric(adj) || opts.mode ~= "all";
+       opts.isdirected = ~issymmetric(graph) || opts.mode ~= "all";
     end
 
     opts.mode = lower(opts.mode);
     opts.findRoot = true;
-    root = mexIgraphDispatcher("isTree", adj, opts);
+    root = mexIgraphDispatcher("isTree", graph, opts);
 end

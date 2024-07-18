@@ -1,11 +1,11 @@
-function TF = isdirected(adj)
+function TF = isdirected(graph)
 %ISDIRECTED guess if a graph is directed.
-%   TF = ISDIRECTED(ADJ) returns false if the ADJ is symmetric or a upper or lower
-%   triangular matrix, true otherwise.
+%   TF = ISDIRECTED(GRAPH) returns false if the GRAPH is symmetric or a upper
+%   or lower triangular matrix, true otherwise.
 %
-%   See also igraph.isweighted
+%   See also IGRAPH.ISWEIGHTED.
 
     % NOTE: Using igraph wrapper instead of matlab builtins because tril/triu
     % do not work with logicals.
-    TF = mexIgraphIsDirected(adj);
+    TF = mexIgraphIsDirected(graph);
 end

@@ -1,22 +1,21 @@
-function save(filename, adj, ioOptions, adjOptions)
+function save(filename, graph, ioOpts, graphOpts)
 %SAVE write a graph to file
-%   SAVE(FILENAME, ADJ) write the graph ADJ to FILENAME. The storage format
+%   SAVE(FILENAME, GRAPH) write the graph GRAPH to FILENAME. The storage format
 %       used will be guessed by the file extension. WARNING: This will write
 %       over a preexisting file with the same name.
 %
-%   SAVE(FILENAME, ADJ, 'FORMAT', FORMAT) use the provided FORMAT to store the
-%       graph instead of trying to determine the format from the file's
+%   SAVE(FILENAME, GRAPH, 'FORMAT', FORMAT) use the provided FORMAT to store
+%       the graph instead of trying to determine the format from the file's
 %       extension. WARNING: Not all formats that can be saved by igraph can be
-%       read, compare format list with IGRAPH.LOAD's list.
-%
-%       Additionally, file types 'ncol' and 'lgl' use names instead of IDs to
-%       track vertices. While it may be useful to be able to read in these file
-%       types, given that this toolbox does not have a method for storing names
-%       these are likely not the most sensible file types for use within the
-%       toolbox. These will also drop information about node order, so the
-%       results of saving then loading will be a graph that is guaranteed to be
-%       isomorphic (see IGRAPH.ISOMORPHIC) to the original graph but not
-%       necessarily equal based on ISEQUAL (nodes are likely to be rearranged).
+%       read, compare format list with IGRAPH.LOAD's list. Additionally, file
+%       types 'ncol' and 'lgl' use names instead of IDs to track vertices.
+%       While it may be useful to be able to read in these file types, given
+%       that this toolbox does not have a method for storing names these are
+%       likely not the most sensible file types for use within the toolbox.
+%       These will also drop information about node order, so the results of
+%       saving then loading will be a graph that is guaranteed to be isomorphic
+%       (see IGRAPH.ISOMORPHIC) to the original graph but not necessarily equal
+%       based on ISEQUAL (nodes are likely to be rearranged).
 %
 %   Available formats are:
 %      Format       File Extension    Description
@@ -44,7 +43,7 @@ function save(filename, adj, ioOptions, adjOptions)
 %       the graph.
 %
 %       If ISWEIGHTED is set to false, the weights will not be saved
-%       even if the adj is weighted. If ISDIRECTED is set to false, the
+%       even if the graph is weighted. If ISDIRECTED is set to false, the
 %       direction of edges may be dropped (i.e. A(j, i) may be stored as
 %       A(i, j)). Otherwise, if ISDIRECTED is set to true, edges A(i, j) and
 %       A(j, i) will be stored for all i,j in adjacency matrix A, even if A is
@@ -59,23 +58,23 @@ function save(filename, adj, ioOptions, adjOptions)
 
     arguments
         filename char {mustBeVector}
-        adj {igraph.args.mustBeGraph}
-        ioOptions.format char {mustBeVector} = guessFileFormat(filename);
-        ioOptions.overwrite (1, 1) logical = false;
-        adjOptions.isweighted (1, 1) logical = igraph.isweighted(adj);
-        adjOptions.isdirected (1, 1) logical = igraph.isdirected(adj);
+        graph {igraph.args.mustBeGraph}
+        ioOpts.format char {mustBeVector} = guessFileFormat(filename);
+        ioOpts.overwrite (1, 1) logical = false;
+        graphOpts.isweighted (1, 1) logical = igraph.isweighted(graph);
+        graphOpts.isdirected (1, 1) logical = igraph.isdirected(graph);
     end
 
-    if ~ioOptions.overwrite && exist(filename, 'file')
+    if ~ioOpts.overwrite && exist(filename, 'file')
         error("igraph:fileExists", "A file already exists at '%s'.\n\n" + ...
               "Change the 'overwrite' name-value pair to true to write " + ...
               "over the old file or choose a new filename.", ...
-             filename);
+              filename);
     end
 
-    switch ioOptions.format
+    switch ioOpts.format
       case 'mat'
-        save(filename, 'adj');
+        save(filename, 'graph');
         return
       case 'edgelist'
         mustBeUnweighted();
@@ -83,30 +82,30 @@ function save(filename, adj, ioOptions, adjOptions)
         mustBeUndirected();
     end
 
-    mexIgraphDispatcher(mfilename(), filename, adj, ioOptions.format, ...
-                        adjOptions);
+    mexIgraphDispatcher(mfilename(), filename, graph, ioOpts.format, ...
+                        graphOpts);
 
     function mustBeUndirected()
-        if adjOptions.isdirected
+        if graphOpts.isdirected
             eid = "Igraph:directed";
             msg = "The '%s' format can only store undirected graphs but " + ...
-                  "the provided adj is directed.\n\nYou can override " + ...
+                  "the provided graph is directed.\n\nYou can override " + ...
                   "this error by setting the 'isdirected' name-value " + ...
                   "argument to false but this will lose information " + ...
                   "if the graph is directed.";
-            throwAsCaller(MException(eid, msg, ioOptions.format));
+            throwAsCaller(MException(eid, msg, ioOpts.format));
         end
     end
 
     function mustBeUnweighted()
-        if adjOptions.isweighted
+        if graphOpts.isweighted
             eid = "Igraph:weighted";
             msg = "The '%s' format can only store unweighted graphs but " + ...
-                  "the provided adj has values outside {0, 1}.\n\n " + ...
+                  "the provided graph has values outside {0, 1}.\n\n " + ...
                   "You can override this error by setting the " + ...
                   "'isweighted' name-value argument to false, but the " + ...
                   "graph's weights will be not be saved.";
-            throwAsCaller(MException(eid, msg, ioOptions.format));
+            throwAsCaller(MException(eid, msg, ioOpts.format));
         end
     end
 end

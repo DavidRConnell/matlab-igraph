@@ -1,27 +1,27 @@
-function TF = isisomorphic(adj1, adj2, adj1Options, adj2Options)
-%ISISOMORPHIC test if adj1 and adj2 are isomorphic
-%   TF = ISISOMORPHIC(ADJ1, ADJ2) returns true if ADJ1 and ADJ2 are the
+function TF = isisomorphic(g1, g2, g1Opts, g2Opts)
+%ISISOMORPHIC test if two graphs are isomorphic
+%   TF = ISISOMORPHIC(GRAPH1, GRAPH2) returns true if GRAPH1 and GRAPH2 are the
 %       equivalent when ignoring the order of nodes.
 %
-%   TF = ISISOMORPHIC(ADJ1, ADJ2, ADJ1ISDIRECTED, ADJ2ISDIRECTED) override the
-%       guesses for whether ADJ1 and ADJ2 are directed. If they are not both
-%       the same (both directed or both undirected) an error is triggered.
+%   TF = ISISOMORPHIC(GRAPH1, GRAPH2, G1ISDIRECTED, G2ISDIRECTED) override the
+%       guesses for whether GRAPH1 and GRAPH2 are directed. If they are not
+%       both the same (both directed or both undirected) an error is triggered.
 
     arguments
-        adj1 {igraph.args.mustBeGraph}
-        adj2 {igraph.args.mustBeGraph}
-        adj1Options.adj1isdirected (1, 1) logical = igraph.isdirected(adj1);
-        adj2Options.adj2isdirected (1, 1) logical = igraph.isdirected(adj2);
+        g1 {igraph.args.mustBeGraph}
+        g2 {igraph.args.mustBeGraph}
+        g1Opts.g1isdirected (1, 1) logical = igraph.isdirected(g1);
+        g2Opts.g2isdirected (1, 1) logical = igraph.isdirected(g2);
     end
 
-    adj1Options.isdirected = adj1Options.adj1isdirected;
-    adj2Options.isdirected = adj2Options.adj2isdirected;
-    if adj1Options.isdirected ~= adj2Options.isdirected
+    g1Opts.isdirected = g1Opts.g1isdirected;
+    g2Opts.isdirected = g2Opts.g2isdirected;
+    if g1Opts.isdirected ~= g2Opts.isdirected
        eid = "igraph:inconsistentProperties";
        msg = "Graphs must both be directed or both be undirected to " + ...
              "test if isomorphic.";
        error(eid, msg);
     end
 
-    TF = mexIgraphDispatcher(mfilename(), adj1, adj2, adj1Options, adj2Options);
+    TF = mexIgraphDispatcher(mfilename(), g1, g2, g1Opts, g2Opts);
 end
