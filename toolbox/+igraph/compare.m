@@ -39,7 +39,7 @@ end
 
 function mustBeEqualLength(a, b)
     if ~isequal(length(a), length(b))
-        eid = 'Igraph:Length:notEqual';
+        eid = 'igraph:notEqualLength';
         msg = 'Length of first membership vector must be the same as second membership vector.';
         throwAsCaller(MException(eid, msg));
     end

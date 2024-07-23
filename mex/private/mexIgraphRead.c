@@ -51,7 +51,7 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
                                       IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed);
     break;
   case MXIGRAPH_FORMAT_DIMACS:
-    mexIgraphError("Igraph:notImplemented",
+    mexIgraphError("igraph:notImplemented",
                    "The DIMACS format has not been implemented in matlab-igraph");
     break;
   case MXIGRAPH_FORMAT_GRAPHDB:
@@ -61,7 +61,7 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
     oldhandler = igraph_set_error_handler(igraph_error_handler_ignore);
     errorcode = igraph_read_graph_graphml(&graph, fptr, index);
     if (errorcode == IGRAPH_UNIMPLEMENTED) {
-      mexIgraphError("Igraph:notSupported",
+      mexIgraphError("igraph:notSupported",
                      "igraph was compiled without GraphML support.");
     }
     igraph_set_error_handler(oldhandler);
@@ -76,11 +76,11 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
     errorcode = igraph_read_graph_dl(&graph, fptr, is_directed);
     break;
   case MXIGRAPH_FORMAT_DOT:
-    mexIgraphError("Igraph:notImplemented",
+    mexIgraphError("igraph:notImplemented",
                    "Upstream igraph does not support reading DOT files.");
     break;
   case MXIGRAPH_FORMAT_LEDA:
-    mexIgraphError("Igraph:notImplemented",
+    mexIgraphError("igraph:notImplemented",
                    "Upstream igraph does not support reading LEDA files.");
     break;
   default:

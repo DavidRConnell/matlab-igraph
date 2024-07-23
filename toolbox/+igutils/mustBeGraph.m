@@ -1,7 +1,7 @@
 function mustBeGraph(graph)
 %MUSTBEGRAPH assert the argument is a valid graph
 
-    eid = "Igraph:NotGraph";
+    eid = "igraph:NotGraph";
     msg = "";
 
     if isa(graph, "graph") || isa(graph, "digraph")

@@ -53,7 +53,7 @@ function varargout = correlatedPair(x, graphOpts, methodOpts)
         [g1, g2] = generatePair(x, graphOpts{:}, methodOpts{:});
         varargout = {g1, g2};
     else
-        error("Igraph:tooManyOutputs", "correlatedPair returns two or " + ...
+        error("igraph:tooManyOutputs", "correlatedPair returns two or " + ...
               "less values, %d requested.", nargout);
     end
 end

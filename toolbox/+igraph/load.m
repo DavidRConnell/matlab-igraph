@@ -110,7 +110,7 @@ function graph = load(filename, ioOptions, graphOpts)
     end
 
     if strcmp(graphOpts.dtype, 'logical') && graphOpts.isweighted
-        error("Igraph:badDataType", "Cannot use a logical adjacency " + ...
+        error("igraph:badDataType", "Cannot use a logical adjacency " + ...
               "matrix to represent weighted graph.");
     end
 

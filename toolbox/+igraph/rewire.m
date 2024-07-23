@@ -42,12 +42,12 @@ function graph = rewire(graph, graphOpts, methodOpts)
     graphOpts = igutils.setGraphInProps(graph, graphOpts{:});
 
     if methodOpts.preserveDegree && ~strcmp(methodOpts.mode, 'all')
-        error("Igraph:overConstrained", "Cannot preserve degree without " + ...
+        error("igraph:overConstrained", "Cannot preserve degree without " + ...
               "modifying both ends of edges.");
     end
 
     if methodOpts.probability > 0 && methodOpts.nRewires > 0
-        error("Igraph:overConstrained", "Cannot set both the " + ...
+        error("igraph:overConstrained", "Cannot set both the " + ...
               "probability of a rewire and the number of rewires.");
     end
 
@@ -56,7 +56,7 @@ function graph = rewire(graph, graphOpts, methodOpts)
     end
 
     if methodOpts.nRewires > igraph.numedges(graph)
-        error("Igraph:tooManyRewires", "Cannot have more rewires than " + ...
+        error("igraph:tooManyRewires", "Cannot have more rewires than " + ...
               "edges.\nGraph only has %d edges requested %d rewires.", ...
               igraph.numedges(graph), methodOpts.nRewires);
     end

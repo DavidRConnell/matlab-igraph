@@ -656,7 +656,7 @@ function opts = parseOptionsBarabasi(method, opts)
     if igutils.isoptionset(opts, "nNodes")
         if (length(opts.nConnections) > 1) && ...
            ((length(opts.nConnections)) ~= opts.nNodes)
-            eid = "Igraph:invalidVectorLength";
+            eid = "igraph:invalidVectorLength";
             msg = "If out sequence is not a scalar it must have " + ...
                   "length equal to the number of nodes.";
            throwAsCaller(MException(eid, msg));
@@ -670,13 +670,13 @@ function opts = parseOptionsBarabasi(method, opts)
     end
 
     if method == "barabasibag" && opts.power ~= 1
-        eid = "Igraph:badPower";
+        eid = "igraph:badPower";
         throwAsCaller(MException(eid, ...
                                  "Power must be 1 when using BarabasiBag."));
     end
 
     if method == "barabasibag" && opts.attractiveness ~= 1
-        eid = "Igraph:badAttractiveness";
+        eid = "igraph:badAttractiveness";
         throwAsCaller(MException(eid, "Attractiveness must be 1 when " + ...
                                   "using BarabasiBag."));
     end

@@ -1,4 +1,4 @@
-#+TITLE: Igraph toolbox
+#+TITLE: igraph toolbox
 
 #+ATTR_HTML: :width 200
 [[./images/matlab_igraph_logo.svg]]
@@ -9,7 +9,7 @@ Toolbox for integrating the [[https://igraph.org/][igraph]] C library with MATLA
 
 See [[https://davidrconnell.github.io/matlab-igraph][The documentation]] for a more thorough introduction.
 
-*In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute. Additionally, you should not see any internal errors (i.e. error ids of the form ~Igraph:internal:something~), please open an issue if you find one.
+*In early development*: Still missing many features and may be buggy. Please report any crashes you have by opening an issue and feel free to make feature requests, suggest changes, or contribute. Additionally, you should not see any internal errors (i.e. error ids of the form ~igraph:internal:something~), please open an issue if you find one.
 Also note, I am not familiar with all the file formats supported by igraph, so if any of read/write logic is not sensible, let me know by opening an issue.
 
 The igraph C library provides efficient graph analysis functions including graph generation, reading/writing graphs to file, and community detection.

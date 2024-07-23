@@ -22,6 +22,6 @@ function varargout = version(type)
         v = mexIgraphVersion(type);
         varargout = {v};
     else
-        error("Igraph:tooManyOutputs", "Version only returns one value.");
+        error("igraph:tooManyOutputs", "Version only returns one value.");
     end
 end

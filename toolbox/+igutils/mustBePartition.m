@@ -1,7 +1,7 @@
 function mustBePartition(membership)
 %MUSTBEPARTITION assert the argument is a valid membership vector
 
-    eid = "Igraph:NotMembershipVector";
+    eid = "igraph:NotMembershipVector";
     msg = "";
     if ~isnumeric(membership)
         msg = "Membership vector must be numeric or logical";

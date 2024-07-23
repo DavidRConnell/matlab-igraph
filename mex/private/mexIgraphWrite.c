@@ -61,18 +61,18 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
     }
     break;
   case MXIGRAPH_FORMAT_DIMACS:
-    mexIgraphError("Igraph:notImplemented",
+    mexIgraphError("igraph:notImplemented",
                    "The DIMACS format has not been implemented in matlab-igraph.");
     break;
   case MXIGRAPH_FORMAT_GRAPHDB:
-    mexIgraphError("Igraph:notImplemented",
+    mexIgraphError("igraph:notImplemented",
                    "Upstream igraph does not support writing to graphdb format.");
     break;
   case MXIGRAPH_FORMAT_GRAPHML:
     oldhandler = igraph_set_error_handler(igraph_error_handler_ignore);
     errorcode = igraph_write_graph_graphml(&graph, fptr, true);
     if (errorcode == IGRAPH_UNIMPLEMENTED) {
-      mexIgraphError("Igraph:notSupported",
+      mexIgraphError("igraph:notSupported",
                      "igraph was compiled without GraphML support.");
     }
     igraph_set_error_handler(oldhandler);
@@ -82,7 +82,7 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
                                        0, NULL);
     break;
   case MXIGRAPH_FORMAT_PAJEK:
-    mexIgraphError("Igraph:notImplemented",
+    mexIgraphError("igraph:notImplemented",
                    "Upstream igraph does not support writing to dl format.");
     break;
   case MXIGRAPH_FORMAT_DOT:
@@ -98,7 +98,7 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
   default:
     fclose(fptr);
     igraph_destroy(&graph);
-    mexErrMsgIdAndTxt("Igraph:unknownFileType",
+    mexErrMsgIdAndTxt("igraph:unknownFileType",
                       "Unrecognized file format %s. See `help igraph.save` for available file formats.",
                       format);
     exit(1);
