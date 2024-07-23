@@ -1,3 +1,21 @@
+/* Copyright 2024 David R. Connell <david32@dcon.addy.io>.
+ *
+ * This file is part of matlab-igraph.
+ *
+ * matlab-igraph is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * matlab-igraph is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 /* Functions for converting between MATLAB and igraph data types. Since C uses
    0-based and MATLAB 1-based indices, it is often necessary to shift values up
    when when going from C to MATLAB types or down 1 when going the other way.
@@ -18,11 +36,11 @@ int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec,
   }
 
   if (!mxIgraphIsVector(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotVector", "Input should be a vector.");
+    mexErrMsgIdAndTxt("igraph:notVector", "Input should be a vector.");
   }
 
   if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input vector should be double.");
+    mexErrMsgIdAndTxt("igraph:notDouble", "Input vector should be double.");
   }
 
   mxDouble* const x_mat = mxGetDoubles(p);
@@ -66,11 +84,11 @@ int mxIgraphVectorIntFromArray(const mxArray* p, igraph_vector_int_t* vec,
   }
 
   if (!mxIgraphIsVector(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotVector", "Input should be a vector.");
+    mexErrMsgIdAndTxt("igraph:notVector", "Input should be a vector.");
   }
 
   if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input vector should be double.");
+    mexErrMsgIdAndTxt("igraph:notDouble", "Input vector should be double.");
   }
 
   mxDouble* x_mat = mxGetDoubles(p);
