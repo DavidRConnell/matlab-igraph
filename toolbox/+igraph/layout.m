@@ -1,4 +1,4 @@
-function pos = layout(graph, method, opts, methodOpts)
+function pos = layout(graph, method, graphOpts, methodOpts)
 %LAYOUT position graph vertices for plotting
 %   POS = LAYOUT(GRAPH, METHOD) use METHOD to generate coordinates for all nodes
 %       in GRAPH. Layout will often be created indirectly by igraph.plot, but
@@ -17,7 +17,7 @@ function pos = layout(graph, method, opts, methodOpts)
 %       'Reingoldtilford' ('rt').
 %
 %   Trying to use a tree layout for a non-tree graph (that fails
-%   IGRAPH.ISTREE), will trigger an error.
+%   IGRAPH.ISTREE) will trigger an error.
 %
 %   Not all methods take into consider edges or edge weights. Methods that uses
 %   edge weights are: 'FruchtermanReingold' and 'KamadaKawai'.
@@ -30,7 +30,7 @@ function pos = layout(graph, method, opts, methodOpts)
 %        Name    Description
 %       --------------------------------------------------------------------
 %        'order' A vector of node indices (starting at 1) specifying the order
-%                nodes should be plotted. Defaults to 1:length(GRAPH). The
+%                nodes should be plotted. Defaults to 1:nNodes(GRAPH). The
 %                length can be less than the number of nodes in which case
 %                nodes excluded from order will be placed at (0, 0).
 %
@@ -41,7 +41,7 @@ function pos = layout(graph, method, opts, methodOpts)
 %        'center' The index of the node to put in the center (default 1).
 %        'order'  A vector of node indices (including the center) specifying
 %                 the order nodes should be plotted. Defaults to
-%                 1:length(GRAPH).
+%                 1:nNodes(GRAPH).
 %
 %   POS = LAYOUT(GRAPH, 'grid', ...) Place nodes in a grid.
 %
@@ -149,7 +149,7 @@ function pos = layout(graph, method, opts, methodOpts)
 %        'coolExp'       Cooling exponent (default 1.5).
 %        'repulseRadius' The radius of repulsion (default nNodes ^ 3).
 %        'cellSize'      Size of the grid cells (default sqrt(nNodes)).
-%        'root'          The root node (default randi([1, length(graph)])).
+%        'root'          The root node (default randi([1, nNodes(graph)])).
 %
 %   POS = LAYOUT(GRAPH, 'ReingoldTilford', ...)
 %   POS = LAYOUT(GRAPH, 'rt', ...) Use the Reingold-Tilford tree layout
@@ -177,7 +177,7 @@ function pos = layout(graph, method, opts, methodOpts)
                                         'lgl', 'reingoldtilford', 'rt', ...
                                         'reingoldtilfordcircular'})};
 
-        opts.isdirected (1, 1) logical = igraph.isdirected(graph);
+        graphOpts.?igraph.args.GraphInProps;
         methodOpts.order;
         methodOpts.center;
         methodOpts.width;
@@ -215,6 +215,9 @@ function pos = layout(graph, method, opts, methodOpts)
         methodOpts.circular
     end
 
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igraph.args.setGraphInProps(graph, graphOpts{:});
+
     method = lower(method);
     if strcmp(method, 'fr')
         method = 'fruchtermanreingold';
@@ -228,7 +231,7 @@ function pos = layout(graph, method, opts, methodOpts)
 
     treeMethods = {'reingoldtilford'};
 
-    if any(contains(treeMethods, method)) && ~igraph.istree(graph)
+    if any(strcmp(treeMethods, method)) && ~igraph.istree(graph)
         error("igraph:notATree", "Requested a tree layout for a graph " + ...
               "that is not a tree.");
     end
@@ -271,8 +274,8 @@ function pos = layout(graph, method, opts, methodOpts)
               method);
     end
 
-    pos = mexIgraphDispatcher(mfilename(), graph, method, ...
-                              opts.isdirected, methodOpts);
+    pos = mexIgraphDispatcher(mfilename(), graph, method, graphOpts, ...
+                              methodOpts);
 end
 
 function opts = parseNullOptions(~)
@@ -285,16 +288,18 @@ end
 
 function opts = parseCircleOptions(graph, opts)
     arguments
-        graph;
-        opts.order (1, :) {mustBePositive, mustBeInteger} = 1:length(graph);
+        graph; %#ok<INUSA>
+        opts.order (1, :) {mustBePositive, mustBeInteger} = ...
+            1:igraph.numnodes(graph);
     end
 end
 
 function opts = parseStarOptions(graph, opts)
     arguments
-        graph;
+        graph; %#ok<INUSA>
         opts.center (1, 1) {mustBePositive, mustBeInteger} = 1;
-        opts.order (1, :) {mustBePositive, mustBeInteger} = 1:length(graph);
+        opts.order (1, :) {mustBePositive, mustBeInteger} = ...
+            1:igraph.numnodes(graph);
     end
 end
 
@@ -304,10 +309,11 @@ function opts = parseGridOptions(graph, opts)
         opts.width (1, 1) {mustBeNonnegative, mustBeInteger} = 0;
     end
 
-    if opts.width > length(graph)
+    if opts.width > igraph.numnodes(graph)
         throwAsCallor(MException("igraph:outOfBounds", ...
                                  "Width must be smaller than or equal " + ...
-                                 "to the number of nodes, %d", length(graph)));
+                                 "to the number of nodes, %d", ...
+                                 igraph.numnodes(graph)));
     end
 end
 
@@ -324,7 +330,7 @@ function opts = parseGraphoptOptions(graph, opts)
     end
 
     if opts.initial
-        if size(opts.initial, 1) ~= length(graph)
+        if size(opts.initial, 1) ~= igraph.numnodes(graph)
             throwAsCaller(MException("Igraph:wrongSize", ...
                                      "Initial must have exactly one " + ...
                                      "element for every node."));
@@ -341,7 +347,7 @@ function opts = parseBipartiteOptions(graph, opts)
         opts.maxIterations (1, 1) {mustBePositive, mustBeInteger} = 100;
     end
 
-    if length(opts.types) ~= length(graph)
+    if length(opts.types) ~= igraph.numnodes(graph)
         throwAsCaller(MException("Igraph:wrongSize", ...
                                  "Type vector must have exactly one " + ...
                                  "element for every node."));
@@ -358,7 +364,7 @@ function opts = parseFruchtermanReingoldOptions(graph, opts)
     end
 
     if opts.initial
-        if size(opts.initial, 1) ~= length(graph)
+        if size(opts.initial, 1) ~= igraph.numnodes(graph)
             throwAsCaller(MException("Igraph:wrongSize", ...
                                      "Initial must have exactly one " + ...
                                      "element for every node."));
@@ -378,14 +384,14 @@ function opts = parseKamadaKawaiOptions(graph, opts)
     arguments
         graph;
         opts.maxIterations (1, 1) {mustBePositive, mustBeInteger} = ...
-            10 * length(graph);
+            10 * igraph.numnodes(graph);
         opts.epsilon (1, 1) {mustBeNonnegative} = 0;
-        opts.constant (1, 1) {mustBeNonnegative} = length(graph);
+        opts.constant (1, 1) {mustBeNonnegative} = igraph.numnodes(graph);
         opts.initial (:, 2) double = [];
     end
 
     if opts.initial
-        if size(opts.initial, 1) ~= length(graph)
+        if size(opts.initial, 1) ~= igraph.numnodes(graph)
             throwAsCaller(MException("Igraph:wrongSize", ...
                                      "Initial must have exactly one " + ...
                                      "element for every node."));
@@ -397,15 +403,15 @@ function opts = parseGemOptions(graph, opts)
     arguments
         graph;
         opts.maxIterations (1, 1) {mustBePositive, mustBeInteger} = ...
-            (40 * (length(graph) ^ 2));
-        opts.tempMax (1, 1) double = length(graph);
+            (40 * (igraph.numnodes(graph) ^ 2));
+        opts.tempMax (1, 1) double = igraph.numnodes(graph);
         opts.tempMin (1, 1) double = 0.1;
-        opts.tempInit (1, 1) double = sqrt(length(graph));
+        opts.tempInit (1, 1) double = sqrt(igraph.numnodes(graph));
         opts.initial (:, 2) double = [];
     end
 
     if opts.initial
-        if size(opts.initial, 1) ~= length(graph)
+        if size(opts.initial, 1) ~= igraph.numnodes(graph)
             throwAsCaller(MException("Igraph:wrongSize", ...
                                      "Initial must have exactly one " + ...
                                      "element for every node."));
@@ -418,7 +424,7 @@ function opts = parseDavidsonharelOptions(graph, opts)
         graph;
         opts.maxIterations (1, 1) {mustBePositive, mustBeInteger} = 10;
         opts.fineIterations (1, 1) {mustBePositive, mustBeInteger} = ...
-            max(10, log2(length(graph)));
+            max(10, log2(igraph.numnodes(graph)));
         opts.coolingFactor (1, 1) double = 0.75;
         opts.initial (:, 2) double = [];
         opts.weightNodeDist (1, 1) double = 1;
@@ -429,7 +435,7 @@ function opts = parseDavidsonharelOptions(graph, opts)
     end
 
     if opts.initial
-        if size(opts.initial, 1) ~= length(graph)
+        if size(opts.initial, 1) ~= igraph.numnodes(graph)
             throwAsCaller(MException("Igraph:wrongSize", ...
                                      "Initial must have exactly one " + ...
                                      "element for every node."));
@@ -439,7 +445,7 @@ function opts = parseDavidsonharelOptions(graph, opts)
     if ~igraph.args.isoptionset(opts, 'weightEdgeLen') || ...
             ~igraph.args.isoptionset(opts, 'weightEdgeCross') || ...
             ~igraph.args.isoptionset(opts, 'weightNodeEdgeDist')
-        density = nnz(graph + graph') / (length(graph) ^ 2);
+        density = igraph.edgeDensity(graph);
     end
 
     if ~igraph.args.isoptionset(opts, 'weightEdgeLen')
@@ -457,11 +463,12 @@ end
 
 function opts = parseMdsOptions(~, opts)
     arguments
-        ~;
-        opts.distance (:, :) double {mustBeSquare} = [];
+        ~
+        opts.distance (:, :) double {igraph.args.mustBeSquare} = [];
     end
 
-    if ~isempty(opts.distance) && (length(opts.distance) ~= length(graph))
+    if ~isempty(opts.distance) && ...
+            (length(opts.distance) ~= igraph.numnodes(graph))
         throwAsCaller(MException("Igraph:wrongSize", ...
                                  "Distance matrix must have element " + ...
                                  "for every pair of nodes (i.e. a " + ...
@@ -471,20 +478,20 @@ end
 
 function opts = parseLglOptions(graph, opts)
     arguments
-        graph;
+        graph; %#ok<INUSA>
         opts.maxIterations (1, 1) {mustBePositive, mustBeInteger} = 150;
-        opts.stepMax (1, 1) {mustBeNonnegative} = length(graph);
-        opts.area (1, 1) {mustBeNonnegative} = length(graph) ^ 2;
+        opts.stepMax (1, 1) {mustBeNonnegative} = igraph.numnodes(graph);
+        opts.area (1, 1) {mustBeNonnegative} = igraph.numnodes(graph) ^ 2;
         opts.coolExp (1, 1) double = 1.5;
-        opts.repulseRadius (1, 1) {mustBePositive} = length(graph) ^ 3;
-        opts.cellSize (1, 1) {mustBePositive} = sqrt(length(graph));
-        opts.root (1, 1) {mustBePositive} = randi([1, length(graph)]);
+        opts.repulseRadius (1, 1) {mustBePositive} = igraph.numnodes(graph) ^ 3;
+        opts.cellSize (1, 1) {mustBePositive} = sqrt(igraph.numnodes(graph));
+        opts.root (1, 1) {mustBePositive} = randi([1, igraph.numnodes(graph)]);
     end
 end
 
-function opts = parseReingoldTilfordOptions(graph, opts)
+function opts = parseReingoldTilfordOptions(~, opts)
     arguments
-        graph;
+        ~
         opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
         opts.root (1, :) {mustBePositive, mustBeInteger} = [];
         opts.circular (1, 1) logical = false;

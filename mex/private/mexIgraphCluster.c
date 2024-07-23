@@ -70,7 +70,7 @@ static igraph_error_t mxIgraph_leading_eigenvector_i(igraph_t const* graph,
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init, false);
+  mxIgraphGetVectorInt(opts, "initial", &init, true);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
     VECTOR(*membership)[i] = VECTOR(init)[i];
   }
@@ -155,7 +155,7 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const* graph,
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init, false);
+  mxIgraphGetVectorInt(opts, "initial", &init, true);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
     VECTOR(*membership)[i] = VECTOR(init)[i];
   }
@@ -201,7 +201,7 @@ static igraph_error_t mxIgraph_label_propagation_i(igraph_t const* graph,
   igraph_vector_bool_t fixed;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &initial, false);
+  mxIgraphGetVectorInt(opts, "initial", &initial, true);
   mxIgraphGetVectorBool(opts, "fixed", &fixed, false);
 
   errcode = igraph_community_label_propagation(graph, membership, mode, weights,
@@ -233,19 +233,17 @@ static igraph_error_t mxIgraph_infomap_i(igraph_t const* graph,
   return errcode;
 }
 
-
 igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
                                 mxArray const* prhs[])
 {
-  VERIFY_N_INPUTS_ATLEAST(4);
+  VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const* adj_options = prhs[2];
+  mxArray const* graph_options = prhs[2];
   mxArray const* method_options = prhs[3];
   mxIgraph_cluster_t method;
   igraph_t graph;
   igraph_vector_t weights;
-  igraph_bool_t directed = mxIgraphGetBool(adj_options, "isdirected");
   igraph_vector_int_t membership;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
   typedef igraph_error_t (*cluster_method_t)(igraph_t const*,
@@ -269,7 +267,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
   method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_CLUSTER_N);
 
   if (method == MXIGRAPH_CLUSTER_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
+    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[1]));
     exit(1);
   }
 
@@ -290,14 +288,15 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
   cluster_method = method_table[method];
 
   if (!cluster_method) {
-    mxIgraphErrorNotImplemented("Generate", mxArrayToString(prhs[2]));
+    mxIgraphErrorNotImplemented("Generate", mxArrayToString(prhs[1]));
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
+  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
   igraph_vector_int_init(&membership, igraph_vcount(&graph));
 
-  errorcode = cluster_method(&graph, &weights, method_options, &membership);
+  errorcode = cluster_method(&graph, MXIGRAPH_WEIGHTS(&weights),
+                             method_options, &membership);
   igraph_destroy(&graph);
   igraph_vector_destroy(&weights);
 

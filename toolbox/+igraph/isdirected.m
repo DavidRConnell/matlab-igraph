@@ -7,5 +7,11 @@ function TF = isdirected(graph)
 
     % NOTE: Using igraph wrapper instead of matlab builtins because tril/triu
     % do not work with logicals.
-    TF = mexIgraphIsDirected(graph);
+    if isa(graph, "digraph")
+        TF = true;
+    elseif isa(graph, "graph")
+        TF = false;
+    else
+        TF = mexIgraphIsDirected(graph);
+    end
 end

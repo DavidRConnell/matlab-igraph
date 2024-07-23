@@ -53,6 +53,27 @@ mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray* p)
   return res;
 }
 
+// Select a graph representation.
+mxIgraphRepr_t mxIgraphSelectRepr(const mxArray* p)
+{
+  mxIgraphRepr_t res;
+  const char* reps[MXIGRAPH_REPR_N] = {
+    [MXIGRAPH_REPR_GRAPH] = "graph",
+    [MXIGRAPH_REPR_FULL] = "full",
+    [MXIGRAPH_REPR_SPARSE] = "sparse"
+  };
+
+  res = mxIgraphSelectMethod(mxGetField(p, 0, "repr"), reps,
+                             MXIGRAPH_REPR_N);
+
+  if (res == MXIGRAPH_REPR_N) {
+    mexErrMsgIdAndTxt("Igraph:unknownRep",
+                      "Received unknown graph representation.");
+  }
+
+  return res;
+}
+
 // Select a data type.
 mxIgraphDType_t mxIgraphSelectDType(const mxArray* p)
 {

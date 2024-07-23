@@ -18,20 +18,20 @@ function save(filename, graph, ioOpts, graphOpts)
 %       based on ISEQUAL (nodes are likely to be rearranged).
 %
 %   Available formats are:
-%      Format       File Extension    Description
+%       Format      File Extension            Description
 %   -------------------------------------------------------------------------
-%      'mat'        '.mat'            MAT-file (limited compatibility outside
-%                                     of MATLAB)
-%      'edgelist'   '.txt'            edgelist (unweighted only)
-%      'ncol'       '.ncol'           Large Graph Layout named vertex format
-%                                     (undirected only)
-%      'lgl'        '.lgl'            Large Graph Layout format (undirected
-%                                     only)
-%      'graphml'    '.graphml'        Graphml format
-%      'gml'        '.gml'            GML format
-%      'pajek'      '.net'            Pajek format
-%      'dot'        {'.dot', '.gv'}   GraphViz DOT format.
-%      'leda'       {'.gw', '.lgr'}   LEDA native format.
+%      'mat'       '.mat'                    MAT-file (limited compatibility
+%                                            outside of MATLAB)
+%      'edgelist'  {'.txt', '.csv', 'edges'} edgelist (unweighted only)
+%      'ncol'      '.ncol'                   Large Graph Layout named vertex
+%                                            format (undirected only)
+%      'lgl'       '.lgl'                    Large Graph Layout format
+%                                            (undirected only)
+%      'graphml'   '.graphml'                Graphml format
+%      'gml'       '.gml'                    GML format
+%      'pajek'     '.net'                    Pajek format
+%      'dot'       {'.dot', '.gv'}           GraphViz DOT format.
+%      'leda'      {'.gw', '.lgr'}           LEDA native format.
 %
 %   SAVE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) use the name-value pairs
 %       'isweighted' and 'isdirected' instead of guessing the values. By
@@ -61,9 +61,11 @@ function save(filename, graph, ioOpts, graphOpts)
         graph {igraph.args.mustBeGraph}
         ioOpts.format char {mustBeVector} = guessFileFormat(filename);
         ioOpts.overwrite (1, 1) logical = false;
-        graphOpts.isweighted (1, 1) logical = igraph.isweighted(graph);
-        graphOpts.isdirected (1, 1) logical = igraph.isdirected(graph);
+        graphOpts.?igraph.args.GraphInProps;
     end
+
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igraph.args.setGraphInProps(graph, graphOpts{:});
 
     if ~ioOpts.overwrite && exist(filename, 'file')
         error("igraph:fileExists", "A file already exists at '%s'.\n\n" + ...

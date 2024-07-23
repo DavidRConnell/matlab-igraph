@@ -74,7 +74,7 @@ if (mxIsScalar(mxIgraphGetArgument(opts, "nConnections"))) {            \
                                                                         \
 if (!mxIsEmpty(start_argument)) {                                       \
     mxIgraphGetGraph(start_argument,                                    \
-	&start_from, NULL, directed);                                   \
+	&start_from, NULL, opts);                                       \
   }                                                                     \
                                                                         \
   errcode = igraph_barabasi_game(graph, n_nodes, power, m, outseq_ptr,  \
@@ -512,7 +512,7 @@ static igraph_error_t mxIgraph_cited_type_i(mxArray const* opts,
   igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
   igraph_error_t error;
 
-  mxIgraphGetVectorInt(opts, "types", &types, false);
+  mxIgraphGetVectorInt(opts, "types", &types, true);
   mxIgraphGetVector(opts, "preference", &preferences, false);
 
   error = igraph_cited_type_game(graph, n_nodes, &types, &preferences,
@@ -534,7 +534,7 @@ static igraph_error_t mxIgraph_citing_cited_type_i(mxArray const
   igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
   igraph_error_t error;
 
-  mxIgraphGetVectorInt(opts, "types", &types, false);
+  mxIgraphGetVectorInt(opts, "types", &types, true);
   mxIgraphGetMatrix(opts, "preference", &pref_matrix, false);
 
   error = igraph_citing_cited_type_game(graph, n_nodes, &types, &pref_matrix,
@@ -642,16 +642,15 @@ static igraph_error_t mxIgraph_simple_interconnected_islands_i(
 igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
                                  mxArray const* prhs[])
 {
-  VERIFY_N_INPUTS_ATLEAST(3);
+  VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   mxIgraph_game_t method;
-  mxArray const* adj_options = prhs[1];
+  mxArray const* graph_options = prhs[1];
   mxArray const* method_options = prhs[2];
   igraph_t graph;
   igraph_error_t errorcode;
-  typedef igraph_error_t (*game_method_t)(mxArray const * prhs,
-                                          igraph_t* g);
+  typedef igraph_error_t (*game_method_t)(mxArray const * prhs, igraph_t* g);
   game_method_t game_method;
 
   const char* games[MXIGRAPH_GAME_N] = {
@@ -693,7 +692,7 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
   method = mxIgraphSelectMethod(prhs[0], games, MXIGRAPH_GAME_N);
 
   if (method == MXIGRAPH_GAME_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
+    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[0]));
     exit(1);
   }
 
@@ -734,13 +733,13 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
   game_method = method_table[method];
 
   if (!game_method) {
-    mxIgraphErrorNotImplemented("RandGame", mxArrayToString(prhs[2]));
+    mxIgraphErrorNotImplemented("RandGame", mxArrayToString(prhs[0]));
     exit(1);
   }
 
   game_method(method_options, &graph);
 
-  plhs[0] = mxIgraphCreateAdj(&graph, NULL, adj_options);
+  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
   return errorcode;

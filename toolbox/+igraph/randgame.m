@@ -19,16 +19,11 @@ function graph = randgame(method, graphOpts, methodOpts)
 %       Note: The method name is case insensitive, for example, 'barabasibag',
 %       'barabasiBag', and 'BarabasiBag', are all allowed.
 %
-%   GRAPH = GAME(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
-%       method specific parameters, there are parameters for specifying how the
-%       resulting GRAPH is represented common to all methods. These follow the
-%       same conventions as the rest of matlab-igraph.
-%
-%        Name           Description
-%       --------------------------------------------------------------------
-%        'makeSparse'   Whether to return a sparse (default) or full matrix.
-%        'dtype'        The data type to use, either 'double' (default) or
-%                       'logical'.
+%   GRAPH = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
+%       method specific parameters, there are parameters REPR and DTYPE for
+%       specifying how the resulting GRAPH is represented common to all
+%       methods. See the "functions returning graphs" section in help IGRAPH
+%       for more information.
 %
 %       Note: The default values for most method options are chosen somewhat
 %       randomly primarily for demonstration purposes.
@@ -491,12 +486,8 @@ function graph = randgame(method, graphOpts, methodOpts)
                             'sbm', 'StochasticBlockMethod', 'hsbm', ...
                             'HierachicalStochasticBlockMethod', 'HsbmList', ...
                             'DotProduct', 'treeLERW', 'treePrufer', ...
-                            'SimpleInterconnectedIslands'})}
-
-        graphOpts.makeSparse (1, 1) logical = true;
-        graphOpts.dtype (1, :) char ...
-            {igraph.args.mustBeMemberi(graphOpts.dtype, {'logical', 'double'})} = 'double';
-
+                            'SimpleInterconnectedIslands'})};
+        graphOpts.?igraph.args.GraphOutProps;
         methodOpts.nNodes;
         methodOpts.radius;
         methodOpts.torus;
@@ -566,7 +557,8 @@ function graph = randgame(method, graphOpts, methodOpts)
         method = 'tree';
     end
 
-    graphOpts.dtype = lower(graphOpts.dtype);
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igraph.args.setGraphOutProps(graphOpts{:});
     methodOpts = namedargs2cell(methodOpts);
 
     switch method
@@ -645,12 +637,12 @@ end
 function opts = parseOptionsBarabasi(method, opts)
     arguments
         method;
+        opts.isdirected (1, 1) logical;
         opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger};
         opts.power (1, 1) {mustBeNonnegative} = 1;
         opts.nConnections (1, :) {mustBeNonnegative, mustBeInteger} = 1;
         opts.outPreference (1, 1) logical = false;
         opts.attractiveness (1, 1) {mustBeNumeric} = 1;
-        opts.isdirected (1, 1) logical;
         opts.startFrom {igraph.args.mustBeGraph} = [];
     end
 
@@ -1257,8 +1249,6 @@ function opts = parseOptionsCitedType(opts)
                                  "Size of preference must be the number " + ...
                                  "of types (i.e. max(types))."));
     end
-
-    opts.types = opts.types - 1;
 end
 
 function opts = parseOptionsCitingCitedType(opts)
@@ -1281,8 +1271,6 @@ function opts = parseOptionsCitingCitedType(opts)
                                  "lengths equal to the number of types " + ...
                                  "(i.e. max(types))."));
     end
-
-    opts.types = opts.types - 1;
 end
 
 function opts = parseOptionsSBM(opts)

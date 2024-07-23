@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for MATLAB builtin graph and digraph classes.
+- Representation independent methods for `numnodes`, `numedges`, and `edgeDensity`.
+- Graph `summary` function.
+- A main igraph help entry used to describe common function arguments.
 - Reindex membership.
 
 ### Changed

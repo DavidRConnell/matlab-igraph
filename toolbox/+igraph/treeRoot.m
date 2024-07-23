@@ -3,7 +3,7 @@ function root = treeRoot(graph, opts)
 %   ROOT = TREEROOT(GRAPH) return the vertex id of the tree root.
 %   If graph is not a tree, returns 0.
 %
-%   See also igraph.istree.
+%   See also IGRAPH.ISTREE.
 
     arguments
         graph {igraph.args.mustBeGraph};
@@ -12,7 +12,7 @@ function root = treeRoot(graph, opts)
     end
 
     if ~igraph.args.isoptionset(opts, "isdirected")
-       opts.isdirected = ~issymmetric(graph) || opts.mode ~= "all";
+       opts.isdirected = igraph.isdirected(graph) || opts.mode ~= "all";
     end
 
     opts.mode = lower(opts.mode);

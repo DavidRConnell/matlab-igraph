@@ -6,6 +6,8 @@ function TF = isisomorphic(g1, g2, g1Opts, g2Opts)
 %   TF = ISISOMORPHIC(GRAPH1, GRAPH2, G1ISDIRECTED, G2ISDIRECTED) override the
 %       guesses for whether GRAPH1 and GRAPH2 are directed. If they are not
 %       both the same (both directed or both undirected) an error is triggered.
+%
+%   See also IGRAPH.ISSUBISOMORPHIC.
 
     arguments
         g1 {igraph.args.mustBeGraph}

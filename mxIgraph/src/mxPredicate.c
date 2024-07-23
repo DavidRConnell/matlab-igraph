@@ -53,6 +53,11 @@ static igraph_bool_t is_weighted_full_i(const mxArray* p)
 /* Test if adjacency matrix p points to has values other than 0 or 1. */
 igraph_bool_t mxIgraphIsWeighted(const mxArray* p)
 {
+  // TODO: temporarily always say yes.
+  if (mxIgraphIsGraph(p)) {
+    return true;
+  }
+
   if (mxIsLogical(p)) {
     return false;
   }
@@ -318,10 +323,21 @@ igraph_bool_t mxIgraphIsSymmetric(const mxArray* p)
   return false;
 }
 
+// Test if the MATLAB object is of the graph or digraph type.
+igraph_bool_t mxIgraphIsGraph(mxArray const* p)
+{
+  return mxIsClass(p, "graph") || mxIsClass(p, "digraph");
+}
+
+
 /* Guess if the graph is directed or not. */
 igraph_bool_t mxIgraphIsDirected(const mxArray* p)
 {
-  return !(mxIgraphIsTriU(p) || mxIgraphIsTriL(p) || mxIgraphIsSymmetric(p));
+  if (mxIgraphIsGraph(p)) {
+    return mxIsClass(p, "digraph");
+  } else {
+    return !(mxIgraphIsTriU(p) || mxIgraphIsTriL(p) || mxIgraphIsSymmetric(p));
+  }
 }
 
 /* Check if the matlab array pointed to by p is either a row or column

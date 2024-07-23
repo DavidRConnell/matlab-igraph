@@ -11,15 +11,10 @@ function graph = famous(name, graphOpts)
 %       'smallestcyclicgroup', 'tetrahedral', 'tetrahedron', 'thomassen',
 %       'tutte', 'uniquely3colorable', 'walther', 'zachary'.
 %
-%   GRAPH = FAMOUS(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) there are
-%       parameters for specifying the how the resulting GRAPH is represented.
-%       These follow the same conventions as the rest of matlab-igraph.
-%
-%        Name           Description
-%       --------------------------------------------------------------------
-%        'makeSparse'   Whether to return a sparse (default) or full matrix.
-%        'dtype'        The data type to use, either 'double' (default) or
-%                       'logical'.
+%   GRAPH = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) there are
+%       parameters REPR and DTYPE for specifying how the resulting GRAPH is
+%       represented common to all methods. See the "functions returning graphs"
+%       section in help IGRAPH for more information.
 %
 %   See also igraph.generate, igraph.game.
 
@@ -37,12 +32,12 @@ function graph = famous(name, graphOpts)
                                         'robertson', 'smallestcyclicgroup', ...
                                         'tetrahedral', 'tetrahedron', 'thomassen', ...
                                         'tutte', 'uniquely3colorable', 'walther', ...
-                                        'zachary'})}
-        graphOpts.makeSparse (1, 1) logical = true;
-        graphOpts.dtype (1, :) char ...
-            {igraph.args.mustBeMemberi(graphOpts.dtype, ...
-                                       {'logical', 'double'})} = 'double';
+                                        'zachary'})};
+        graphOpts.?igraph.args.GraphOutProps;
     end
+
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igraph.args.setGraphOutProps(graphOpts{:});
 
     graph = mexIgraphDispatcher(mfilename(), lower(name), graphOpts);
 end

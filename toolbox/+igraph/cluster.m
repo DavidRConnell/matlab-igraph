@@ -243,10 +243,9 @@ function opts = parseLeadingEigenvectorOptions(graph, opts)
     arguments
         graph %#ok<INUSA>
         opts.maxSteps (1, 1) {mustBePositive, mustBeInteger} = 5;
-        opts.initial (1, :) {mustBePartition} = 1:length(graph)
+        opts.initial (1, :) ...
+            {igraph.args.mustBePartition} = 1:igraph.numnodes(graph)
     end
-
-    opts.initial = opts.initial - 1;
 end
 
 function opts = parseWalktrapOptions(~, opts)
@@ -280,10 +279,9 @@ function opts = parseLeidenOptions(graph, opts)
             {igraph.args.mustBeMemberi(opts.metric, ...
                                        {'modularity', 'cpm', ...
                                         'constantpottsmodel'})} = 'cpm';
-        opts.initial (1, :) {mustBePartition} = 1:length(graph);
+        opts.initial (1, :) ...
+            {igraph.args.mustBePartition} = 1:igraph.numnodes(graph);
     end
-
-    opts.initial = opts.initial - 1;
 
     opts.metric = lower(opts.metric);
     if strcmp(opts.metric, 'constantpottsmodel')
@@ -302,11 +300,10 @@ function opts = parseLabelPropagationOptions(graph, opts)
     arguments
         graph %#ok<INUSA>
         opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
-        opts.initial (1, :) {mustBePartition} = 1:length(graph);
-        opts.fixed (1, :) logical = false(1, length(graph));
+        opts.initial (1, :) ...
+            {igraph.args.mustBePartition} = 1:igraph.numnodes(graph);
+        opts.fixed (1, :) logical = false(1, igraph.numnodes(graph));
     end
-
-    opts.initial = opts.initial - 1;
 
     if length(opts.fixed) ~= length(opts.initial)
         throwAsCaller(MException("Igraph:wrongLength", ...
@@ -319,10 +316,11 @@ function opts = parseInfomapOptions(graph, opts)
     arguments
         graph
         opts.nTrials (1, 1) {mustBePositive,mustBeInteger} = 1;
-        opts.nodeWeights (1, :) {mustBePositive} = ones(1, length(graph));
+        opts.nodeWeights (1, :) {mustBePositive} = ...
+            ones(1, igraph.numnodes(graph));
     end
 
-    if length(opts.nodeWeights) ~= length(graph)
+    if length(opts.nodeWeights) ~= igraph.numnodes(graph)
         throwAsCaller(MException("Igraph:wrongLength", ...
                                  "The length of node weights must be" + ...
                                  " equal to the number of nodes in the" + ...

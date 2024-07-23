@@ -22,7 +22,7 @@ function plot(graph, layout, options, layoutOpts)
     arguments
         graph {igraph.args.mustBeGraph};
         layout;
-        options.membership (1, :) {mustBePartition} = [];
+        options.membership (1, :) {igraph.args.mustBePartition} = [];
         options.size (1, :) = 100;
         options.ax = false;
         options.edgeAlpha = 0.5;
@@ -71,7 +71,7 @@ function plot(graph, layout, options, layoutOpts)
         layout = igraph.layout(graph, layout, layoutOpts{:});
     end
 
-    if size(layout, 1) ~= length(graph)
+    if size(layout, 1) ~= igraph.numnodes(graph)
         error("igraph:wrongSize", "Layout must have exactly one row for " + ...
               "each node in the graph.");
     end
@@ -81,16 +81,16 @@ function plot(graph, layout, options, layoutOpts)
     end
 
     if isempty(options.membership)
-        options.membership = ones(1, length(graph));
+        options.membership = ones(1, igraph.numnodes(graph));
     end
 
-    if length(options.membership) ~= length(graph)
+    if length(options.membership) ~= igraph.numnodes(graph)
         error("igraph:wrongSize", "Membership must have exactly " + ...
               "one element for each node in the graph.");
     end
 
     if isscalar(options.size)
-        options.size = zeros(1, length(graph)) + options.size;
+        options.size = zeros(1, igraph.numnodes(graph)) + options.size;
     elseif min(options.size) <= 0
         % Scaling the size vector to attempt to ensure a good spread of sizes.
         % May need tweaking.
@@ -107,7 +107,13 @@ function plot(graph, layout, options, layoutOpts)
         ax = subplot(1, 1, 1);
     end
 
-    [from, to] = find(graph);
+    if igraph.args.isgraph(graph)
+        from = graph.Edges.EndNodes(:, 1);
+        to = graph.Edges.EndNodes(:, 2);
+    else
+        [from, to] = find(graph);
+    end
+
     options.edgeColor = validatecolor(options.edgeColor);
     options.edgeColor(4) = options.edgeAlpha;
     plot(ax, ...

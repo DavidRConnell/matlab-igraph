@@ -26,7 +26,9 @@ function graph = load(filename, ioOptions, graphOpts)
 %      'dl'         {'.txt', '.dl'}         UCINET's DL format.
 %
 %   GRAPH = LOAD(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to the
-%   'FORMAT' the folliwing
+%   'FORMAT' the LOAD accepts the common graph out arguments 'repr', 'dtype',
+%   and 'weight'. For more information see the "IGRAPH functions returning
+%   graphs" section in help IGRAPH. LOAD specific parameters are listed below:
 %
 %       Parameter        Value
 %        'isweighted'*   Whether to load weights if they exist or not. If no
@@ -58,25 +60,6 @@ function graph = load(filename, ioOptions, graphOpts)
 %                        and the lower triangle will be return if it appears to
 %                        be undirected.
 %
-%        'dtype'         Set the returned GRAPH's datatype. By default, the data
-%                        type will be determined by the value of ISWEIGHTED
-%                        ('logical' if false, 'double' otherwise). Allowed data
-%                        types are 'double' and 'logical'. If DTYPE is set to
-%                        'logical' and ISWEIGHTED is explicitly set to true,
-%                        this will cause an error since a logical adjacency
-%                        matrix cannot store weights.
-%
-%        'makeSparse'    Whether the resulting GRAPH should use a full matrix
-%                        representation (false) or a sparse representation
-%                        (true, default). This should have little impact on
-%                        performance since the performance bottlenecks usually
-%                        occur after converting to an internal igraph type,
-%                        which is independent of MATLAB's representation. The
-%                        impact on memory is again limited by the need to
-%                        convert to an internal igraph type, but it may be
-%                        important if there are multiple adjacency matrices
-%                        stored in memory at once.
-%
 %         'index'        For formats that can store multiple graphs (graphml),
 %                        select which graph to read (defaults to 0).
 %
@@ -89,15 +72,16 @@ function graph = load(filename, ioOptions, graphOpts)
 %   See also IGRAPH.SAVE, IGRAPH.CONVERT, IGRAPH.ISDIRECTED.
 
     arguments
-        filename char {mustBeVector}
+        filename char {mustBeVector};
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
         ioOptions.index (1, 1) double {mustBeInteger, mustBeNonnegative} = 0;
-        graphOpts.isweighted (1, 1) logical
+        graphOpts.?igraph.args.GraphOutProps;
+        graphOpts.isweighted (1, 1) logical;
         graphOpts.isdirected (1, 1) logical;
-        graphOpts.dtype char {igraph.args.mustBeMemberi(graphOpts.dtype, ...
-                                                         {'double', 'logical'})};
-        graphOpts.makeSparse (1, 1) logical = true;
     end
+
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igraph.args.setGraphOutProps(graphOpts{:});
 
     if ~exist(filename, 'file')
         error("igraph:fileNotFound", "No graph found at '%s'.", filename);
@@ -115,14 +99,6 @@ function graph = load(filename, ioOptions, graphOpts)
     end
 
     isoptionset = @igraph.args.isoptionset;
-    if ~isoptionset(graphOpts, 'dtype')
-        if isoptionset(graphOpts, 'isweighted') && ~graphOpts.isweighted
-            graphOpts.dtype = 'logical';
-        else
-            graphOpts.dtype = 'double';
-        end
-    end
-
     if ~isoptionset(graphOpts, 'isweighted')
         if strcmp(graphOpts.dtype, 'logical')
             graphOpts.isweighted = false;
@@ -150,11 +126,12 @@ function graph = load(filename, ioOptions, graphOpts)
         graphOpts.isdirected = igraph.isdirected(graph);
     end
 
-    if ~graphOpts.isweighted && ~islogical(graph)
+    if ~graphOpts.isweighted && ~igraph.args.isgraph(graph) && ...
+            ~islogical(graph)
         graph = double(graph ~= 0);
     end
 
-    if ~graphOpts.isdirected
+    if ~graphOpts.isdirected && ~igraph.args.isgraph(graph)
         if igraph.isdirected(graph)
             warning("Forcing a non-triangular, asymmetric adjacency " + ...
                     "matrix to be undirected. Summing edges A(i, j) " + ...
