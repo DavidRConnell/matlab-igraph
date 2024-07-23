@@ -1,4 +1,4 @@
-function membership = cluster(graph, method, graphOpts, methodOpts)
+function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %CLUSTER perform community detection on a graph
 %   MEMBERSHIP = CLUSTER(GRAPH, METHOD) use METHOD to find a community
 %       structure for the graph. See below for method specific options.
@@ -20,6 +20,11 @@ function membership = cluster(graph, method, graphOpts, methodOpts)
 %   Detection, Proceedings of the National Academy of Sciences. and V. A.
 %   Traag, P. Van Dooren & Y. Nesterov (2011) Narrow Scope for
 %   Resolution-Limit-Free Community Detection, Physical Review E.).
+%
+%   GRAPH = CLUSTER(GRAPH, METHOD, RESULT, "NAME") if GRAPH can hold
+%   attributes, setting RESULT will determine the name of a node attribute to
+%   store the results such that GRAPH.Nodes.NAME will be the membership vector.
+%   Note: The original GRAPH is not modified.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'optimal') Find the community structure that
 %       maximizes Newman's modularity. This algorithm is slow for larger graphs
@@ -173,6 +178,8 @@ function membership = cluster(graph, method, graphOpts, methodOpts)
         methodOpts.mode;
         methodOpts.nTrials;
         methodOpts.nodeWeights;
+        attribute.results (1, :) char ...
+            {igutils.mustHoldNodeAttr(graph, attribute.results)} = '';
     end
 
     method = lower(method);
@@ -211,6 +218,11 @@ function membership = cluster(graph, method, graphOpts, methodOpts)
 
     membership = mexIgraphDispatcher(mfilename(), graph, method, graphOpts, ...
                                      methodOpts);
+
+    if ~isempty(attribute.results)
+        graph.Nodes.(attribute.results) = membership';
+        membership = graph;
+    end
 end
 
 function opts = parseNullOptions(~)

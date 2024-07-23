@@ -1,18 +1,18 @@
-function plot(graph, layout, options, layoutOpts)
+function plot(graph, layout, options, nodeOpts, edgeOpts, layoutOpts)
 %PLOT draw a graph
 %   PLOT(GRAPH, LAYOUT) use LAYOUT to plot the vertices of GRAPH. LAYOUT can
 %       either be a matrix of coordinates (nNodes x 2), such as a layout
 %       produced with IGRAPH.LAYOUT, or the name of a method accepted by
 %       IGRAPH.LAYOUT.
 %
-%   PLOT(..., "MEMBERSHIP", C) Color the nodes based on the communities of C. C
+%   PLOT(..., "NODECOLOR", C) Color the nodes based on the communities of C. C
 %       should be a vector with a community label for each node (such as a
 %       membership vector produced by IGRAPH.CLUSTER).
 %
-%   PLOT(..., "SIZE", SZ) Adjust the size of the plot markers. This can be
+%   PLOT(..., "NODESIZE", SZ) Adjust the size of the plot markers. This can be
 %       either a scalar or a vector with one size per node. This is used to
-%       display node metrics such as the output of IGRAPH.CENTERALITY. If a
-%       SZ is a vector it will be scaled.
+%       display node metrics such as the output of IGRAPH.CENTERALITY. If a SZ
+%       is a vector it will be scaled.
 %
 %   PLOT(..., "AX", AXIS) Plot onto the provided axis instead of creating a new
 %       one.
@@ -22,11 +22,14 @@ function plot(graph, layout, options, layoutOpts)
     arguments
         graph {igutils.mustBeGraph};
         layout;
-        options.membership (1, :) {igutils.mustBePartition} = [];
-        options.size (1, :) = 100;
+
         options.ax = false;
-        options.edgeAlpha = 0.5;
-        options.edgeColor = 'k';
+
+        nodeOpts.nodeColor (1, :) = [];
+        nodeOpts.size (1, :) = 100;
+
+        edgeOpts.edgeAlpha (1, :) = 0.5;
+        edgeOpts.edgeColor (1, :) = 'k';
 
         layoutOpts.isdirected;
         layoutOpts.order;
@@ -80,23 +83,31 @@ function plot(graph, layout, options, layoutOpts)
         error("igraph:wrongSize", "Layout must have exactly two columns.");
     end
 
-    if isempty(options.membership)
-        options.membership = ones(1, igraph.numnodes(graph));
+    if isempty(nodeOpts.nodeColor)
+        nodeOpts.nodeColor = ones(1, igraph.numnodes(graph));
+    else
+        nodeOpts.nodeColor = ...
+            igutils.validateNodeAttr(graph, nodeOpts.nodeColor);
     end
 
-    if length(options.membership) ~= igraph.numnodes(graph)
+    if length(nodeOpts.nodeColor) ~= igraph.numnodes(graph)
         error("igraph:wrongSize", "Membership must have exactly " + ...
               "one element for each node in the graph.");
     end
 
-    if isscalar(options.size)
-        options.size = zeros(1, igraph.numnodes(graph)) + options.size;
-    elseif min(options.size) <= 0
+    if isscalar(nodeOpts.size)
+        nodeOpts.size = zeros(1, igraph.numnodes(graph)) + ...
+            nodeOpts.size;
+    else
+        nodeOpts.size = igutils.validateNodeAttr(graph, nodeOpts.size);
+    end
+
+    if min(nodeOpts.size) <= 0
         % Scaling the size vector to attempt to ensure a good spread of sizes.
         % May need tweaking.
-        options.size = options.size - min(options.size);
-        options.size = options.size / max(options.size);
-        options.size = (options.size * 500) + 75;
+        nodeOpts.size = nodeOpts.size - min(nodeOpts.size);
+        nodeOpts.size = nodeOpts.size / max(nodeOpts.size);
+        nodeOpts.size = (nodeOpts.size * 500) + 75;
     end
 
     if isa(options.ax, 'matlab.graphics.axis.Axes')
@@ -114,18 +125,18 @@ function plot(graph, layout, options, layoutOpts)
         [from, to] = find(graph);
     end
 
-    options.edgeColor = validatecolor(options.edgeColor);
-    options.edgeColor(4) = options.edgeAlpha;
+    edgeOpts.edgeColor = validatecolor(edgeOpts.edgeColor);
+    edgeOpts.edgeColor(4) = edgeOpts.edgeAlpha;
     plot(ax, ...
          [layout(from, 1)'; layout(to, 1)'], ...
          [layout(from, 2)'; layout(to, 2)'], ...
-         color=options.edgeColor);
+         color=edgeOpts.edgeColor);
     hold on
 
-    for i = unique(options.membership)
-        scatter(ax, layout(options.membership == i, 1), ...
-             layout(options.membership == i, 2), ...
-             options.size(options.membership == i), ...
+    for i = unique(nodeOpts.nodeColor)
+        scatter(ax, layout(nodeOpts.nodeColor == i, 1), ...
+             layout(nodeOpts.nodeColor == i, 2), ...
+             nodeOpts.size(nodeOpts.nodeColor == i), ...
              "filled")
     end
     hold off
