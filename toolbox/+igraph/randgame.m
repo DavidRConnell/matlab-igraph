@@ -499,6 +499,7 @@ function graph = randgame(method, graphOpts, methodOpts)
         methodOpts.startFrom;
         methodOpts.nEdges;
         methodOpts.loops;
+        methodOpts.multiple;
         methodOpts.probability;
         methodOpts.dim;
         methodOpts.size;
@@ -623,6 +624,13 @@ function graph = randgame(method, graphOpts, methodOpts)
               method);
     end
 
+    if methodOpts.multiple && ~strcmp(graphOpts.repr, 'graph')
+        throwAsCaller(MException("igraph:invalidOption", ...
+                                 "Adjacency matrices cannot express " + ...
+                                 "multigraphs, use 'graph' as " + ...
+                                 "representation or set multiple to false."));
+    end
+
     graph = mexIgraphDispatcher(mfilename(), method, graphOpts, methodOpts);
 end
 
@@ -718,6 +726,7 @@ function opts = parseOptionsWattsStrogatz(opts)
             {mustBeNonnegative, ...
              mustBeLessThanOrEqual(opts.probability, 1)} = 0.2;
         opts.loops (1, 1) logical = false;
+        opts.multiple (1, 1) logical = false;
     end
 end
 
@@ -776,6 +785,7 @@ function opts = parseOptionsKRegular(opts)
         opts.nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
         opts.degree (1, 1) {mustBeNonnegative, mustBeInteger} = 3;
         opts.isdirected (1, 1) logical = false;
+        opts.multiple (1, 1) logical = false;
     end
 end
 
@@ -786,6 +796,7 @@ function opts = parseOptionsStaticFitness(opts)
         opts.inFitness (1, :) {mustBeNonnegative, mustBeNumeric};
         opts.nEdges (1, 1) {mustBeInteger, mustBePositive} = 20;
         opts.loops (1, 1) logical = false;
+        opts.multiple (1, 1) logical = false;
     end
 
     isoptionset = @igutils.isoptionset;
@@ -840,6 +851,7 @@ function opts = parseOptionsStaticPowerLaw(opts)
         opts.outExponent (1, 1) {mustBeNumeric};
         opts.inExponent (1, 1) {mustBeNumeric};
         opts.loops (1, 1) logical = false;
+        opts.multiple (1, 1) logical = false;
         opts.finiteSizeCorrection (1, 1) logical = false;
     end
 
