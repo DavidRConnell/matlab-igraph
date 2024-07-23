@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
@@ -9,13 +9,11 @@ igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
 
   mxArray const* adj1Options = prhs[2];
   mxArray const* adj2Options = prhs[3];
-  igraph_bool_t adj1IsDirected = mxIgraphGetBool(adj1Options, "isdirected");
-  igraph_bool_t adj2IsDirected = mxIgraphGetBool(adj2Options, "isdirected");
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
-  mxIgraphGetGraph(prhs[0], &graph1, NULL, adj1IsDirected);
-  mxIgraphGetGraph(prhs[1], &graph2, NULL, adj2IsDirected);
+  mxIgraphGetGraph(prhs[0], &graph1, NULL, adj1Options);
+  mxIgraphGetGraph(prhs[1], &graph2, NULL, adj2Options);
 
   igraph_isomorphic(&graph1, &graph2, &flag);
   igraph_destroy(&graph1);
@@ -34,13 +32,11 @@ igraph_error_t mexIgraphIsSubIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
 
   mxArray const* adj1Options = prhs[2];
   mxArray const* adj2Options = prhs[3];
-  igraph_bool_t adj1IsDirected = mxIgraphGetBool(adj1Options, "isdirected");
-  igraph_bool_t adj2IsDirected = mxIgraphGetBool(adj2Options, "isdirected");
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
-  mxIgraphGetGraph(prhs[0], &graph1, NULL, adj1IsDirected);
-  mxIgraphGetGraph(prhs[1], &graph2, NULL, adj2IsDirected);
+  mxIgraphGetGraph(prhs[0], &graph1, NULL, adj1Options);
+  mxIgraphGetGraph(prhs[1], &graph2, NULL, adj2Options);
 
   igraph_subisomorphic(&graph1, &graph2, &flag);
   igraph_destroy(&graph1);

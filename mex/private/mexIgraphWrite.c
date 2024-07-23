@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 #define mexIgraphError(id, msg)			\
@@ -15,13 +15,12 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
   VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_NO_OUTPUTS;
 
-  mxArray const* adj_options = prhs[3];
+  mxArray const* graph_options = prhs[3];
   igraph_t graph;
   igraph_vector_t weights;
   char* filename = mxArrayToString(prhs[0]);
   mxIgraphFileFormat_t format = mxIgraphSelectFileFormat(prhs[2]);
-  igraph_bool_t isweighted = mxIgraphGetBool(adj_options, "isweighted");
-  igraph_bool_t isdirected = mxIgraphGetBool(adj_options, "isdirected");
+  igraph_bool_t is_weighted = mxIgraphGetBool(graph_options, "isweighted");
   FILE* fptr;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
   igraph_error_handler_t* oldhandler;
@@ -31,13 +30,14 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
                       filename);
   }
 
-  if (isweighted) {
+  if (is_weighted) {
     igraph_set_attribute_table(&igraph_cattribute_table);
   }
 
-  mxIgraphGetGraph(prhs[1], &graph, &weights, adj_options);
+  mxIgraphGetGraph(prhs[1], &graph, is_weighted ? &weights : NULL,
+                   graph_options);
 
-  if (isweighted) {
+  if (is_weighted) {
     SETEANV(&graph, "weight", &weights);
     igraph_vector_destroy(&weights);
   }
@@ -47,14 +47,14 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
     errorcode = igraph_write_graph_edgelist(&graph, fptr);
     break;
   case MXIGRAPH_FORMAT_NCOL:
-    if (isweighted) {
+    if (is_weighted) {
       errorcode = igraph_write_graph_ncol(&graph, fptr, NULL, "weight");
     } else {
       errorcode = igraph_write_graph_ncol(&graph, fptr, NULL, NULL);
     }
     break;
   case MXIGRAPH_FORMAT_LGL:
-    if (isweighted) {
+    if (is_weighted) {
       errorcode = igraph_write_graph_lgl(&graph, fptr, NULL, "weight", true);
     } else {
       errorcode = igraph_write_graph_lgl(&graph, fptr, NULL, NULL, true);
@@ -89,7 +89,7 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray* plhs[], int nrhs,
     errorcode = igraph_write_graph_dot(&graph, fptr);
     break;
   case MXIGRAPH_FORMAT_LEDA:
-    if (isweighted) {
+    if (is_weighted) {
       errorcode = igraph_write_graph_leda(&graph, fptr, NULL, "weight");
     } else {
       errorcode = igraph_write_graph_leda(&graph, fptr, NULL, NULL);

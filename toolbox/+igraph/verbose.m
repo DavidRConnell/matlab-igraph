@@ -4,9 +4,11 @@ function verbose(handler, ison)
 %       one of 'warning', 'progress', or 'status'. If TF, igraph will use the
 %       handler; if set to false, igraph will not print messages with the
 %       provided handler.
+
     arguments
-        handler (1, :) char {mustBeMemberi(handler, ...
-                                        {'warning', 'progress', 'status'})};
+        handler (1, :) char ...
+            {igutils.mustBeMemberi(handler, ...
+                                   {'warning', 'progress', 'status'})};
         ison (1, 1) logical;
     end
 

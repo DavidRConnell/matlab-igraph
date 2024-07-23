@@ -1,8 +1,7 @@
-function varargout = correlatedPair(x, adjOptions, methodOptions)
+function varargout = correlatedPair(x, graphOpts, methodOpts)
 %CORRELATEDPAIR create a pair of correlated graphs
-%   ADJ2 = CORRELATEDPAIR(ADJ1, ...) create a new graph that is correlated to
-%       ADJ1.
-%   [ADJ1, ADJ2] = CORRELATEDPAIR(NNODES, ...) create two graphs with NNODES
+%   G2 = CORRELATEDPAIR(G1, ...) create a new graph that is correlated to G1.
+%   [G1, G2] = CORRELATEDPAIR(NNODES, ...) create two graphs with NNODES
 %       nodes each that are correlated.
 %
 %   If the number of outputs is 1, assumes the first parameter is an adjacency
@@ -14,16 +13,14 @@ function varargout = correlatedPair(x, adjOptions, methodOptions)
 %       If an adjacency matrix is the first argument, the default values for
 %       options that impact the type of adjacency matrix returned will be to
 %       match the input adjacency matrix, otherwise the defaults are those in
-%       the table below. For ISDIRECTED the igraph.isdirected test is used
-%       which is a best guess based off the characteristics of the adjacency
-%       matrix. If you want a symmetric adjacency matrix to be treated as
-%       directed, explicitly set the ISDIRECTED option.
+%       the table below.
+%
+%       This function accepts the standard Graph Out arguments 'repr' and
+%       'dtype' (see the "IGRAPH functions returning graphs" section in help
+%       IGRAPH for more information).
 %
 %        Name          Description
 %       --------------------------------------------------------------------
-%        'makeSparse'  Whether to return a sparse (default) or full matrix.
-%        'dtype'       The data type to use, either 'double' (default) or
-%                      'logical'.
 %        'correlation' The (Pearson) correlation between the two graphs
 %                      (default 0.5).
 %        'density'     The probability any given edge exists (i.e. the goal
@@ -31,66 +28,62 @@ function varargout = correlatedPair(x, adjOptions, methodOptions)
 %                      matrices are being created otherwise, it's the density
 %                      of the old graph.
 %        'isdirected'  Whether the new graphs should be directed (default
-%                      false).
+%                      false or the result of IGRAPH.ISDIRECTED on the old
+%                      graph).
 %
-%   See also igraph.rng, igraph.randgame, igraph.rewire.
+%   See also IGRAPH.RNG, IGRAPH.RANDGAME, IGRAPH.REWIRE.
 
     arguments
         x
-        adjOptions.makeSparse (1, 1) logical;
-        adjOptions.dtype (1, :) char;
-        methodOptions.correlation (1, 1) ...
-            {mustBeInRange(methodOptions.correlation, -1, 1)} = 0.25;
-        methodOptions.density (1, 1) {mustBeInRange(methodOptions.density, 0, 1)};
-        methodOptions.isdirected (1, 1) logical;
+        graphOpts.?igutils.GraphOutProps;
+        graphOpts.isdirected (1, 1) logical;
+        methodOpts.correlation (1, 1) ...
+            {mustBeInRange(methodOpts.correlation, -1, 1)} = 0.25;
+        methodOpts.density (1, 1) {mustBeInRange(methodOpts.density, 0, 1)};
     end
 
-    adjOptions = namedargs2cell(adjOptions);
-    methodOptions = namedargs2cell(methodOptions);
+    graphOpts = namedargs2cell(graphOpts);
+    methodOpts = namedargs2cell(methodOpts);
+
     if nargout < 2
-        adj2 = correlateWith(x, adjOptions{:}, methodOptions{:});
-        varargout = {adj2};
+        g2 = correlateWith(x, graphOpts{:}, methodOpts{:});
+        varargout = {g2};
     elseif nargout == 2
-        [adj1, adj2] = generatePair(x, adjOptions{:}, methodOptions{:});
-        varargout = {adj1, adj2};
+        [g1, g2] = generatePair(x, graphOpts{:}, methodOpts{:});
+        varargout = {g1, g2};
     else
         error("Igraph:tooManyOutputs", "correlatedPair returns two or " + ...
               "less values, %d requested.", nargout);
     end
 end
 
-function adj2 = correlateWith(adj, adjOptions, methodOptions)
+function g2 = correlateWith(g1, graphOpts, methodOpts)
     arguments
-        adj = {mustBeAdj}
-        adjOptions.makeSparse = issparse(adj);
-        adjOptions.dtype;
-        methodOptions.correlation;
-        methodOptions.density = nnz(adj + adj') / numel(adj);
-        methodOptions.isdirected = igraph.isdirected(adj);
+        g1 = {igutils.mustBeGraph}
+        graphOpts.?igutils.GraphOutProps;
+        graphOpts.isdirected = igraph.isdirected(g1);
+        methodOpts.correlation;
+        methodOpts.density = igraph.edgeDensity(g1);
     end
 
-    if ~isoptionset(adjOptions, "dtype")
-        if islogical(adj)
-            adjOptions.dtype = 'logical';
-        else
-            adjOptions.dtype = 'double';
-        end
-    end
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igutils.setGraphOutProps(graphOpts{:}, template = g1);
 
-    adj2 = mexIgraphDispatcher(mfunctionname(), adj, adjOptions, ...
-                               methodOptions);
+    g2 = mexIgraphDispatcher(mfunctionname(), g1, graphOpts, methodOpts);
 end
 
-function [adj1, adj2] = generatePair(nNodes, adjOptions, methodOptions)
+function [g1, g2] = generatePair(nNodes, graphOpts, methodOpts)
     arguments
         nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
-        adjOptions.makeSparse = true;
-        adjOptions.dtype = 'double';
-        methodOptions.correlation;
-        methodOptions.density = 0.5;
-        methodOptions.isdirected = false;
+        graphOpts.?igutils.GraphOutProps;
+        graphOpts.isdirected = false;
+        methodOpts.correlation;
+        methodOpts.density = 0.5;
     end
 
-    [adj1, adj2] = mexIgraphDispatcher(mfunctionname(), adjOptions, ...
-                                       methodOptions);
+    graphOpts = namedargs2cell(graphOpts);
+    graphOpts = igutils.setGraphOutProps(graphOpts{:});
+
+    [g1, g2] = mexIgraphDispatcher(mfunctionname(), nNodes, ...
+                                   graphOpts, methodOpts);
 end

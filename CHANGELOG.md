@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for MATLAB builtin graph and digraph classes.
+- Representation independent methods for `numnodes`, `numedges`, and `edgeDensity`.
+- Graph `summary` function.
+- A main igraph help entry used to describe common function arguments.
 - Reindex membership.
+- Allow `multiple` option for algorithms that allow when using MATLAB graphs.
+- Options for storing results as node and edge attributes and using stored attributes in other functions.
 
 ### Changed
 
 - Bump igraph version to 0.10.12.
+- Move argument parsers into namespace below igraph to expose them igraph users to writing igraph to functions in extension toolboxes.
 
 ## [0.1.13] 2024-04-01
 

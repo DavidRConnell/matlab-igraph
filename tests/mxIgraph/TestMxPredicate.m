@@ -5,25 +5,25 @@ classdef TestMxPredicate < matlab.unittest.TestCase
     end
 
     properties (ClassSetupParameter)
-        dtype = struct('logical', 'logical', ...
-                       'double', 'double');
-        useSparse = struct('sparse', true, 'dense', false);
+        dtype = {'logical', 'double'};
+        repr = {'sparse', 'full'};
         n = num2cell(10 .^ (1:2));
     end
 
     methods (TestClassSetup)
-        function unWeightedSetup(testCase, n, dtype, useSparse)
-            testCase.adj = randomGraph(n, 5, dtype, useSparse);
+        function unWeightedSetup(testCase, n, dtype, repr)
+            testCase.adj = randomGraph(n, 5, dtype, repr);
             testCase.adj = tril(testCase.adj);
             testCase.adj = testCase.adj + testCase.adj' - ...
                 diag(diag(testCase.adj));
+
             if strcmp(dtype, 'logical')
-                logical(testCase.adj);
+                testCase.adj = logical(testCase.adj);
             end
         end
 
-        function weightedSetup(testCase, n, useSparse)
-            testCase.weightedAdj = randomGraph(n, 5, 'double', useSparse);
+        function weightedSetup(testCase, n, repr)
+            testCase.weightedAdj = randomGraph(n, 5, 'double', repr);
             testCase.weightedAdj = addWeights(testCase.weightedAdj);
             testCase.weightedAdj = tril(testCase.weightedAdj);
             testCase.weightedAdj = testCase.weightedAdj + ...

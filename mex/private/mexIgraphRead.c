@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 #define mexIgraphError(eid, msg)		\
@@ -17,7 +17,7 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   mxArray const* method_options = prhs[1];
-  mxArray const* adj_options = prhs[2];
+  mxArray const* graph_options = prhs[2];
   igraph_t graph;
   igraph_vector_t weights;
   char* filename = mxArrayToString(prhs[0]);
@@ -25,8 +25,8 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
                                   method_options, "format"));
   igraph_integer_t index = mxIgraphGetInteger(method_options, "index");
 
-  igraph_bool_t is_weighted = mxIgraphGetBool(adj_options, "isweighted");
-  igraph_bool_t is_directed = mxIgraphGetBool(adj_options, "isdirected");
+  igraph_bool_t is_weighted = mxIgraphGetBool(graph_options, "isweighted");
+  igraph_bool_t is_directed = mxIgraphGetBool(graph_options, "isdirected");
   FILE* fptr;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
   igraph_error_handler_t* oldhandler;
@@ -101,7 +101,7 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
     }
   }
 
-  plhs[0] = mxIgraphCreateAdj(&graph, &weights, adj_options);
+  plhs[0] = mxIgraphCreateGraph(&graph, &weights, graph_options);
 
   fclose(fptr);
   igraph_vector_destroy(&weights);

@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 
 /* Generic string selector.
    Find which of a predefined set of strings an input value matches.
@@ -48,6 +48,27 @@ mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray* p)
   if (res == MXIGRAPH_FORMAT_N) {
     mexErrMsgIdAndTxt("Igraph:unknownFileFormat",
                       "Received unknown file format.");
+  }
+
+  return res;
+}
+
+// Select a graph representation.
+mxIgraphRepr_t mxIgraphSelectRepr(const mxArray* p)
+{
+  mxIgraphRepr_t res;
+  const char* reps[MXIGRAPH_REPR_N] = {
+    [MXIGRAPH_REPR_GRAPH] = "graph",
+    [MXIGRAPH_REPR_FULL] = "full",
+    [MXIGRAPH_REPR_SPARSE] = "sparse"
+  };
+
+  res = mxIgraphSelectMethod(mxGetField(p, 0, "repr"), reps,
+                             MXIGRAPH_REPR_N);
+
+  if (res == MXIGRAPH_REPR_N) {
+    mexErrMsgIdAndTxt("Igraph:unknownRep",
+                      "Received unknown graph representation.");
   }
 
   return res;

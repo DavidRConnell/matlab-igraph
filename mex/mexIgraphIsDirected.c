@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])

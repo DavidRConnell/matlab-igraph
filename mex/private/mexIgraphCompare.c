@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 igraph_error_t mexIgraphCompare(int nlhs, mxArray* plhs[], int nrhs,

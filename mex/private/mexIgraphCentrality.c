@@ -1,10 +1,10 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
                                    mxArray const* prhs[])
 {
-  VERIFY_N_INPUTS_EQUAL(3);
+  VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   enum {
@@ -13,7 +13,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
     MXIGRAPH_CENTRALITY_BETWEENNESS,
     MXIGRAPH_CENTRALITY_PAGERANK,
     MXIGRAPH_CENTRALITY_BURT,
-    /* MXIGRAPH_CENTRALITY_EIGENVECTOR, */
+    MXIGRAPH_CENTRALITY_EIGENVECTOR,
     MXIGRAPH_CENTRALITY_N
   };
 
@@ -22,27 +22,30 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
     [MXIGRAPH_CENTRALITY_HARMONIC] = "harmonic",
     [MXIGRAPH_CENTRALITY_BETWEENNESS] = "betweenness",
     [MXIGRAPH_CENTRALITY_PAGERANK] = "pagerank",
-    [MXIGRAPH_CENTRALITY_BURT] = "burt"
-    /* [MXIGRAPH_CENTRALITY_EIGENVECTOR] = "eigenvector" */
+    [MXIGRAPH_CENTRALITY_BURT] = "burt",
+    [MXIGRAPH_CENTRALITY_EIGENVECTOR] = "eigenvector"
   };
 
-  mxArray const* opts = prhs[2];
   igraph_integer_t method = mxIgraphSelectMethod(prhs[1], methods,
                             MXIGRAPH_CENTRALITY_N);
+  mxArray const* graph_options = prhs[2];
+  mxArray const* method_options = prhs[3];
+
   igraph_t graph;
   igraph_vector_t weights;
   igraph_vector_t res;
   igraph_vector_int_t vertices;
   igraph_vs_t vids;
   igraph_bool_t warning;
-  igraph_neimode_t mode = mxIgraphSelectMode(opts);
-  igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
-  igraph_bool_t normalized = mxIgraphGetBool(opts, "normalized");
-  igraph_real_t damping = mxIgraphGetReal(opts, "damping");
+  igraph_bool_t const directed = mxIgraphGetBool(graph_options, "isdirected");
+  igraph_neimode_t const mode = mxIgraphSelectMode(method_options);
+  igraph_bool_t const normalized = mxIgraphGetBool(method_options,
+                                   "normalized");
+  igraph_real_t const damping = mxIgraphGetReal(method_options, "damping");
   igraph_error_t errorcode;
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
-  mxIgraphGetVectorInt(opts, "vids", &vertices, false);
+  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
+  mxIgraphGetVectorInt(method_options, "vids", &vertices, true);
   igraph_vs_vector(&vids, &vertices);
 
   igraph_vector_init(&res, 0);
@@ -50,7 +53,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
   switch (method) {
   case MXIGRAPH_CENTRALITY_CLOSENESS:
     errorcode = igraph_closeness(&graph, &res, NULL, &warning, vids, mode,
-                                 &weights, normalized);
+                                 MXIGRAPH_WEIGHTS(&weights), normalized);
 
     if (warning) {
       mexWarnMsgTxt("Graph not connected; not all nodes could reach "
@@ -58,23 +61,28 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray* plhs[], int nrhs,
     }
     break;
   case MXIGRAPH_CENTRALITY_HARMONIC:
-    errorcode = igraph_harmonic_centrality(&graph, &res, vids, mode, &weights,
+    errorcode = igraph_harmonic_centrality(&graph, &res, vids, mode,
+                                           MXIGRAPH_WEIGHTS(&weights),
                                            normalized);
     break;
   case MXIGRAPH_CENTRALITY_BETWEENNESS:
-    errorcode = igraph_betweenness(&graph, &res, vids, directed, &weights);
+    errorcode = igraph_betweenness(&graph, &res, vids, directed,
+                                   MXIGRAPH_WEIGHTS(&weights));
     break;
   case MXIGRAPH_CENTRALITY_PAGERANK:
     errorcode = igraph_pagerank(&graph, IGRAPH_PAGERANK_ALGO_PRPACK, &res, NULL,
-                                vids, directed, damping, &weights, NULL);
+                                vids, directed, damping,
+                                MXIGRAPH_WEIGHTS(&weights), NULL);
     break;
   case MXIGRAPH_CENTRALITY_BURT:
-    errorcode = igraph_constraint(&graph, &res, vids, &weights);
+    errorcode = igraph_constraint(&graph, &res, vids,
+                                  MXIGRAPH_WEIGHTS(&weights));
     break;
-  /* case MXIGRAPH_CENTRALITY_EIGENVECTOR: */
-  /*   errorcode = igraph_eigenvector_centrality(&graph, &res, NULL, directed, */
-  /*               normalized, &weights, NULL); */
-  /*   break; */
+  case MXIGRAPH_CENTRALITY_EIGENVECTOR:
+    mxIgraphErrorNotImplemented("Centrality", "eigenvector");
+    /*   errorcode = igraph_eigenvector_centrality(&graph, &res, NULL, directed, */
+    /*               normalized, MXIGRAPH_WEIGHTS(&weights), NULL); */
+    break;
   default:
     mexErrMsgIdAndTxt("Igraph:internal:unknownMethod",
                       "Centrality method %s not known.",

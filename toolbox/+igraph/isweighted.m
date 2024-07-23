@@ -1,8 +1,13 @@
-function TF = isweighted(adj)
+function TF = isweighted(graph)
 %ISWEIGHTED guess if a graph is weighted
-%   TF = ISWEIGHTED(ADJ) return true if ADJ contains values other than 0 and 1.
+%   TF = ISWEIGHTED(GRAPH) return true if GRAPH contains values other than 0
+%   and 1.
 %
-%   See also igraph.isdirected
+%   See also IGRAPH.ISDIRECTED.
 
-    TF = sum(adj == 1 | adj == 0, 'all') ~= numel(adj);
+    if igutils.isgraph(graph)
+        TF = igutils.hasEdgeAttr(graph);
+    else
+        TF = sum(graph == 1 | graph == 0, 'all') ~= numel(graph);
+    end
 end

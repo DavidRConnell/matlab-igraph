@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 typedef enum {
@@ -74,7 +74,7 @@ if (mxIsScalar(mxIgraphGetArgument(opts, "nConnections"))) {            \
                                                                         \
 if (!mxIsEmpty(start_argument)) {                                       \
     mxIgraphGetGraph(start_argument,                                    \
-	&start_from, NULL, directed);                                   \
+	&start_from, NULL, opts);                                       \
   }                                                                     \
                                                                         \
   errcode = igraph_barabasi_game(graph, n_nodes, power, m, outseq_ptr,  \
@@ -139,10 +139,11 @@ static igraph_error_t mxIgraph_watts_strogatz_i(mxArray const* opts,
   igraph_integer_t n_neighbors = mxIgraphGetInteger(opts, "radius");
   igraph_real_t probability = mxIgraphGetReal(opts, "probability");
   igraph_bool_t loops = mxIgraphGetBool(opts, "loops");
+  igraph_bool_t multiple = mxIgraphGetBool(opts, "multiple");
   igraph_error_t errcode;
 
   errcode = igraph_watts_strogatz_game(graph, dim, size, n_neighbors,
-                                       probability, loops, false);
+                                       probability, loops, multiple);
 
   return errcode;
 }
@@ -198,9 +199,10 @@ static igraph_error_t mxIgraph_k_regular_i(mxArray const* opts,
   igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
   igraph_integer_t degree = mxIgraphGetInteger(opts, "degree");
   igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
+  igraph_bool_t multiple = mxIgraphGetBool(opts, "multiple");
   igraph_error_t error;
 
-  error = igraph_k_regular_game(graph, n_nodes, degree, directed, false);
+  error = igraph_k_regular_game(graph, n_nodes, degree, directed, multiple);
 
   return error;
 }
@@ -213,6 +215,7 @@ static igraph_error_t mxIgraph_static_fitness_i(mxArray const* opts,
   igraph_vector_t fitness_in;
   igraph_vector_t* fitness_in_ptr = NULL;
   igraph_bool_t loops = mxIgraphGetBool(opts, "loops");
+  igraph_bool_t multiple = mxIgraphGetBool(opts, "multiple");
   igraph_error_t error;
 
   mxIgraphGetVector(opts, "outFitness", &fitness_out, false);
@@ -223,7 +226,7 @@ static igraph_error_t mxIgraph_static_fitness_i(mxArray const* opts,
   }
 
   error = igraph_static_fitness_game(graph, n_edges, &fitness_out,
-                                     fitness_in_ptr, loops, false);
+                                     fitness_in_ptr, loops, multiple);
 
   igraph_vector_destroy(&fitness_out);
   igraph_vector_destroy(&fitness_in);
@@ -239,12 +242,13 @@ static igraph_error_t mxIgraph_static_power_law_i(mxArray const
   igraph_real_t exponent_out = mxIgraphGetReal(opts, "outExponent");
   igraph_real_t exponent_in = mxIgraphGetReal(opts, "inExponent");
   igraph_bool_t loops = mxIgraphGetBool(opts, "loops");
+  igraph_bool_t multiple = mxIgraphGetBool(opts, "multiple");
   igraph_bool_t finite_size_correction = mxIgraphGetBool(opts,
                                          "finiteSizeCorrection");
   igraph_error_t error;
 
   error = igraph_static_power_law_game(graph, n_nodes, n_edges, exponent_out,
-                                       exponent_in, loops, false,
+                                       exponent_in, loops, multiple,
                                        finite_size_correction);
 
   return error;
@@ -512,7 +516,7 @@ static igraph_error_t mxIgraph_cited_type_i(mxArray const* opts,
   igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
   igraph_error_t error;
 
-  mxIgraphGetVectorInt(opts, "types", &types, false);
+  mxIgraphGetVectorInt(opts, "types", &types, true);
   mxIgraphGetVector(opts, "preference", &preferences, false);
 
   error = igraph_cited_type_game(graph, n_nodes, &types, &preferences,
@@ -534,7 +538,7 @@ static igraph_error_t mxIgraph_citing_cited_type_i(mxArray const
   igraph_bool_t directed = mxIgraphGetBool(opts, "isdirected");
   igraph_error_t error;
 
-  mxIgraphGetVectorInt(opts, "types", &types, false);
+  mxIgraphGetVectorInt(opts, "types", &types, true);
   mxIgraphGetMatrix(opts, "preference", &pref_matrix, false);
 
   error = igraph_citing_cited_type_game(graph, n_nodes, &types, &pref_matrix,
@@ -642,16 +646,15 @@ static igraph_error_t mxIgraph_simple_interconnected_islands_i(
 igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
                                  mxArray const* prhs[])
 {
-  VERIFY_N_INPUTS_ATLEAST(3);
+  VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   mxIgraph_game_t method;
-  mxArray const* adj_options = prhs[1];
+  mxArray const* graph_options = prhs[1];
   mxArray const* method_options = prhs[2];
   igraph_t graph;
   igraph_error_t errorcode;
-  typedef igraph_error_t (*game_method_t)(mxArray const * prhs,
-                                          igraph_t* g);
+  typedef igraph_error_t (*game_method_t)(mxArray const * prhs, igraph_t* g);
   game_method_t game_method;
 
   const char* games[MXIGRAPH_GAME_N] = {
@@ -693,7 +696,7 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
   method = mxIgraphSelectMethod(prhs[0], games, MXIGRAPH_GAME_N);
 
   if (method == MXIGRAPH_GAME_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
+    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[0]));
     exit(1);
   }
 
@@ -734,13 +737,13 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray* plhs[], int nrhs,
   game_method = method_table[method];
 
   if (!game_method) {
-    mxIgraphErrorNotImplemented("RandGame", mxArrayToString(prhs[2]));
+    mxIgraphErrorNotImplemented("RandGame", mxArrayToString(prhs[0]));
     exit(1);
   }
 
   game_method(method_options, &graph);
 
-  plhs[0] = mxIgraphCreateAdj(&graph, NULL, adj_options);
+  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
   return errorcode;

@@ -10,7 +10,8 @@ function varargout = version(type)
 
     arguments
         type (1, :) char {...
-            mustBeMemberi(type, {'toolbox', 'library', 'both'})} = 'both';
+            igutils.mustBeMemberi(type, ...
+                                  {'toolbox', 'library', 'both'})} = 'both';
     end
 
     if nargout == 0

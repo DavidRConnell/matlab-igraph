@@ -13,7 +13,9 @@ function makeDocsTask(~)
 end
 
 function testMxIgraphTask(~)
+    oldPath = addpath("toolbox");
     runtests("tests/mxIgraph");
+    path(oldPath);
 end
 
 function testToolboxTask(~)

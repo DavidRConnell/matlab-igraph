@@ -3,7 +3,7 @@
    when when going from C to MATLAB types or down 1 when going the other way.
    For this the @a shift_start argument can be set to true. */
 
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 
 /* Copy a matlab vector to an igraph real vector.
 

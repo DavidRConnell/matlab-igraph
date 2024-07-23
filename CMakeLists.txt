@@ -71,6 +71,7 @@ add_subdirectory(mxIgraph)
 add_subdirectory(mex)
 
 add_subdirectory(tests)
+add_subdirectory(benchmarks)
 
 # Installation
 install(DIRECTORY toolbox

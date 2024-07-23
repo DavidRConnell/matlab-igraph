@@ -9,12 +9,23 @@
 
 #include "igraph.h"
 
+/* Helper for passing weights when the graph might be unweighted. */
+#define MXIGRAPH_WEIGHTS(weights) \
+    igraph_vector_size(weights) > 0 ? weights : NULL
+
 // types
 typedef enum {
   MXIGRAPH_DTYPE_LOGICAL = 0,
   MXIGRAPH_DTYPE_DOUBLE,
   MXIGRAPH_DTYPE_N
 } mxIgraphDType_t;
+
+typedef enum {
+  MXIGRAPH_REPR_GRAPH = 0,
+  MXIGRAPH_REPR_FULL,
+  MXIGRAPH_REPR_SPARSE,
+  MXIGRAPH_REPR_N
+} mxIgraphRepr_t;
 
 typedef enum {
   MXIGRAPH_FORMAT_EDGELIST = 0,
@@ -49,6 +60,7 @@ igraph_bool_t mxIgraphIsSquare(const mxArray* p);
 igraph_bool_t mxIgraphIsVector(const mxArray* p);
 igraph_bool_t mxIgraphIsEmpty(const mxArray* p);
 igraph_bool_t mxIgraphIsWeighted(const mxArray* p);
+igraph_bool_t mxIgraphIsGraph(const mxArray* p);
 igraph_bool_t mxIgraphIsDirected(const mxArray* p);
 igraph_bool_t mxIgraphIsTriU(const mxArray* p);
 igraph_bool_t mxIgraphIsTriL(const mxArray* p);
@@ -61,14 +73,14 @@ int mxIgraphMembershipFromArray(const mxArray* p,
 mxArray* mxIgraphMembershipToArray(igraph_vector_int_t const* membership);
 
 // mxGraph
-igraph_integer_t mxIgraphVCount(const mxArray* p);
-igraph_integer_t mxIgraphECount(const mxArray* p,
+igraph_integer_t mxIgraphVCount(mxArray const* p);
+igraph_integer_t mxIgraphECount(mxArray const* p,
                                 const igraph_bool_t is_directed);
-void mxIgraphGetGraph(const mxArray* p, igraph_t* graph,
-                      igraph_vector_t* weights, const igraph_bool_t is_directed);
-mxArray* mxIgraphCreateAdj(igraph_t const* graph,
-                           igraph_vector_t const* weights,
-                           mxArray const* adjOptions);
+void mxIgraphGetGraph(mxArray const* p, igraph_t* graph,
+                      igraph_vector_t* weights, mxArray const* graph_options);
+mxArray* mxIgraphCreateGraph(igraph_t const* graph,
+                             igraph_vector_t const* weights,
+                             mxArray const* graphOpts);
 
 // mxStructures
 int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec,
@@ -107,6 +119,7 @@ mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray* p);
 
 mxArray* mxIgraphGetArgument(mxArray const* arg_struct,
                              char const fieldname[1]);
+mxIgraphRepr_t mxIgraphSelectRepr(const mxArray* arg_struct);
 mxIgraphDType_t mxIgraphSelectDType(const mxArray* arg_struct);
 igraph_neimode_t mxIgraphSelectMode(const mxArray* arg_struct);
 igraph_integer_t mxIgraphGetInteger(const mxArray* arg_struct,

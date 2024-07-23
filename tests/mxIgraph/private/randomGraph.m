@@ -1,4 +1,4 @@
-function [adj, c] = randomGraph(n, nClusters, dtype, makeSparse)
+function [adj, c] = randomGraph(n, nClusters, dtype, repr)
     clusterSizes = repmat(floor(n / nClusters), [nClusters 1]);
     clusterSizes(end) = n - sum(clusterSizes(1:end-1));
 
@@ -13,7 +13,7 @@ function [adj, c] = randomGraph(n, nClusters, dtype, makeSparse)
         count(1) = count(2);
     end
     adj = blkdiag(edges{:});
-    if makeSparse
+    if strcmp(repr, 'sparse')
         adj = sparse(adj);
     end
 

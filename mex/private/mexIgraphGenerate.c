@@ -1,4 +1,4 @@
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 typedef enum {
@@ -148,7 +148,7 @@ static igraph_error_t mxIgraph_prufer_i(mxArray const* opts, igraph_t* graph)
   igraph_vector_int_t prufer;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "prufer", &prufer, false);
+  mxIgraphGetVectorInt(opts, "prufer", &prufer, true);
 
   errcode = igraph_from_prufer(graph, &prufer);
   igraph_vector_int_destroy(&prufer);
@@ -208,11 +208,11 @@ static igraph_error_t mxIgraph_petersen_i(mxArray const* opts,
 igraph_error_t mexIgraphGenerate(int nlhs, mxArray* plhs[], int nrhs,
                                  mxArray const* prhs[])
 {
-  VERIFY_N_INPUTS_ATLEAST(3);
+  VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   mxIgraph_generator_t method;
-  mxArray const* adj_options = prhs[1];
+  mxArray const* graph_options = prhs[1];
   mxArray const* method_options = prhs[2];
   igraph_t graph;
   igraph_error_t errorcode;
@@ -247,7 +247,7 @@ igraph_error_t mexIgraphGenerate(int nlhs, mxArray* plhs[], int nrhs,
                                 MXIGRAPH_GENERATOR_N);
 
   if (method == MXIGRAPH_GENERATOR_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
+    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[0]));
     exit(1);
   }
 
@@ -270,13 +270,13 @@ igraph_error_t mexIgraphGenerate(int nlhs, mxArray* plhs[], int nrhs,
   generator_method = method_table[method];
 
   if (!generator_method) {
-    mxIgraphErrorNotImplemented("Generate", mxArrayToString(prhs[2]));
+    mxIgraphErrorNotImplemented("Generate", mxArrayToString(prhs[0]));
     exit(1);
   }
 
   generator_method(method_options, &graph);
 
-  plhs[0] = mxIgraphCreateAdj(&graph, NULL, adj_options);
+  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
   return errorcode;

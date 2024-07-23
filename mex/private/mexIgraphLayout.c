@@ -1,5 +1,5 @@
 #include <string.h>
-#include "mxIgraph.h"
+#include <mxIgraph.h>
 #include "utils.h"
 
 typedef enum {
@@ -291,13 +291,13 @@ static igraph_error_t mxIgraph_reingold_tilford_circular_i(
 igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
                                mxArray const* prhs[])
 {
-  VERIFY_N_INPUTS_ATLEAST(4);
+  VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   igraph_t graph;
   igraph_vector_t weights;
+  mxArray const* graph_options = prhs[2];
   mxIgraph_layout_t method;
-  igraph_bool_t directed = mxGetScalar(prhs[2]);
   mxArray const* method_options = prhs[3];
   igraph_matrix_t pos;
   typedef igraph_error_t (*layout_method_t)(igraph_t const*,
@@ -325,7 +325,7 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
   method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_LAYOUT_N);
 
   if (method == MXIGRAPH_LAYOUT_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[2]));
+    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[1]));
     exit(1);
   }
 
@@ -353,10 +353,11 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, directed);
+  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
   igraph_matrix_init(&pos, 0, 0);
 
-  errorcode = layout_method(&graph, &weights, method_options, &pos);
+  errorcode = layout_method(&graph, MXIGRAPH_WEIGHTS(&weights), method_options,
+                            &pos);
   igraph_destroy(&graph);
   igraph_vector_destroy(&weights);
 

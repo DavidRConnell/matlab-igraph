@@ -42,7 +42,7 @@ classdef TestIO < matlab.unittest.TestCase
             end
         end
 
-        function name = filename(testCase, method, isweighted, isdirected)
+        function name = filename(testCase, method)
             name = "graph." + testCase.methodExt(method);
             name = fullfile(testCase.location, name);
         end
@@ -72,11 +72,18 @@ classdef TestIO < matlab.unittest.TestCase
             testCase.assumeFalse(isdirected && ~testCase.directedAllowed(method), ...
                                 "Method cannot handle directed graphs, skipping.")
 
+            if isweighted
+                dtype = 'double';
+            else
+                dtype = 'logical';
+            end
+
             name = testCase.filename(method);
             expected = testCase.getAdj(isweighted, isdirected);
             igraph.save(name, expected, 'overwrite', true);
             actual = igraph.load(name, isweighted=isweighted, ...
-                                 isdirected=isdirected, makeSparse=false);
+                                 isdirected=isdirected, repr="full", ...
+                                 dtype=dtype);
 
             if any(strcmp(method, {'ncol', 'lgl'}))
                 % These methods do not track node id order so use a weaker

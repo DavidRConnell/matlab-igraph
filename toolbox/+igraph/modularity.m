@@ -1,7 +1,7 @@
-function q = modularity(adj, membership, options)
+function q = modularity(graph, membership, graphOpts, methodOpts)
 %MODULARITY calculate the modularity of a graph under a partition
-%   Q = MODULARITY(ADJ, MEMBERSHIP) calculates the Newman modularity for the
-%       given ADJ with structure provided by MEMBERSHIP.
+%   Q = MODULARITY(GRAPH, MEMBERSHIP) calculates the Newman modularity for the
+%       given GRAPH with structure provided by MEMBERSHIP.
 %
 %   Q = MODULARITY(..., 'PARAM1', VAL1, 'PARAM2', VAL2) Additionally accepts
 %       the optional name value pairs RESOLUTION and ISDIRECTED. RESOLUTION
@@ -12,14 +12,15 @@ function q = modularity(adj, membership, options)
 %       ISDIRECTED determines whether the graph should be treated as directed
 %       or not. Defaults to the results of IGRAPH.ISDIRECTED.
 %
-%   See also igraph.optimalModularity, igraph.cluster.
+%   See also IGRAPH.OPTIMALMODULARITY, IGRAPH.CLUSTER.
 
     arguments
-        adj {mustBeAdj};
-        membership {mustBePartition};
-        options.resolution (1, 1) {mustBeNonnegative} = 1;
-        options.isdirected (1, 1) logical = igraph.isdirected(adj);
+        graph {igutils.mustBeGraph};
+        membership {igutils.mustBePartition};
+        graphOpts.isdirected (1, 1) logical = igraph.isdirected(graph);
+        methodOpts.resolution (1, 1) {mustBeNonnegative} = 1;
     end
 
-    q = mexIgraphDispatcher(mfilename(), adj, membership, options);
+    q = mexIgraphDispatcher(mfilename(), graph, membership, graphOpts, ...
+                            methodOpts);
 end
