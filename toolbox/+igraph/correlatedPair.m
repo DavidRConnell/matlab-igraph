@@ -1,8 +1,9 @@
 function varargout = correlatedPair(x, graphOpts, methodOpts)
 %CORRELATEDPAIR create a pair of correlated graphs
 %   G2 = CORRELATEDPAIR(G1, ...) create a new graph that is correlated to G1.
+%
 %   [G1, G2] = CORRELATEDPAIR(NNODES, ...) create two graphs with NNODES
-%       nodes each that are correlated.
+%   nodes each that are correlated.
 %
 %   If the number of outputs is 1, assumes the first parameter is an adjacency
 %   matrix to use in creating the second adjacency matrix. If there are two
@@ -19,7 +20,7 @@ function varargout = correlatedPair(x, graphOpts, methodOpts)
 %       'dtype' (see the "IGRAPH functions returning graphs" section in help
 %       IGRAPH for more information).
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'correlation' The (Pearson) correlation between the two graphs
 %                      (default 0.5).

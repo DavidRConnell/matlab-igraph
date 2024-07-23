@@ -1,10 +1,11 @@
 function rng(seed, generator)
 %RNG modify the random number generator used by igraph.
 %   RNG(SD) seeds the rng with SD. The seed must be a non-negative integer.
-%   RNG(SD, GENERATOR) sets the generator used by igraph's default rng to
-%      GENERATOR. GENERATOR can be one of:
 %
-%       Generator    Description
+%   RNG(SD, GENERATOR) sets the generator used by igraph's default rng to
+%   GENERATOR. GENERATOR can be one of:
+%
+%        Generator    Description
 %      ----------------------------------------------------------------------
 %       'MT19937'     Makoto Matsumoto and Takuji Nishimura variant of
 %                     Merseene Twister (default)

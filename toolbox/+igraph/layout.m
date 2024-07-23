@@ -1,12 +1,13 @@
 function pos = layout(graph, method, graphOpts, methodOpts)
 %LAYOUT position graph vertices for plotting
-%   POS = LAYOUT(GRAPH, METHOD) use METHOD to generate coordinates for all nodes
-%       in GRAPH. Layout will often be created indirectly by igraph.plot, but
-%       calling LAYOUT directly can be useful for reusing the same layout or
-%       manually modifying a layout.
-%   POS = LAYOUT(GRAPH, METHOD, "ISDIRECTED", TF) explicitly state if the graph
-%       should be treated as directed or not. Defaults to result of
-%       IGRAPH.ISDIRECTED.
+%   POS = LAYOUT(GRAPH, METHOD) use METHOD to generate coordinates for all
+%   nodes in GRAPH. Layout will often be created indirectly by IGRAPH.PLOT, but
+%   calling LAYOUT directly can be useful for reusing the same layout or
+%   manually modifying a layout.
+%
+%   POS = LAYOUT(GRAPH, METHOD, 'isdirected', TF) explicitly state if the graph
+%   should be treated as directed or not. Defaults to result of
+%   IGRAPH.ISDIRECTED.
 %
 %   Methods include regular layouts:
 %       'random', 'circle', 'star', 'grid', 'graphopt', 'bipartite',
@@ -27,7 +28,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %   POS = LAYOUT(GRAPH, 'random') Places nodes at random along a 2d plane.
 %   POS = LAYOUT(GRAPH, 'circle', ...) Uniform place nodes along a circle.
 %
-%        Name    Description
+%         Name    Description
 %       --------------------------------------------------------------------
 %        'order' A vector of node indices (starting at 1) specifying the order
 %                nodes should be plotted. Defaults to 1:nNodes(GRAPH). The
@@ -36,7 +37,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %
 %   POS = LAYOUT(GRAPH, 'star', ...) Form star with a node in the center.
 %
-%        Name    Description
+%         Name    Description
 %       --------------------------------------------------------------------
 %        'center' The index of the node to put in the center (default 1).
 %        'order'  A vector of node indices (including the center) specifying
@@ -45,14 +46,14 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %
 %   POS = LAYOUT(GRAPH, 'grid', ...) Place nodes in a grid.
 %
-%        Name    Description
+%         Name    Description
 %       --------------------------------------------------------------------
 %        'width' The number of nodes per row. Default of 0 means
 %                ceil(sqrt(nNodes)).
 %
 %   POS = LAYOUT(GRAPH, 'graphopt', ...) Use the graphopt algorithm.
 %
-%        Name             Description
+%         Name             Description
 %       --------------------------------------------------------------------
 %        'nIterations'    Number of iterations (default 500).
 %        'charge'         Node charge for calculating repulsion (default 0.001).
@@ -65,9 +66,9 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %                         (default [], let the algorithm decide).
 %
 %   POS = LAYOUT(GRAPH, 'bipartite', ...) A layout for displaying bipartite
-%       graphs.
+%   graphs.
 %
-%        Name             Description
+%         Name             Description
 %       --------------------------------------------------------------------
 %        'types'         Logical vector of nodes expressing which nodes are in
 %                        each type.
@@ -78,7 +79,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %   POS = LAYOUT(GRAPH, 'FruchtermanReingold', ...)
 %   POS = LAYOUT(GRAPH, 'fr', ...) Use the Fruchterman-Reingold algorithm.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nIterations' Number of iterations (default 500).
 %        'startTemp'   Initial maximum movement per step (decreases over
@@ -90,7 +91,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %   POS = LAYOUT(GRAPH, 'KamadaKawai', ...)
 %   POS = LAYOUT(GRAPH, 'kk', ...) Use the Kamada-Kawai algorithm
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'maxIterations' Maximum number of iterations (default 10 * nNodes).
 %        'epsilon'       The minimum change needed to continue iterating
@@ -100,7 +101,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %
 %   POS = LAYOUT(GRAPH, 'gem', ...) Use the GEM algorithm.
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'maxIterations' Maximum number of iterations (default 40 * nNodes ^ 2).
 %        'tempMax'       Maximum local temperature (default nNodes).
@@ -112,7 +113,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %   POS = LAYOUT(GRAPH, 'DavidsonHarel', ...)
 %   POS = LAYOUT(GRAPH, 'dh', ...) The Davidson-Harel algorithm.
 %
-%        Name                 Description
+%         Name                 Description
 %       --------------------------------------------------------------------
 %        'maxIterations'      Maximum number of iterations (default 10).
 %        'fineIterations'     Number of tuning iterations (default
@@ -129,18 +130,18 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %                             (default []).
 %
 %   POS = LAYOUT(GRAPH, 'mds', ...) Use multidimensional scaling to position
-%       nodes.
+%   nodes.
 %
-%        Name        Description
+%         Name        Description
 %       --------------------------------------------------------------------
 %        'distance'  The nNodes x nNodes distance matrix. Distance functions
 %                    should be undirected (default [], in which case the
 %                    shortest path lengths will be used).
 %
 %   POS = LAYOUT(GRAPH, 'lgl', ...) The large graph layout (LGL) force based
-%       simulation.
+%   simulation.
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'maxIterations' Max number of iterations (default 150).
 %        'stepMax'       Maximum distance allowed for a node to move per step
@@ -153,17 +154,17 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 %
 %   POS = LAYOUT(GRAPH, 'ReingoldTilford', ...)
 %   POS = LAYOUT(GRAPH, 'rt', ...) Use the Reingold-Tilford tree layout
-%       algorithm.
+%   algorithm.
 %
-%        Name         Description
+%         Name         Description
 %       --------------------------------------------------------------------
 %        'mode'       Determines which edges to use for building the tree,
 %                     'all' (default), 'out', or 'in'.
 %        'root'       The index of the root node or a vector of root nodes. By
 %                     default, it attempts to select a root node automatically.
-%        'circular' Whether to plot vertices in a circle.
+%        'circular'   Whether to plot vertices in a circle.
 %
-% See also igraph.layout3d, igraph.plot, igraph.rng
+% See also IGRAPH.PLOT, IGRAPH.RNG.
 
     arguments
         graph {igutils.mustBeGraph};

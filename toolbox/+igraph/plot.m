@@ -1,23 +1,22 @@
 function plot(graph, layout, options, nodeOpts, edgeOpts, layoutOpts)
 %PLOT draw a graph
 %   PLOT(GRAPH, LAYOUT) use LAYOUT to plot the vertices of GRAPH. LAYOUT can
-%       either be a matrix of coordinates (nNodes x 2), such as a layout
-%       produced with IGRAPH.LAYOUT, or the name of a method accepted by
-%       IGRAPH.LAYOUT.
+%   either be a matrix of coordinates (nNodes x 2), such as a layout produced
+%   with IGRAPH.LAYOUT, or the name of a method accepted by IGRAPH.LAYOUT.
 %
 %   PLOT(..., "NODECOLOR", C) Color the nodes based on the communities of C. C
-%       should be a vector with a community label for each node (such as a
-%       membership vector produced by IGRAPH.CLUSTER).
+%   should be a vector with a community label for each node (such as a
+%   membership vector produced by IGRAPH.CLUSTER).
 %
 %   PLOT(..., "NODESIZE", SZ) Adjust the size of the plot markers. This can be
-%       either a scalar or a vector with one size per node. This is used to
-%       display node metrics such as the output of IGRAPH.CENTERALITY. If a SZ
-%       is a vector it will be scaled.
+%   either a scalar or a vector with one size per node. This is used to display
+%   node metrics such as the output of IGRAPH.CENTERALITY. If a SZ is a vector
+%   it will be scaled.
 %
 %   PLOT(..., "AX", AXIS) Plot onto the provided axis instead of creating a new
-%       one.
+%   one.
 %
-%   See also igraph.layout, igraph.plot3d.
+%   See also IGRAPH.LAYOUT.
 
     arguments
         graph {igutils.mustBeGraph};

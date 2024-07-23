@@ -1,5 +1,5 @@
 function postinstall()
-% POSTINSTALL system specific clean up of matlab-igraph toolbox
+%POSTINSTALL system specific clean up of matlab-igraph toolbox
 %   POSTINSTALL() Remove compiled files not needed on the current system.
 %
 %   In order to make the toolbox independent of the end system, files for all

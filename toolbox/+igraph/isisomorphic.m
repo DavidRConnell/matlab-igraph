@@ -1,11 +1,11 @@
 function TF = isisomorphic(g1, g2, g1Opts, g2Opts)
 %ISISOMORPHIC test if two graphs are isomorphic
 %   TF = ISISOMORPHIC(GRAPH1, GRAPH2) returns true if GRAPH1 and GRAPH2 are the
-%       equivalent when ignoring the order of nodes.
+%   equivalent when ignoring the order of nodes.
 %
 %   TF = ISISOMORPHIC(GRAPH1, GRAPH2, G1ISDIRECTED, G2ISDIRECTED) override the
-%       guesses for whether GRAPH1 and GRAPH2 are directed. If they are not
-%       both the same (both directed or both undirected) an error is triggered.
+%   guesses for whether GRAPH1 and GRAPH2 are directed. If they are not both
+%   the same (both directed or both undirected) an error is triggered.
 %
 %   See also IGRAPH.ISSUBISOMORPHIC.
 

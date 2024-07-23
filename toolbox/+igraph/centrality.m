@@ -1,14 +1,16 @@
 function values = centrality(graph, method, graphOpts, methodOpts, attribute)
 %CENTRALITY calculate centrality measure in a graph
 %   VALUES = CENTRALITY(GRAPH, METHOD) calculate the centrality for all nodes
-%      in GRAPH using METHOD. METHOD can be one of 'closeness', 'harmonic',
-%      'betweenness', 'pagerank', 'burt' (equivalently 'constraint').
-%   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'VIDS', NODES) select a subset of
-%      nodes in the graph to calculate centrality on.
-%   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'directed', TF) if true, treat the
-%      graph is directed (defaults to IGRAPH.ISDIRECTED).
+%   in GRAPH using METHOD. METHOD can be one of 'closeness', 'harmonic',
+%   'betweenness', 'pagerank', 'burt' (equivalently 'constraint').
 %
-%   GRAPH = CENTRALITY(GRAPH, METHOD, RESULT, "NAME") if GRAPH can hold
+%   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'vids', NODES) select a subset of
+%   nodes in the graph to calculate centrality on.
+%
+%   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'directed', TF) if true, treat the
+%   graph is directed (defaults to IGRAPH.ISDIRECTED).
+%
+%   GRAPH = CENTRALITY(GRAPH, METHOD, 'result', NAME) if GRAPH can hold
 %   attributes, setting RESULT will determine the name of a node attribute to
 %   store the results such that GRAPH.Nodes.NAME will be a vector of centrality
 %   values. Note: The original GRAPH is not modified.

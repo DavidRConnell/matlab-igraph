@@ -1,15 +1,15 @@
 function graph = load(filename, ioOptions, graphOpts)
 %LOAD read a graph from file
 %   GRAPH = LOAD(FILE) read FILE representing a graph into MATLAB. The file's
-%       storage format will be guessed based on the file's extension.
+%   storage format will be guessed based on the file's extension.
 %
-%   GRAPH = LOAD(FILE, 'FORMAT', FORMAT) use FORMAT to read the file instead of
-%       guessing the value from the file extension. In some cases, it may read
-%       in part of a file to differentiate between types with the same
-%       extension.
+%   GRAPH = LOAD(FILE, 'format', FORMAT) use FORMAT to read the file instead of
+%   guessing the value from the file extension. In some cases, it may read in
+%   part of a file to differentiate between types with the same extension.
 %
 %   Available formats are:
-%      Format       File Extension          Description
+%
+%       Format       File Extension          Description
 %   -------------------------------------------------------------------------
 %      'mat'        '.mat'                  MAT-file (limited compatibility
 %                                           outside of MATLAB)
@@ -26,11 +26,11 @@ function graph = load(filename, ioOptions, graphOpts)
 %      'dl'         {'.txt', '.dl'}         UCINET's DL format.
 %
 %   GRAPH = LOAD(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to the
-%   'FORMAT' the LOAD accepts the common graph out arguments 'repr', 'dtype',
+%   'format' the LOAD accepts the common graph out arguments 'repr', 'dtype',
 %   and 'weight'. For more information see the "IGRAPH functions returning
 %   graphs" section in help IGRAPH. LOAD specific parameters are listed below:
 %
-%       Parameter        Value
+%       Parameter       Value
 %        'isweighted'*   Whether to load weights if they exist or not. If no
 %                        weights exist in the file, there is no harm in leaving
 %                        this as true. By default this is true unless data type

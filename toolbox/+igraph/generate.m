@@ -1,9 +1,10 @@
 function graph = generate(method, graphOpts, methodOpts)
 %GENERATE create a graph with a deterministic generator
 %   GRAPH = GENERATE(METHOD) use METHOD to generate a deterministic graph. Each
-%       method has its own set of optional arguments, see below for more
-%       information on a specific method. All resulting graphs are unweighted.
-%       METHOD can be one of the following:
+%   method has its own set of optional arguments, see below for more
+%   information on a specific method. All resulting graphs are unweighted.
+%
+%   METHOD can be one of the following:
 %
 %       'star', 'wheel', 'ring', 'KaryTree', 'RegularTree', 'full',
 %       'citation', 'prufer', 'atlas', 'DeBruijn', 'kautz', 'circulant',
@@ -13,10 +14,10 @@ function graph = generate(method, graphOpts, methodOpts)
 %       'karyTree', etc are all acceptable.
 %
 %   GRAPH = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
-%       method specific parameters, there are parameters REPR and DTYPE for
-%       specifying how the resulting GRAPH is represented common to all
-%       methods. See the "functions returning graphs" section in help IGRAPH
-%       for more information.
+%   method specific parameters, there are parameters REPR and DTYPE for
+%   specifying how the resulting GRAPH is represented common to all methods.
+%   See the "functions returning graphs" section in help IGRAPH for more
+%   information.
 %
 %   GRAPH = GENERATE('star', ...) Creates a graph where every node connects to
 %       only the center node.
@@ -28,21 +29,21 @@ function graph = generate(method, graphOpts, methodOpts)
 %        'center'   The index of the center node (defaults to 1).
 %
 %   GRAPH = GENERATE('wheel', ...) Creates a circular graph with a center node
-%       all other edges connect to (i.e. a wheel with spokes). See also ring
-%       and star generators.
+%   all other edges connect to (i.e. a wheel with spokes). See also ring and
+%   star generators.
 %
-%        Name       Description
+%         Name       Description
 %       --------------------------------------------------------------------
 %        'nNodes'   Number of nodes (defaults to 10).
 %        'mode'     One of {'out', 'in', 'mutual', 'undirected' (default)}.
 %        'center'   The index of the center node (defaults to 1).
 %
 %   GRAPH = GENERATE('ring', ...) Creates a circular graph where every node has
-%       an edge with the next node (and consequently the previous node). If
-%       circular the final node connects to the first node. See also circulant
-%       and petersen generators.
+%   an edge with the next node (and consequently the previous node). If
+%   circular the final node connects to the first node. See also circulant and
+%   petersen generators.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nNodes'      Number of nodes (defaults to 10).
 %        'isdirected'  Whether to consider the graph directed or undirected
@@ -52,16 +53,16 @@ function graph = generate(method, graphOpts, methodOpts)
 %        'iscircular'  Whether to close the ring or not (default).
 %
 %   GRAPH = GENERATE('kary_tree', ...) Creates a tree graph where every node has
-%       the same number of children.
+%   the same number of children.
 %
-%        Name        Description
+%         Name        Description
 %       --------------------------------------------------------------------
 %        'nNodes'    Number of nodes (defaults to 10).
 %        'children'  The number of children for each nodes (defaults to 3).
 %        'mode'      One of {'out', 'in', 'undirected' (default)}.
 %
 %   GRAPH = GENERATE('regular_tree', ...) Creates a tree graph where all nodes
-%       have the same degree.
+%   have the same degree.
 %
 %        Name       Description
 %       --------------------------------------------------------------------
@@ -70,9 +71,9 @@ function graph = generate(method, graphOpts, methodOpts)
 %        'mode'     One of {'out', 'in', 'undirected' (default)}
 %
 %   GRAPH = GENERATE('full', ...) Creates a full graph where every possible edge
-%       exists. If undirected and no loops, this produces a 'citation' graph.
+%   exists. If undirected and no loops, this produces a 'citation' graph.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nNodes'      Number of nodes (defaults to 10).
 %        'isdirected'  Whether to return a directed graph (i.e. triangular
@@ -81,17 +82,17 @@ function graph = generate(method, graphOpts, methodOpts)
 %                      (default)
 %
 %   GRAPH = GENERATE('citation', ...) Creates a graph where every edge for the
-%       source id < destination id is present. This always produces a lower
-%       triangle.
+%   source id < destination id is present. This always produces a lower
+%   triangle.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nNodes'      Number of nodes (defaults to 10).
 %        'isdirected'  Whether to return a directed graph or not (default).
 %
 %   GRAPH = GENERATE('prufer', ...) Creates a tree graph from a Prufer sequence.
 %
-%        Name       Description
+%         Name       Description
 %       --------------------------------------------------------------------
 %        'prufer'   A vector representing the prufer sequence. The resulting
 %                   graph is has n + 2 nodes where n is the number of elements
@@ -99,39 +100,39 @@ function graph = generate(method, graphOpts, methodOpts)
 %                   to 1:10).
 %
 %   GRAPH = GENERATE('atlas', ...) Return a graph from the graph atlas.
-%       only the center node. Params:
+%   only the center node. Params:
 %
-%        Name        Description
+%         Name        Description
 %       --------------------------------------------------------------------
 %        'atlasId'   The index of the atlas graph to return (defaults to 1).
 %                    Max index is 1253.
 %
-%   GRAPH = GENERATE('de_bruijn', ...) Creates a de Bruijn graph. There's an edge
-%        for all unique strings of length STRINGLENGTH that can be made with
-%        NLETTERS. Edges are made between nodes if shifting the string of one
-%        node to the right 1 produces the other nodes strings.
+%   GRAPH = GENERATE('de_bruijn', ...) Creates a de Bruijn graph. There's an
+%   edge for all unique strings of length STRINGLENGTH that can be made with
+%   NLETTERS. Edges are made between nodes if shifting the string of one node
+%   to the right 1 produces the other nodes strings.
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'nLetters'      Number of letters in the alphabet (defaults to 3).
 %        'stringLength'  Length of the strings (defaults to 2).
 %
-%   GRAPH = GENERATE('kautz', ...) Creates a Kautz graph. There's an edge for all
-%       unique strings of length STRINGLENGTH + 1 that can be made with
-%       NLETTERS + 1, where no two consecutive letters are the same. Edges are
-%       made between nodes if shifting the string of one node to the right 1
-%       produces the other nodes strings.
+%   GRAPH = GENERATE('kautz', ...) Creates a Kautz graph. There's an edge for
+%   all unique strings of length STRINGLENGTH + 1 that can be made with
+%   NLETTERS + 1, where no two consecutive letters are the same. Edges are made
+%   between nodes if shifting the string of one node to the right 1 produces
+%   the other nodes strings.
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'nLetters'      Number of letters in the alphabet (defaults to 3).
 %        'stringLength'  Length of the strings (defaults to 2).
 %
 %   GRAPH = GENERATE('circulant', ...) Creates a circular graph where each node
-%       is connected to a node some shift nodes away. If there are more than
-%       one shifts, each node has a connection for each shift.
+%   is connected to a node some shift nodes away. If there are more than one
+%   shifts, each node has a connection for each shift.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nNodes'      Number of nodes (defaults to 10).
 %        'shifts'      A vector of shifts, one edge is created for each node
@@ -140,19 +141,18 @@ function graph = generate(method, graphOpts, methodOpts)
 %        'isdirected'  Whether to consider the graph directed or not (default).
 %
 %   GRAPH = GENERATE('petersen', ...) Creates a graph with an outer and inner
-%       ring. The inner ring has connections between nodes some shift away in
-%       the inner ring (similar to 'circulant'). In addition there's one
-%       connection between each outer ring node in a corresponding inner ring
-%       node.
+%   ring. The inner ring has connections between nodes some shift away in the
+%   inner ring (similar to 'circulant'). In addition there's one connection
+%   between each outer ring node in a corresponding inner ring node.
 %
-%        Name       Description
+%         Name       Description
 %       --------------------------------------------------------------------
 %        'nNodes'   Number of nodes (defaults to 5).
 %        'shift'    The distance between nodes in the outer ring to make
 %                   connections with (simiar to shifts in 'circulant' but there
 %                   can only be one). Most be < nNodes / 2. (Defaults to 2.)
 %
-%   See also igraph.famous, igraph.game.
+%   See also IGRAPH.FAMOUS, IGRAPH.GAME.
 
     arguments
         method (1, :) char ...

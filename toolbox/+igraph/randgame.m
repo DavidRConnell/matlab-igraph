@@ -1,10 +1,10 @@
 function graph = randgame(method, graphOpts, methodOpts)
 %RANDGAME create graph with a stochastic game generator
-%   GRAPH = GAME(METHOD) use METHOD to generate a random graph.
-%       Results can be reproduced by setting the random generator using
-%       IGRAPH.RNG. Each method has its own set of optional arguments, see
-%       below for more information on a specific method. All resulting graphs
-%       are unweighted. METHOD can be one of the following:
+%   GRAPH = GAME(METHOD) use METHOD to generate a random graph. Results can be
+%   reproduced by setting the random generator using IGRAPH.RNG. Each method
+%   has its own set of optional arguments, see below for more information on a
+%   specific method. All resulting graphs are unweighted. METHOD can be one of
+%   the following:
 %
 %       'grg', 'BarabasiBag', 'BarabasiPsumTree', 'BarabasiPsumTreeMultiple',
 %       'ErdosRenyi', 'WattsStrogatz', 'SmallWorld', 'DegSeqConfiguration',
@@ -20,19 +20,19 @@ function graph = randgame(method, graphOpts, methodOpts)
 %       'barabasiBag', and 'BarabasiBag', are all allowed.
 %
 %   GRAPH = GENERATE(..., 'PARAM1', VAL1, 'PARAM2', VAL2, ...) in addition to
-%       method specific parameters, there are parameters REPR and DTYPE for
-%       specifying how the resulting GRAPH is represented common to all
-%       methods. See the "functions returning graphs" section in help IGRAPH
-%       for more information.
+%   method specific parameters, there are parameters REPR and DTYPE for
+%   specifying how the resulting GRAPH is represented common to all methods.
+%   See the "functions returning graphs" section in help IGRAPH for more
+%   information.
 %
-%       Note: The default values for most method options are chosen somewhat
-%       randomly primarily for demonstration purposes.
+%   Note: The default values for most method options are chosen somewhat
+%   randomly primarily for demonstration purposes.
 %
 %   GRAPH = GAME('GeneratorRandomGraph', ...)
 %   GRAPH = GAME('grg', ...) Creates a graph by randomly placing points on a
-%       square and connecting those within radius distance of each other.
+%   square and connecting those within radius distance of each other.
 %
-%        Name       Description
+%         Name       Description
 %       --------------------------------------------------------------------
 %        'nNodes'   Number of nodes (defaults to 10).
 %        'radius'   How close two points need to be for an edge to form
@@ -42,21 +42,21 @@ function graph = randgame(method, graphOpts, methodOpts)
 %   GRAPH = GAME('BarabasiPsumTree', ...)
 %   GRAPH = GAME('BarabasiPsumTreeMultiple', ...)
 %   GRAPH = GAME('BarabasiBag', ...) Generate graphs using a Barabàsi Albert
-%       model. Produces a graph where each node is initially connected to
-%       nConnections other nodes. Nodes are added one at a time and the
-%       probability a new node matches with another node is related to the
-%       number of edges the other node has made. There are three variants of
-%       this method. The Barabàsi Bag is the basic algorithm, the other two
-%       methods use a prefix-sum tree, either with or without multiple edges.
+%   model. Produces a graph where each node is initially connected to
+%   nConnections other nodes. Nodes are added one at a time and the probability
+%   a new node matches with another node is related to the number of edges the
+%   other node has made. There are three variants of this method. The Barabàsi
+%   Bag is the basic algorithm, the other two methods use a prefix-sum tree,
+%   either with or without multiple edges.
 %
-%        Name             Description
+%         Name             Description
 %       --------------------------------------------------------------------
 %        'nNodes'         Number of nodes (defaults to 10 or the length of
-%                         NCONNECTIONS if that is a vector).
+%                         'nConnections' if that is a vector).
 %        'power'          Power of preferential attachment. The larger power
 %                         the stronger the preference for highly connected
 %                         nodes (defaults to 1 and must be one for
-%                         `BarabasiBag`).
+%                         'BarabasiBag').
 %        'nConnections'   The number of edges a new node should make with other
 %                         nodes. If it is a vector, it should have length equal
 %                         to the number of nodes in the graph. Defaults to 1.
@@ -67,17 +67,17 @@ function graph = randgame(method, graphOpts, methodOpts)
 %                         likelihood of making a connection.
 %        'isdirected'     Whether to generate a directed (true) or undirected
 %                         (false) graph. When undirected, it overrides
-%                         OUTPREFERENCE. Defaults to false or the directedness
-%                         of STARTFROM.
-%        'startFrom'      A graph to use as the starting point (a NCONNECTIONS
-%                         clique by default).
+%                         'outPreference'. Defaults to false or the
+%                         directedness of 'startfrom'.
+%        'startFrom'      A graph to use as the starting point (a
+%                         'nConnections' clique by default).
 %
 %   GRAPH = GAME('RenyiErdos', ...) Generate graphs with a fixed number of
-%       edges or a constant probability of an edge existing. Either select the
-%       number of edges or the probability any given edge exists. Cannot select
-%       both NEDGES and PROBABILITY.
+%   edges or a constant probability of an edge existing. Either select the
+%   number of edges or the probability any given edge exists. Cannot select
+%   both NEDGES and PROBABILITY.
 %
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'nNodes'       Number of nodes (defaults to 10)
 %        'nEdges'       Number of edges (defaults to 10)
@@ -89,14 +89,9 @@ function graph = randgame(method, graphOpts, methodOpts)
 %
 %   GRAPH = GAME('SmallWorld', ...)
 %   GRAPH = GAME('WattsStrogatz', ...) Uses the Watts-Strogatz model to generate
-%       a graph with small-world properties. This method rewires a lattice
-%       graph.
+%   a graph with small-world properties. This method rewires a lattice graph.
 %
-%       NOTE: Does not accept multiple logical since there is currently no
-%       method to handle multiple edges using the adjacency matrix
-%       representation.
-%
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'dim'          The dimension of the lattice (defaults to 2)
 %        'size'         Length of each dimension (defaults to 4)
@@ -105,19 +100,22 @@ function graph = randgame(method, graphOpts, methodOpts)
 %                       are at least this close on the grid.
 %        'probability'  Probability of each edge is rewired (defaults to 0.2).
 %        'loops'        Whether to allow loops (true). Defaults to false.
+%        'multiple'     Whether multiple edges are allowed between node pairs
+%                       (default false, requires the use a 'graph'
+%                       representation).
 %
 %   GRAPH = GAME('DegSeqConfiguration', ...)
 %   GRAPH = GAME('DegSeqConfigurationSimple', ...)
 %   GRAPH = GAME('DegSeqFastHuerSimple', ...)
 %   GRAPH = GAME('DegSeqEdgeSwitchingSimple', ...)
 %   GRAPH = GAME('DegSeqVl', ...) Create a graph with the provided degree
-%       sequence.
+%   sequence.
 %
-%       For creating directed graphs both INDEGREE and OUTDEGREE must be
-%       specified and the same length. For undirected graphs, only DEGREE
-%       should be specified.
+%   For creating directed graphs both INDEGREE and OUTDEGREE must be specified
+%   and the same length. For undirected graphs, only DEGREE should be
+%   specified.
 %
-%        Name         Description
+%         Name         Description
 %       --------------------------------------------------------------------
 %        'degree'     The degree sequence for an undirected graph (default a
 %                     vector of 10 3s).
@@ -125,9 +123,9 @@ function graph = randgame(method, graphOpts, methodOpts)
 %        'inDegree'   Degree sequence for edges entering the nodes (no default).
 %
 %   GRAPH = GAME('kRegular', ...) Generate a graph where each node has the same
-%       degree.
+%   degree.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nNodes'      Number of nodes (default to 10).
 %        'degree'      The degree of all nodes (default to 3).
@@ -135,12 +133,12 @@ function graph = randgame(method, graphOpts, methodOpts)
 %                      (false, default).
 %
 %   GRAPH = GAME('StaticFitness', ...) Use node fitness scores to determine edge
-%       probabilities.
+%   probabilities.
 %
-%       When creating a directed graph, both INFITNESS and OUTFITNESS must be
-%       specified and the same length. For undirected graphs use FITNESS.
+%   When creating a directed graph, both 'infitness' and 'outfitness' must be
+%   specified and the same length. For undirected graphs use 'fitness'.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nEdges'      The number of edges the graph should have (default 20).
 %        'fitness'     A vector of fitness scores for each node, use for
@@ -150,13 +148,13 @@ function graph = randgame(method, graphOpts, methodOpts)
 %        'loops'       Whether to allow self-loop edges (default false).
 %
 %   GRAPH = GAME('StaticPowerLaw', ...) Generate a graph a power-law node degree
-%       distribution
+%   distribution
 %
-%       When creating a directed graph, both INEXPONENT and OUTEXPONENT must be
-%       specified. For undirected graphs use EXPONENT. Values must be greater
-%       than or equal to 2.
+%   When creating a directed graph, both 'inexponent' and 'outexponent' must be
+%   specified. For undirected graphs use 'exponent'. Values must be greater
+%   than or equal to 2.
 %
-%        Name                   Description
+%         Name                   Description
 %       --------------------------------------------------------------------
 %        'nNodes'               The number of nodes the graph should have
 %                               (default 10).
@@ -174,7 +172,7 @@ function graph = randgame(method, graphOpts, methodOpts)
 %
 %   GRAPH = GAME('ForestFire', ...) Create a graph with the forest fire model.
 %
-%        Name                 Description
+%         Name                 Description
 %       --------------------------------------------------------------------
 %        'nNodes'             The number of nodes the graph should have
 %                             (default 10).
@@ -184,9 +182,9 @@ function graph = randgame(method, graphOpts, methodOpts)
 %        'isdirected'         Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('GrowingRandom', ...) Grow a graph by randomly adding a nodes
-%       one at a time.
+%   one at a time.
 %
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'nNodes'       The number of nodes the graph should have (default 10).
 %        'edgesPerStep' The number of edges to add each step (default 4).
@@ -196,68 +194,68 @@ function graph = randgame(method, graphOpts, methodOpts)
 %
 %   GRAPH = GAME('CallawayTraits', ...)
 %   GRAPH = GAME('establishment', ...) Randomly add nodes of different types and
-%        connect them based the preference for that type to connect to another.
+%   connect them based the preference for that type to connect to another.
 %
-%        For CALLAWAYTRAITS, EDGESPERSTEP new edges are made each time step.
-%        For ESTABLISHMENT, EDGESPERSTEP new edges are tried. In CALLAWAYTRAITS
-%        the tries are made until EDGESPERSTEP new edges whereas ESTABLISHMENT
-%        only makes that many tries regardless of howmany new edges are
-%        actually made. The success of an attempt is dependent on the node
-%        types selected for the attempt and the the probability that edges are
-%        made between those two types (PREFERENCE(i, j)).
+%   For 'CallawayTraits', 'edgesPerStep' new edges are made each time step. For
+%   'establishment', 'edgesPerStep' new edges are tried. In 'CallawayTraits'
+%   the tries are made until 'edgesPerStep' new edges whereas 'establishment'
+%   only makes that many tries regardless of howmany new edges are actually
+%   made. The success of an attempt is dependent on the node types selected for
+%   the attempt and the the probability that edges are made between those two
+%   types (PREFERENCE(i, j)).
 %
-%        Name               Description
+%         Name               Description
 %       --------------------------------------------------------------------
 %        'nNodes'           The number of nodes the graph should have
 %                           (default 10).
 %        'edgesPerStep'     The number of edges to add each step (default 4).
 %        'nTypes'           Number of unique node types (default 4 or length
-%                           of TYPEDISTRIBUTION).
+%                           of 'typeDistribution').
 %        'typeDistribution' Distribution of node types (default uniform
-%                           distribution of length NTYPES).
-%        'preference'       NTYPES X NTYPES connection preference matrix
+%                           distribution of length 'nTypes').
+%        'preference'       'nTypes' X 'nTypes' connection preference matrix
 %                           (default uniform distribution).
 %        'mixingParam'      Generates a uniform preference matrix with
-%                           MIXINGPARAM as the probability a node in one type
+%                           'mixingParam' as the probability a node in one type
 %                           connects to a node in a different type and (1 -
-%                           MIXINGPARAM) as the probability a node connects
+%                           'mixingParam') as the probability a node connects
 %                           with a node in the same type. Only one of
-%                           PREFERENCE and MIXINGPARAM can be set.
+%                           'preference' and 'mixingParam' can be set.
 %        'isdirected'       Whether graph should be directed (default false
 %                           unless preference is specified and non-symmetric).
 %
-%   GRAPH = GAME('preference', ...) Like CALLAWAYTRAITS and ESTABLISHMENT but all
-%       nodes are generated first, then an attempt to make an edge is made for
-%       all node pairs. Success is dependent on the preference matrix and the
-%       type of each node pair.
+%   GRAPH = GAME('preference', ...) Like 'CallawayTraits' and 'establishment'
+%   but all nodes are generated first, then an attempt to make an edge is made
+%   for all node pairs. Success is dependent on the preference matrix and the
+%   type of each node pair.
 %
-%       Only one of TYPEDISTRIBUTION or BLOCKSIZES can be supplied.
+%   Only one of 'typeDistribution' or 'blockSizes' can be supplied.
 %
-%        Name               Description
+%         Name               Description
 %       --------------------------------------------------------------------
 %        'nNodes'           The number of nodes the graph should have
 %                           (default 10 or sum(BLOCKSIZES) if set).
 %        'nTypes'           Number of unique node types (default 4 or length
-%                           of TYPEDISTRIBUTION).
+%                           of 'typeDistribution').
 %        'typeDistribution' Distribution of node types (default uniform
-%                           distribution of length NTYPES).
+%                           distribution of length 'nTypes').
 %        'blockSizes'       Number of nodes in each type (block) (no default).
-%        'preference'       NTYPES X NTYPES connection preference matrix
+%        'preference'       'nTypes' X 'nTypes' connection preference matrix
 %                           (default uniform distribution).
 %        'mixingParam'      Generates a uniform preference matrix with
-%                           MIXINGPARAM as the probability a node in one type
+%                           'mixingParam' as the probability a node in one type
 %                           connects to a node in a different type and (1 -
-%                           MIXINGPARAM) as the probability a node connects
+%                           'mixingParam') as the probability a node connects
 %                           with a node in the same type. Only one of
-%                           PREFERENCE and MIXINGPARAM can be set.
+%                           'preference' and 'mixingParam' can be set.
 %        'isdirected'       Whether graph should be directed (default false
 %                           unless preference is specified and non-symmetric).
 %        'loops'            Whether to allow self-loop edges (default false).
 %
 %   GRAPH = GAME('AsymmetricPreference', ...) Like preference but each node is
-%       given two node types, an ingoing and outgoing.
+%   given two node types, an ingoing and outgoing.
 %
-%       Graph is always directed.
+%   Graph is always directed.
 %
 %        Name               Description
 %       --------------------------------------------------------------------
@@ -268,27 +266,27 @@ function graph = randgame(method, graphOpts, methodOpts)
 %        'nInTypes'         Number of unique node types (default 4 or
 %                           size(TYPEDISTRIBUTION, 2)
 %        'typeDistribution' Distribution of node types (default uniform
-%                           distribution of size NOUTTYPES X NINTYPES).
-%        'preference'       NOUTTYPES X NINTYPES connection preference matrix
-%                           (default uniform distribution).
+%                           distribution of size 'nOutTypes' X 'nInTypes').
+%        'preference'       'nOutTypes' X 'nInTypes' connection preference
+%                           matrix (default uniform distribution).
 %        'loops'            Whether to allow self-loop edges (default false).
 %
 %   GRAPH = GAME('RecentDegree', ...) Randomly add edges to nodes proportional to
-%       the number of edges the the node has recently gained.
+%   the number of edges the the node has recently gained.
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'nNodes'        The number of nodes the graph should have
-%                        (default 10 or length of EDGESPERSTEP if a vector).
+%                        (default 10 or length of 'edgesPerStep' if a vector).
 %                        Used as the number of time steps in the simulation.
 %        'degreeExp'     Probability a node gains a new edge is proportional
 %                        to the number of edges it has recently gained to
-%                        DEGREEEXP (default 1).
+%                        'degreeExp' (default 1).
 %        'timeWindow'    Include an edge as recent if it was created within
-%                        TIMEWINDOW time steps of now (default 3). (Should
-%                        be less than NNODES.)
+%                        'timeWindow' time steps of now (default 3). (Should
+%                        be less than 'nNodes'.)
 %        'edgesPerStep'  How many edges to add in a time step. Either a vector
-%                        of length NNODES or a scalar to use the same value
+%                        of length 'nNodes' or a scalar to use the same value
 %                        for each time step (default 3).
 %        'outPreference' Whether to count edges that started from a node
 %                        (during it's time step). (default false.)
@@ -298,172 +296,172 @@ function graph = randgame(method, graphOpts, methodOpts)
 %        'isdirected'    Whether graph should be directed (default false unless
 %                        preference is specified and non-symmetric).
 %
-%   GRAPH = GAME('BarabasiAging', ...) Similar to RECENTDEGREE but adds in an age
-%       component such that older nodes are preferred. Unlike RECENTDEGREE all
-%       edges are taken into consideration, not just recent edges. One node is
-%       added every timestep.
+%   GRAPH = GAME('BarabasiAging', ...) Similar to 'RecentDegree' but adds in an
+%   age component such that older nodes are preferred. Unlike 'RecentDegree'
+%   all edges are taken into consideration, not just recent edges. One node is
+%   added every timestep.
 %
-%        Name               Description
+%         Name               Description
 %       --------------------------------------------------------------------
 %        'nNodes'           The number of nodes the graph should have
 %                           (default 10).
 %        'edgesPerStep'     How many edges to add in a time step. Either a
-%                           vector of length NNODES or a scalar to use the same
-%                           value for each time step (default 3).
+%                           vector of length 'nNodes' or a scalar to use the
+%                           same value for each time step (default 3).
 %        'outPreference'    Whether to count edges that started from a node
 %                           (during it's time step). (default false.)
 %        'zeroDegreeAppeal' (default 0.1).
 %        'degreeCoef'       (default 1).
 %        'degreeExp'        (default 1).
 %                           The degree component of the probability a node gets
-%                           an edge is ZERODEGREEAPPEAL + DEGREECOEF * degree ^
-%                           DEGREEEXP
+%                           an edge is 'zeroDegreeAppeal' + 'degreeCoef' *
+%                           degree ^ 'degreeExp'.
 %        'zeroAgeAppeal'    (default 0.1).
 %        'ageCoef'          (default 1).
 %        'ageExp'           (default 1).
 %                           The age component of the probability a node gets
-%                           an edge is ZEROAGEAPPEAL + AGECOEF * age ^
-%                           AGEEXP
+%                           an edge is 'zeroAgeAppeal' + 'ageCoef' * age ^
+%                           'ageExp'
 %        'agingBins'        How many time steps represent 1 age. (If 3, a
 %                           node gains 1 to it's age every three time steps.)
 %                           (default 1).
 %        'isdirected'       Whether graph should be directed (default false).
 %
-%   GRAPH = GAME('RecentDegreeAging', ...) RECENTDEGREE with aging component.
+%   GRAPH = GAME('RecentDegreeAging', ...) 'recentDegree' with aging component.
 %
-%        Name            Description
+%         Name            Description
 %       --------------------------------------------------------------------
 %        'nNodes'        The number of nodes the graph should have
 %                        (default 10).
 %        'edgesPerStep'  How many edges to add in a time step. Either a vector
-%                        of length NNODES or a scalar to use the same value for
+%                        of length 'nNodes' or a scalar to use the same value for
 %                        each time step (default 3).
 %        'outPreference' Whether to count edges that started from a node
 %                        (during it's time step). (default false.)
 %        'zeroAppeal'    The baseline probability a node gains an edge
 %                        (default 0.1).
 %        'degreeExp'     The degree component of the probability a node gets
-%                        an edge is degree ^ DEGREEEXP (default 1).
+%                        an edge is degree ^ 'degreeExp' (default 1).
 %        'ageExp'        The age component of the probability a node gets
-%                        an edge is age ^ AGEEXP
+%                        an edge is age ^ 'ageExp'
 %        'agingBins'     How many time steps represent 1 age. (If 3, a
 %                        node gains 1 to it's age every three time steps.)
 %                        (default 1).
 %        'timeWindow'    Include an edge as recent if it was created within
-%                        TIMEWINDOW time steps of now (default 3). (Should
-%                        be less than NNODES.)
+%                        'timeWindow' time steps of now (default 3). (Should
+%                        be less than 'nNodes'.)
 %        'isdirected'    Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('LastCit', ...) Simulation that makes edges proportional to how
-%       recently a node was last cited. Nodes are binned based on the last time
-%       they were cited. Note: this is different than other methods which use
-%       node creation as age.
+%   recently a node was last cited. Nodes are binned based on the last time
+%   they were cited. Note: this is different than other methods which use
+%   node creation as age.
 %
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'nNodes'       The number of nodes the graph should have (default 10).
 %        'edgesPerStep' How many edges to add in a time step (default 3).
 %                       (Must be an integer not a vector.)
-%        'agingBins'    The number of age bins to use (default NNODES).
-%        'preference'   A vector of length AGINGBINS + 1 with the preferences
-%                       for each age bin (default ONES(1, AGINGBINS + 1)).
+%        'agingBins'    The number of age bins to use (default 'nNodes').
+%        'preference'   A vector of length 'agingBins' + 1 with the preferences
+%                       for each age bin (default ones(1, AGINGBINS + 1)).
 %        'isdirected'   Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('CitedType', ...) Create a network one node at a time and add
-%       edges with other nodes with preference based on node types
+%   edges with other nodes with preference based on node types
 %
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'edgesPerStep' How many edges to add in a time step (default 3).
 %        'types'        Vector of node types (labeled from 1). The number of
-%                       nodes in the resulting graph is length TYPES. (default
-%                       1:10.)
-%        'preference'   Vector of type preference of length MAX(TYPES).
-%                       (default ONES(1, MAX(TYPES))).
+%                       nodes in the resulting graph is length 'types'.
+%                       (default 1:10.).
+%        'preference'   Vector of type preference of length max(TYPES).
+%                       (default ones(1, max(TYPES))).
 %        'isdirected'   Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('CitingCitedType', ...) Generate a graph by adding edges with
-%       probability given by the preference matrix and the types of both the
-%       nodes being wired.
+%   probability given by the preference matrix and the types of both the nodes
+%   being wired.
 %
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'edgesPerStep' How many edges to add in a time step (default 3).
 %        'types'        Vector of node types (labeled from 1). The number of
 %                       nodes in the resulting graph is length TYPES. (default
 %                       1:10.)
-%        'preference'   Matrix of type preference of size MAX(TYPES) X
-%                       MAX(TYPES). (default ONES(MAX(TYPES), MAX(TYPES)).)
+%        'preference'   Matrix of type preference of size max(TYPES) X
+%                       max(TYPES). (default ones(max(TYPES), max(TYPES)).)
 %        'isdirected'   Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('StochasticBlockModel', ...)
 %   GRAPH = GAME('sbm', ...) Create a block graph where edges are created with
-%       probability dependent on which block each node is a member of.
+%   probability dependent on which block each node is a member of.
 %
-%        Name         Description
+%         Name         Description
 %       --------------------------------------------------------------------
 %        'blockSizes' A vector containing the sizes for each block. Number of
-%                     nodes is equal to SUM(BLOCKSIZES). (default ONES(1, 5) *
+%                     nodes is equal to sum(BLOCKSIZES). (default ones(1, 5) *
 %                     2)
 %        'preference' A matrix of the probabilities for an edge between nodes
 %                     of different blocks. Size should be K X K, where K is the
-%                     number of blocks (LENGTH(BLOCKSIZES)). (default
-%                     ONES(K, K) / (K ^ 2).)
+%                     number of blocks (length(BLOCKSIZES)). (default
+%                     ones(K, K) / (K ^ 2).)
 %        'isdirected' Whether graph should be directed (default false).
 %        'loops'      Whether to allow self-loop edges (default false).
 %
 %   GRAPH = GAME('HierarchicalStochasticBlockMethod', ...)
 %   GRAPH = GAME('hsbm', ...) Generate a hierarchical graph with the
-%       hierarchical stochastic block method.
+%   hierarchical stochastic block method.
 %
-%       NOTE: NNODES, BLOCKSIZES, and RHO are all dependent on each other, so
-%       changing one default may require changing the others.
+%   NOTE: NNODES, BLOCKSIZES, and RHO are all dependent on each other, so
+%   changing one default may require changing the others.
 %
-%        Name         Description
+%         Name         Description
 %       --------------------------------------------------------------------
 %        'nNodes'     The number of nodes in the graph (default 20).
 %        'blockSizes' The number of nodes in a block (default 5).
 %        'rho'        Fraction of a block's node in each within block cluster.
 %                     (default [2 2 1] / 5).
-%        'preference' Matrix of size K X K, where K is the nmuber of within
-%                     block clusters (LENGTH(RHO)), with the preference for a
+%        'preference' Matrix of size K X K, where K is the number of within
+%                     block clusters (length(RHO)), with the preference for a
 %                     node from 1 cluster to connect to a node in another
 %                     cluster.
 %        'pOut'       Probability a node in one block connects with a node in
 %                     a different block (default 0.3).
 %
-%   GRAPH = GAME('DotProduct', ...) Create a graph where the probability an edge
-%       exists is the dot product between the two nodes latent positions.
+%   GRAPH = GAME('DotProduct', ...) Create a graph where the probability an
+%   edge exists is the dot product between the two nodes latent positions.
 %
-%        Name         Description
+%         Name         Description
 %       --------------------------------------------------------------------
 %        'positions'  A matrix with nNodes columns. Each column represents
-%                     the position of a node (default ONES(3, 10) / 3).
+%                     the position of a node (default ones(3, 10) / 3).
 %        'isdirected' Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('TreePrufer', ...)
 %   GRAPH = GAME('TreeLERW', ...) Generate random tree graphs.
 %
-%       Graphs can be made with two methods, Prufer and loop-erased random
-%       walk. For Prufer, ISDIRECTED must be false.
+%   Graphs can be made with two methods, Prufer and loop-erased random walk.
+%   For Prufer, ISDIRECTED must be false.
 %
-%        Name         Description
+%         Name         Description
 %       --------------------------------------------------------------------
 %        'nNodes'     The number of nodes in the graph (default 10).
 %        'isdirected' Whether graph should be directed (default false).
 %
 %   GRAPH = GAME('SimpleInterConnectedIslands', ...) Create a network with
-%       islands, where nodes within an island are more likely to connect than
-%       nodes between an island.
+%   islands, where nodes within an island are more likely to connect than nodes
+%   between an island.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nIslands'    The number of islands in the graph (default 5).
 %        'islandSize'  Size of each island (default 4).
 %        'pIn'         Within island edge probability (default 0.75).
 %        'nInterEdges' The number of edges between two islands (default 4).
 %
-%   See also igraph.famous, igraph.generate, igraph.rewire, igraph.rng.
+%   See also IGRAPH.FAMOUS, IGRAPH.GENERATE, IGRAPH.REWIRE, IGRAPH.RNG.
 
     arguments
         method (1, :) char ...

@@ -1,10 +1,10 @@
 function score = compare(comm1, comm2, method)
 %COMPARE score the similarity of two membership vectors
 %   SCORE = COMPARE(COMM1, COMM2) return a score of how similar the membership
-%       vector COMM1 is to membership vector COMM2.
+%   vector COMM1 is to membership vector COMM2.
 %
 %   SCORE = COMPARE(COMM1, COMM2, METHOD) use method METHOD to compare the
-%       membership vectors. Valid methods are:
+%   membership vectors. Valid methods are:
 %
 %       Name                        Method
 %   -------------------------------------------------------------------------
@@ -14,7 +14,7 @@ function score = compare(comm1, comm2, method)
 %      'rand'                   rand index
 %      {'ari','adjustedrand'}   adjusted rand index
 %
-%   See also IGRAPH.CLUSTER for estimating a graph's membership vector.
+%   See also IGRAPH.CLUSTER.
 
     arguments
         comm1 {igutils.mustBePartition}

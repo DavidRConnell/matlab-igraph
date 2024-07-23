@@ -1,12 +1,14 @@
 function TF = issubisomorphic(g1, g2, g1Opts, g2Opts)
 %ISISOMORPHIC test if g2 is isomorphic to a subgraph of g1
 %   TF = ISSUBISOMORPHIC(GRAPH1, GRAPH2) returns true if GRAPH2 is isomorphic
-%       with a subgraph of GRAPH1. Throws an error if GRAPH1 is not bigger than
-%       GRAPH2.
+%   with a subgraph of GRAPH1. Throws an error if GRAPH1 is not bigger than
+%   GRAPH2.
 %
 %   TF = ISSUBISOMORPHIC(GRAPH1, GRAPH2, G1ISDIRECTED, G2ISDIRECTED) override
-%       the guesses for whether GRAPH1 and GRAPH2 are directed. If they are not
-%       both the same (both directed or both undirected) an error is triggered.
+%   the guesses for whether GRAPH1 and GRAPH2 are directed. If they are not
+%   both the same (both directed or both undirected) an error is triggered.
+%
+%   See also IGRAPH.ISISOMORPHIC.
 
     arguments
         g1 {igutils.mustBeGraph}

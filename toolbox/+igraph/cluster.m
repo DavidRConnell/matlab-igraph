@@ -1,7 +1,7 @@
 function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %CLUSTER perform community detection on a graph
 %   MEMBERSHIP = CLUSTER(GRAPH, METHOD) use METHOD to find a community
-%       structure for the graph. See below for method specific options.
+%   structure for the graph. See below for method specific options.
 %
 %   The allowed methods are: 'optimal', 'SpinGlass', 'LeadingEigenvector',
 %   'walktrap', 'EdgeBetweenness', 'FastGreedy', 'multilevel', 'louvain',
@@ -21,20 +21,20 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %   Traag, P. Van Dooren & Y. Nesterov (2011) Narrow Scope for
 %   Resolution-Limit-Free Community Detection, Physical Review E.).
 %
-%   GRAPH = CLUSTER(GRAPH, METHOD, RESULT, "NAME") if GRAPH can hold
+%   GRAPH = CLUSTER(GRAPH, METHOD, 'result', NAME) if GRAPH can hold
 %   attributes, setting RESULT will determine the name of a node attribute to
 %   store the results such that GRAPH.Nodes.NAME will be the membership vector.
 %   Note: The original GRAPH is not modified.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'optimal') Find the community structure that
-%       maximizes Newman's modularity. This algorithm is slow for larger graphs
-%       and likely unfeasible for graphs beyond ~100 nodes. See
-%       igraph.optimalModularity to find only the modularity.
+%   maximizes Newman's modularity. This algorithm is slow for larger graphs and
+%   likely unfeasible for graphs beyond ~100 nodes. See
+%   IGRAPH.OPTIMALMODULARITY to find only the modularity.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'SpinGlass', ...) Use the spinglass clustering
-%       algorithm. Additional arguments:
+%   algorithm. Additional arguments:
 %
-%        Name             Description
+%         Name             Description
 %       --------------------------------------------------------------------
 %        'nSpins'         Number of spins to perform (default 4). This is
 %                         equivalently the maximum number of clusters (but the
@@ -58,42 +58,41 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %   MEMBERSHIP = CLUSTER(GRAPH, 'LeadingEigenvector') Not implemented.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'walktrap') A random walker based community
-%       detection algorithm.
+%   detection algorithm.
 %
-%        Name      Description
+%         Name      Description
 %       --------------------------------------------------------------------
 %        'nSteps'  The length of random walks (default 4);
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'edgebetweenness') Community detection based on
-%       separating communities by removing heavily traveled edges until
-%       isolated islands forms. This assumes communities are well separated
-%       except for a few hub edges that allow for cross-community
-%       communication.
+%   separating communities by removing heavily traveled edges until isolated
+%   islands forms. This assumes communities are well separated except for a few
+%   hub edges that allow for cross-community communication.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'isweighted'  Whether to treat the graphs as weighted or not (defaults
 %                      result of IGRAPH.ISWEIGHTED).
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'fastgreedy') A fast approximation of the
-%       community structure that maximizes Newman's modularity.
+%   community structure that maximizes Newman's modularity.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'multilevel')
 %   MEMBERSHIP = CLUSTER(GRAPH, 'louvain') Run the 'multilevel' community
-%       detection algorithm, often referred to as 'Louvain'.
+%   detection algorithm, often referred to as 'Louvain'.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'resolution'  Larger resolutions favor smaller communities (default 1,
 %                      the original multilevel definition).
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'leiden') A community detection algorithm based
-%       off multilevel to improve some known weaknesses in the multilevel
-%       algorithm. By default it uses the Constant Potts Model (CPM) instead of
-%       modularity for optimizing. If unsure, Leiden is a good choice for an
-%       optimization based algorithm.
+%   off multilevel to improve some known weaknesses in the multilevel
+%   algorithm. By default it uses the Constant Potts Model (CPM) instead of
+%   modularity for optimizing. If unsure, Leiden is a good choice for an
+%   optimization based algorithm.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'resolution'  Larger resolutions favor smaller communities (default 1,
 %        'randomness'  How much randomness to use in the refinement stage (beta
@@ -109,18 +108,18 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %                      start with 1.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'fluidcommunities') A community detection
-%       algorithm based on simulating interacting fluids flowing through the
-%       graph. Edge weights will be ignored for this method.
+%   algorithm based on simulating interacting fluids flowing through the graph.
+%   Edge weights will be ignored for this method.
 %
-%        Name           Description
+%         Name           Description
 %       --------------------------------------------------------------------
 %        'nCommunities' Number of communities to define (default 4). This value
 %                       should be changed to something sensible for the graph.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'labelpropagation') Cluster nodes based on the
-%       labels of their neighbors.
+%   labels of their neighbors.
 %
-%        Name      Description
+%         Name      Description
 %       --------------------------------------------------------------------
 %        'mode'    Which direction labels should travel. Does not impact
 %                  undirected graphs. For directed graphs, upstream igraph
@@ -137,16 +136,16 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %                  false (all nodes can be relabeled freely).
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'infomap') The infomap community detection
-%       algorithm.
+%   algorithm.
 %
-%        Name          Description
+%         Name          Description
 %       --------------------------------------------------------------------
 %        'nTrials'     Number of attempts to partition the network (default 1).
 %        'nodeWeights' Weights of nodes, used as the likelihood of a random
 %                      walker jumps to a given node when it gets stuck.
 %                      Defaults to uniform likelihood.
 %
-%   See also igraph.modularity, igraph.compare.
+%   See also IGRAPH.MODULARITY, IGRAPH.COMPARE.
 
     arguments
         graph {igutils.mustBeGraph};
