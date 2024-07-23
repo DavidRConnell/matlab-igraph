@@ -6,10 +6,10 @@ function n = numnodes(graph)
 %   See also IGRAPH.NUMEDGES.
 
     arguments
-        graph {igraph.args.mustBeGraph};
+        graph {igutils.mustBeGraph};
     end
 
-    if igraph.args.isgraph(graph)
+    if igutils.isgraph(graph)
         n = graph.numnodes();
     else
         n = size(graph, 2);

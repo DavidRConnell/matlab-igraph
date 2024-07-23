@@ -15,8 +15,8 @@ function q = modularity(graph, membership, graphOpts, methodOpts)
 %   See also IGRAPH.OPTIMALMODULARITY, IGRAPH.CLUSTER.
 
     arguments
-        graph {igraph.args.mustBeGraph};
-        membership {igraph.args.mustBePartition};
+        graph {igutils.mustBeGraph};
+        membership {igutils.mustBePartition};
         graphOpts.isdirected (1, 1) logical = igraph.isdirected(graph);
         methodOpts.resolution (1, 1) {mustBeNonnegative} = 1;
     end

@@ -27,21 +27,21 @@ function graph = rewire(graph, graphOpts, methodOpts)
 %   IGRAPH.CORRELATEDPAIR.
 
     arguments
-        graph {igraph.args.mustBeGraph};
-        graphOpts.?igraph.args.GraphOutProps
+        graph {igutils.mustBeGraph};
+        graphOpts.?igutils.GraphOutProps
         graphOpts.isdirected (1, 1) logical;
         methodOpts.probability (1, 1) ...
             {mustBeInRange(methodOpts.probability, 0, 1)} = 0;
         methodOpts.nRewires (1, 1) {mustBeNonnegative, mustBeInteger} = 0;
         methodOpts.preserveDegree (1, 1) logical = true;
-        methodOpts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
+        methodOpts.mode (1, :) char {igutils.mustBeMode} = 'all';
         methodOpts.loops (1, 1) logical = false;
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphOutProps(graphOpts{:}, template = graph);
+    graphOpts = igutils.setGraphOutProps(graphOpts{:}, template = graph);
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphInProps(graph, graphOpts{:});
+    graphOpts = igutils.setGraphInProps(graph, graphOpts{:});
 
     if methodOpts.preserveDegree && ~strcmp(methodOpts.mode, 'all')
         error("Igraph:overConstrained", "Cannot preserve degree without " + ...

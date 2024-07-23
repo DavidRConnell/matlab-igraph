@@ -9,7 +9,7 @@ function tf = hasEdgeAttr(graph, name)
         name (1, :) char = '';
     end
 
-    if ~igraph.args.isgraph(graph)
+    if ~igutils.isgraph(graph)
         throwAsCaller(MException("igraph:notGraphClass", ...
                                  "Attempted to get an edge attribute " + ...
                                  "from a graph representation that " + ...
@@ -23,7 +23,7 @@ function tf = hasEdgeAttr(graph, name)
                                  "a vector to the function."));
     end
 
-    edgeAttrs = igraph.args.listEdgeAttrs(graph);
+    edgeAttrs = igutils.listEdgeAttrs(graph);
     if isempty(edgeAttrs)
         tf = false;
     elseif isempty(name)

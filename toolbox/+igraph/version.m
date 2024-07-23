@@ -10,8 +10,8 @@ function varargout = version(type)
 
     arguments
         type (1, :) char {...
-            igraph.args.mustBeMemberi(type, ...
-                                      {'toolbox', 'library', 'both'})} = 'both';
+            igutils.mustBeMemberi(type, ...
+                                  {'toolbox', 'library', 'both'})} = 'both';
     end
 
     if nargout == 0

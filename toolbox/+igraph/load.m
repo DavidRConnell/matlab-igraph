@@ -75,13 +75,13 @@ function graph = load(filename, ioOptions, graphOpts)
         filename char {mustBeVector};
         ioOptions.format char {mustBeVector} = guessFileFormat(filename);
         ioOptions.index (1, 1) double {mustBeInteger, mustBeNonnegative} = 0;
-        graphOpts.?igraph.args.GraphOutProps;
+        graphOpts.?igutils.GraphOutProps;
         graphOpts.isweighted (1, 1) logical;
         graphOpts.isdirected (1, 1) logical;
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphOutProps(graphOpts{:});
+    graphOpts = igutils.setGraphOutProps(graphOpts{:});
 
     if ~exist(filename, 'file')
         error("igraph:fileNotFound", "No graph found at '%s'.", filename);
@@ -98,7 +98,7 @@ function graph = load(filename, ioOptions, graphOpts)
         return
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if ~isoptionset(graphOpts, 'isweighted')
         if strcmp(graphOpts.dtype, 'logical')
             graphOpts.isweighted = false;
@@ -126,12 +126,12 @@ function graph = load(filename, ioOptions, graphOpts)
         graphOpts.isdirected = igraph.isdirected(graph);
     end
 
-    if ~graphOpts.isweighted && ~igraph.args.isgraph(graph) && ...
+    if ~graphOpts.isweighted && ~igutils.isgraph(graph) && ...
             ~islogical(graph)
         graph = double(graph ~= 0);
     end
 
-    if ~graphOpts.isdirected && ~igraph.args.isgraph(graph)
+    if ~graphOpts.isdirected && ~igutils.isgraph(graph)
         if igraph.isdirected(graph)
             warning("Forcing a non-triangular, asymmetric adjacency " + ...
                     "matrix to be undirected. Summing edges A(i, j) " + ...

@@ -7,7 +7,7 @@ function memb = reindexMembership(memb)
 %   See also IGRAPH.CLUSTER, IGRAPH.MODULARITY.
 
     arguments
-        memb {igraph.args.mustBePartition};
+        memb {igutils.mustBePartition};
     end
 
     memb = mexIgraphDispatcher(mfilename(), memb);

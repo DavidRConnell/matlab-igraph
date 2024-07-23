@@ -6,10 +6,10 @@ function n = numedges(graph)
 %   See also IGRAPH.NUMNODES.
 
     arguments
-        graph {igraph.args.mustBeGraph};
+        graph {igutils.mustBeGraph};
     end
 
-    if igraph.args.isgraph(graph)
+    if igutils.isgraph(graph)
         n = graph.numedges();
     elseif issymmetric(graph)
         n = nnz(graph);

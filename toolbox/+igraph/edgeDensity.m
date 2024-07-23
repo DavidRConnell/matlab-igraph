@@ -9,7 +9,7 @@ function d = edgeDensity(graph)
 %   See also IGRAPH.NUMEDGES.
 
     arguments
-        graph {igraph.args.mustBeGraph};
+        graph {igutils.mustBeGraph};
     end
 
     nNodes = igraph.numnodes(graph);

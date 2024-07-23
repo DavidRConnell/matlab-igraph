@@ -20,9 +20,9 @@ function plot(graph, layout, options, layoutOpts)
 %   See also igraph.layout, igraph.plot3d.
 
     arguments
-        graph {igraph.args.mustBeGraph};
+        graph {igutils.mustBeGraph};
         layout;
-        options.membership (1, :) {igraph.args.mustBePartition} = [];
+        options.membership (1, :) {igutils.mustBePartition} = [];
         options.size (1, :) = 100;
         options.ax = false;
         options.edgeAlpha = 0.5;
@@ -107,7 +107,7 @@ function plot(graph, layout, options, layoutOpts)
         ax = subplot(1, 1, 1);
     end
 
-    if igraph.args.isgraph(graph)
+    if igutils.isgraph(graph)
         from = graph.Edges.EndNodes(:, 1);
         to = graph.Edges.EndNodes(:, 2);
     else

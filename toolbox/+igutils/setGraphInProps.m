@@ -7,10 +7,10 @@ function args = setGraphInProps(graph, args, graphOutArgs)
         args.isweighted
         args.isdirected
         args.weight
-        graphOutArgs.?igraph.args.GraphOutProps
+        graphOutArgs.?igutils.GraphOutProps
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if ~isoptionset(args, 'isdirected')
         args.isdirected = igraph.isdirected(graph);
     end
@@ -20,12 +20,11 @@ function args = setGraphInProps(graph, args, graphOutArgs)
     end
 
     if args.isweighted && isoptionset(args, 'weight')
-        if ~igraph.args.isgraph(graph)
+        if ~igutils.isgraph(graph)
             warning("Option 'weight' set but is only used for 'graph' " + ...
                     "representations, the value will be ignored.");
-        elseif ~igraph.args.hasEdgeAttr(graph, args.weight)
-            edgeAttrs = graph.Edges.Properties.VariableNames;
-            edgeAttrs = edgeAttrs(~strcmp(edgeAttrs, "EndNodes"));
+        elseif ~igutils.hasEdgeAttr(graph, args.weight)
+            edgeAttrs = igutils.listEdgeAttr(graph);
             throwAsCaller(MException("igraph:invalidWeight", ...
                                      "The requested edge attribute ('%s') " + ...
                                      "to use for weights was not " + ...
@@ -35,11 +34,11 @@ function args = setGraphInProps(graph, args, graphOutArgs)
                                      args.weight, ...
                                      strjoin("    " + edgeAttrs, '\n')));
         end
-    elseif igraph.args.isgraph(graph)
-        if igraph.args.hasEdgeAttr(graph, 'Weight');
+    elseif igutils.isgraph(graph)
+        if igutils.hasEdgeAttr(graph, 'Weight');
             args.weight = 'Weight';
-        elseif igraph.args.hasEdgeAttr(graph)
-            args.weight = igraph.args.listEdgeAttrs(graph)
+        elseif igutils.hasEdgeAttr(graph)
+            args.weight = igutils.listEdgeAttrs(graph)
             args.weight = args.weight{1};
         end
     else

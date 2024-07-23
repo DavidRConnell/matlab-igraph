@@ -22,12 +22,12 @@ function q = optimalModularity(graph, graphOpts)
 %   See also IGRAPH.MODULARITY, IGRAPH.CLUSTER.
 
     arguments
-        graph {igraph.args.mustBeGraph};
-        graphOpts.?igraph.args.GraphInProps;
+        graph {igutils.mustBeGraph};
+        graphOpts.?igutils.GraphInProps;
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphInProps(graph, graphOpts{:});
+    graphOpts = igutils.setGraphInProps(graph, graphOpts{:});
 
     q = mexIgraphDispatcher(mfilename(), graph, graphOpts);
 end

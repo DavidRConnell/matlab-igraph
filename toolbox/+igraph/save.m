@@ -58,14 +58,14 @@ function save(filename, graph, ioOpts, graphOpts)
 
     arguments
         filename char {mustBeVector}
-        graph {igraph.args.mustBeGraph}
+        graph {igutils.mustBeGraph}
         ioOpts.format char {mustBeVector} = guessFileFormat(filename);
         ioOpts.overwrite (1, 1) logical = false;
-        graphOpts.?igraph.args.GraphInProps;
+        graphOpts.?igutils.GraphInProps;
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphInProps(graph, graphOpts{:});
+    graphOpts = igutils.setGraphInProps(graph, graphOpts{:});
 
     if ~ioOpts.overwrite && exist(filename, 'file')
         error("igraph:fileExists", "A file already exists at '%s'.\n\n" + ...

@@ -3,7 +3,7 @@ function summary(graph)
 %   SUMMARY(GRAPH) provide a brief summary about GRAPH.
 
     arguments
-        graph {igraph.args.mustBeGraph}
+        graph {igutils.mustBeGraph}
     end
 
     if igraph.isweighted(graph)

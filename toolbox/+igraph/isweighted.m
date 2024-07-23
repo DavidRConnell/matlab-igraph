@@ -5,8 +5,8 @@ function TF = isweighted(graph)
 %
 %   See also IGRAPH.ISDIRECTED.
 
-    if igraph.args.isgraph(graph)
-        TF = igraph.args.hasEdgeAttr(graph);
+    if igutils.isgraph(graph)
+        TF = igutils.hasEdgeAttr(graph);
     else
         TF = sum(graph == 1 | graph == 0, 'all') ~= numel(graph);
     end

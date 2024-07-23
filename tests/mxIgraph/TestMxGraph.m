@@ -6,8 +6,8 @@ classdef TestMxGraph < matlab.unittest.TestCase
     end
 
     properties (ClassSetupParameter)
-        dtype = igraph.args.datatypes();
-        repr = igraph.args.representations();
+        dtype = igutils.datatypes();
+        repr = igutils.representations();
         n = num2cell(10 .^ (1:2));
     end
 

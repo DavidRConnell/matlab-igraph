@@ -166,18 +166,18 @@ function pos = layout(graph, method, graphOpts, methodOpts)
 % See also igraph.layout3d, igraph.plot, igraph.rng
 
     arguments
-        graph {igraph.args.mustBeGraph};
+        graph {igutils.mustBeGraph};
         method (1, :) char ...
-            {igraph.args.mustBeMemberi(method, ...
-                                       {'random', 'circle', 'star', 'grid', ...
-                                        'graphopt', 'bipartite', ...
-                                        'fruchtermanreingold', 'fr', ...
-                                        'kamadakawai', 'kk', 'gem', ...
-                                        'davidsonharel', 'dh', 'mds', ...
-                                        'lgl', 'reingoldtilford', 'rt', ...
-                                        'reingoldtilfordcircular'})};
+            {igutils.mustBeMemberi(method, ...
+                                   {'random', 'circle', 'star', 'grid', ...
+                                    'graphopt', 'bipartite', ...
+                                    'fruchtermanreingold', 'fr', ...
+                                    'kamadakawai', 'kk', 'gem', ...
+                                    'davidsonharel', 'dh', 'mds', ...
+                                    'lgl', 'reingoldtilford', 'rt', ...
+                                    'reingoldtilfordcircular'})};
 
-        graphOpts.?igraph.args.GraphInProps;
+        graphOpts.?igutils.GraphInProps;
         methodOpts.order;
         methodOpts.center;
         methodOpts.width;
@@ -216,7 +216,7 @@ function pos = layout(graph, method, graphOpts, methodOpts)
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphInProps(graph, graphOpts{:});
+    graphOpts = igutils.setGraphInProps(graph, graphOpts{:});
 
     method = lower(method);
     if strcmp(method, 'fr')
@@ -371,7 +371,7 @@ function opts = parseFruchtermanReingoldOptions(graph, opts)
         end
     end
 
-    if ~igraph.args.isoptionset(opts, 'grid')
+    if ~igutils.isoptionset(opts, 'grid')
         opts.grid = 'auto';
     elseif opts.grid
         opts.grid = 'grid';
@@ -442,21 +442,21 @@ function opts = parseDavidsonharelOptions(graph, opts)
         end
     end
 
-    if ~igraph.args.isoptionset(opts, 'weightEdgeLen') || ...
-            ~igraph.args.isoptionset(opts, 'weightEdgeCross') || ...
-            ~igraph.args.isoptionset(opts, 'weightNodeEdgeDist')
+    if ~igutils.isoptionset(opts, 'weightEdgeLen') || ...
+            ~igutils.isoptionset(opts, 'weightEdgeCross') || ...
+            ~igutils.isoptionset(opts, 'weightNodeEdgeDist')
         density = igraph.edgeDensity(graph);
     end
 
-    if ~igraph.args.isoptionset(opts, 'weightEdgeLen')
+    if ~igutils.isoptionset(opts, 'weightEdgeLen')
         opts.weightEdgeLen = density / 10;
     end
 
-    if ~igraph.args.isoptionset(opts, 'weightEdgeCross')
+    if ~igutils.isoptionset(opts, 'weightEdgeCross')
         opts.weightEdgeCross = 1 - sqrt(density);
     end
 
-    if ~igraph.args.isoptionset(opts, 'weightNodeEdgeDist')
+    if ~igutils.isoptionset(opts, 'weightNodeEdgeDist')
         opts.weightNodeEdgeDist = 1 - (density / 5);
     end
 end
@@ -464,7 +464,7 @@ end
 function opts = parseMdsOptions(~, opts)
     arguments
         ~
-        opts.distance (:, :) double {igraph.args.mustBeSquare} = [];
+        opts.distance (:, :) double {igutils.mustBeSquare} = [];
     end
 
     if ~isempty(opts.distance) && ...
@@ -492,7 +492,7 @@ end
 function opts = parseReingoldTilfordOptions(~, opts)
     arguments
         ~
-        opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
+        opts.mode (1, :) char {igutils.mustBeMode} = 'all';
         opts.root (1, :) {mustBePositive, mustBeInteger} = [];
         opts.circular (1, 1) logical = false;
     end

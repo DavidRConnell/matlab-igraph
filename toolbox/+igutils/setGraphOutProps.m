@@ -8,10 +8,10 @@ function args = setGraphOutProps(args, graphInArgs)
         args.dtype
         args.multiple
         args.weight
-        graphInArgs.?igraph.args.GraphInProps
+        graphInArgs.?igutils.GraphInProps
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if isoptionset(args, 'template')
         graph = args.template;
         args = rmfield(args, 'template');
@@ -58,13 +58,13 @@ end
 
 function type = dtype(graph)
     type = 'double';
-    if ~igraph.args.isgraph(graph) && islogical(graph)
+    if ~igutils.isgraph(graph) && islogical(graph)
         type = 'logical';
     end
 end
 
 function type = repr(graph)
-   if igraph.args.isgraph(graph)
+   if igutils.isgraph(graph)
        type = 'graph';
    elseif issparse(graph)
        type = 'sparse';

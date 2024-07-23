@@ -9,8 +9,8 @@ function TF = issubisomorphic(g1, g2, g1Opts, g2Opts)
 %       both the same (both directed or both undirected) an error is triggered.
 
     arguments
-        g1 {igraph.args.mustBeGraph}
-        g2 {igraph.args.mustBeGraph}
+        g1 {igutils.mustBeGraph}
+        g2 {igutils.mustBeGraph}
         g1Opts.g1isdirected (1, 1) logical = igraph.isdirected(g1);
         g2Opts.g2isdirected (1, 1) logical = igraph.isdirected(g2);
     end

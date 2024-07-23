@@ -5,12 +5,12 @@ function TF = istree(graph, opts)
 %   See also IGRAPH.TREEROOT.
 
     arguments
-        graph {igraph.args.mustBeGraph};
+        graph {igutils.mustBeGraph};
         opts.isdirected (1, 1) logical;
-        opts.mode (1, :) char {igraph.args.mustBeMode} = 'all';
+        opts.mode (1, :) char {igutils.mustBeMode} = 'all';
     end
 
-    if ~igraph.args.isoptionset(opts, "isdirected")
+    if ~igutils.isoptionset(opts, "isdirected")
        opts.isdirected = ~issymmetric(graph) || opts.mode ~= "all";
     end
 

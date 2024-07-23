@@ -7,8 +7,8 @@ function verbose(handler, ison)
 
     arguments
         handler (1, :) char ...
-            {igraph.args.mustBeMemberi(handler, ...
-                                       {'warning', 'progress', 'status'})};
+            {igutils.mustBeMemberi(handler, ...
+                                   {'warning', 'progress', 'status'})};
         ison (1, 1) logical;
     end
 

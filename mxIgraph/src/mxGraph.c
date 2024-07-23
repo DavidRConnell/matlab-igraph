@@ -43,7 +43,7 @@ static inline mxArray const* mxGraph2struct_i(mxArray const* p)
   mxArray* ret, * in;
   in = (mxArray*)p;
 
-  mexCallMATLAB(1, &ret, 1, &in, "igraph.args.graph2struct");
+  mexCallMATLAB(1, &ret, 1, &in, "igutils.graph2struct");
 
   return ret;
 }
@@ -309,7 +309,7 @@ static mxArray* create_graph_i(igraph_t const* graph,
 
   mxSetField(in[0], 0, "Nodes", mxNodes);
   mxSetField(in[0], 0, "Edges", mxEdges);
-  mexCallMATLAB(1, &ret, 2, in, "igraph.args.struct2graph");
+  mexCallMATLAB(1, &ret, 2, in, "igutils.struct2graph");
 
   return ret;
 }

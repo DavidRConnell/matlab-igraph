@@ -467,27 +467,27 @@ function graph = randgame(method, graphOpts, methodOpts)
 
     arguments
         method (1, :) char ...
-            {igraph.args.mustBeMemberi(method, ...
-                           {'grg', 'GeneratorRandomGraph' 'BarabasiBag', ...
-                            'BarabasiPsumtree', ...
-                            'BarabasiPsumtreeMultiple', 'ErdosRenyi', ...
-                            'WattsStrogatz', 'SmallWorld', ...
-                            'DegSeqConfiguration', ...
-                            'DegSeqConfigurationSimple', ...
-                            'DegSeqFastHeurSimple', ...
-                            'DegSeqEdgeSwitchingSimple', 'DegseqVl', ...
-                            'KRegular', 'StaticFitness', ...
-                            'StaticPowerLaw', 'ForestFire', ...
-                            'GrowingRandom', 'CallawayTraits', ...
-                            'establishment', 'preference', ...
-                            'AsymmetricPreference', 'RecentDegree', ...
-                            'BarabasiAging', 'RecentDegreeAging', ...
-                            'lastcit', 'CitedType', 'CitingCitedType', ...
-                            'sbm', 'StochasticBlockMethod', 'hsbm', ...
-                            'HierachicalStochasticBlockMethod', 'HsbmList', ...
-                            'DotProduct', 'treeLERW', 'treePrufer', ...
-                            'SimpleInterconnectedIslands'})};
-        graphOpts.?igraph.args.GraphOutProps;
+            {igutils.mustBeMemberi(method, ...
+                                   {'grg', 'GeneratorRandomGraph' 'BarabasiBag', ...
+                                    'BarabasiPsumtree', ...
+                                    'BarabasiPsumtreeMultiple', 'ErdosRenyi', ...
+                                    'WattsStrogatz', 'SmallWorld', ...
+                                    'DegSeqConfiguration', ...
+                                    'DegSeqConfigurationSimple', ...
+                                    'DegSeqFastHeurSimple', ...
+                                    'DegSeqEdgeSwitchingSimple', 'DegseqVl', ...
+                                    'KRegular', 'StaticFitness', ...
+                                    'StaticPowerLaw', 'ForestFire', ...
+                                    'GrowingRandom', 'CallawayTraits', ...
+                                    'establishment', 'preference', ...
+                                    'AsymmetricPreference', 'RecentDegree', ...
+                                    'BarabasiAging', 'RecentDegreeAging', ...
+                                    'lastcit', 'CitedType', 'CitingCitedType', ...
+                                    'sbm', 'StochasticBlockMethod', 'hsbm', ...
+                                    'HierachicalStochasticBlockMethod', 'HsbmList', ...
+                                    'DotProduct', 'treeLERW', 'treePrufer', ...
+                                    'SimpleInterconnectedIslands'})};
+        graphOpts.?igutils.GraphOutProps;
         methodOpts.nNodes;
         methodOpts.radius;
         methodOpts.torus;
@@ -558,7 +558,7 @@ function graph = randgame(method, graphOpts, methodOpts)
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphOutProps(graphOpts{:});
+    graphOpts = igutils.setGraphOutProps(graphOpts{:});
     methodOpts = namedargs2cell(methodOpts);
 
     switch method
@@ -568,7 +568,7 @@ function graph = randgame(method, graphOpts, methodOpts)
         methodOpts = parseOptionsBarabasi(method, methodOpts{:});
       case 'erdosrenyi'
         methodOpts = parseOptionsErdosRenyi(methodOpts{:});
-        if igraph.args.isoptionset(methodOpts, "probability")
+        if igutils.isoptionset(methodOpts, "probability")
             methodOpts.useEdges = false;
         else
             methodOpts.useEdges = true;
@@ -643,10 +643,10 @@ function opts = parseOptionsBarabasi(method, opts)
         opts.nConnections (1, :) {mustBeNonnegative, mustBeInteger} = 1;
         opts.outPreference (1, 1) logical = false;
         opts.attractiveness (1, 1) {mustBeNumeric} = 1;
-        opts.startFrom {igraph.args.mustBeGraph} = [];
+        opts.startFrom {igutils.mustBeGraph} = [];
     end
 
-    if igraph.args.isoptionset(opts, "nNodes")
+    if igutils.isoptionset(opts, "nNodes")
         if (length(opts.nConnections) > 1) && ...
            ((length(opts.nConnections)) ~= opts.nNodes)
             eid = "Igraph:invalidVectorLength";
@@ -680,7 +680,7 @@ function opts = parseOptionsBarabasi(method, opts)
                                  "when out preference is false."))
     end
 
-    if ~igraph.args.isoptionset(opts, "isdirected")
+    if ~igutils.isoptionset(opts, "isdirected")
        if isempty(opts.startFrom)
            opts.isdirected = false;
        else
@@ -699,7 +699,7 @@ function opts = parseOptionsErdosRenyi(opts)
         opts.loops (1, 1) logical = false;
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if (~isoptionset(opts, "nEdges")) && (~isoptionset(opts, "probability"))
         opts.nEdges = 10;
     elseif (isoptionset(opts, "nEdges") && (isoptionset(opts, "probability")))
@@ -728,7 +728,7 @@ function opts = parseOptionsDegSeq(opts)
         opts.inDegree (1, :) {mustBeNonnegative, mustBeInteger};
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if isoptionset(opts, "degree") && ...
             (isoptionset(opts, "outDegree") || isoptionset(opts, "inDegree"))
         throwAsCaller(MException("Igraph:badArgument", ...
@@ -788,7 +788,7 @@ function opts = parseOptionsStaticFitness(opts)
         opts.loops (1, 1) logical = false;
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if isoptionset(opts, "fitness") && ...
             (isoptionset(opts, "outFitness") || isoptionset(opts, "inFitness"))
         throwAsCaller(MException("Igraph:badArgument", ...
@@ -843,7 +843,7 @@ function opts = parseOptionsStaticPowerLaw(opts)
         opts.finiteSizeCorrection (1, 1) logical = false;
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if isoptionset(opts, "exponent") && ...
             (isoptionset(opts, "outExponent") || ...
              isoptionset(opts, "inExponent"))
@@ -926,7 +926,7 @@ function opts = parseOptionsCallawayTraits(opts)
         opts.isdirected (1, 1) logical;
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if ~isoptionset(opts, "nTypes")
         if ~(isoptionset(opts, "typeDistribution") || ...
              isoptionset(opts, "preference"))
@@ -992,7 +992,7 @@ function opts = parseOptionsPreference(opts)
         opts.loops (1, 1) logical = false;
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if isoptionset(opts, "typeDistribution") && isoptionset(opts, "blockSizes")
         throwAsCaller(MException("Igraph:overConstrained", ...
                                  "typeDistribution and blockSizes " + ...
@@ -1080,7 +1080,7 @@ function opts = parseOptionsAsymmetricPreference(opts)
         opts.loops (1, 1) logical = false;
     end
 
-    isoptionset = @igraph.args.isoptionset;
+    isoptionset = @igutils.isoptionset;
     if ~isoptionset(opts, "nOutTypes")
         if ~(isoptionset(opts, "typeDistribution") || ...
              isoptionset(opts, "preference"))
@@ -1140,7 +1140,7 @@ function opts = parseOptionsRecentDegree(opts)
         opts.isdirected (1, 1) logical = false;
     end
 
-    if ~igraph.args.isoptionset(opts, "nNodes")
+    if ~igutils.isoptionset(opts, "nNodes")
         if length(opts.edgesPerStep) > 1
             opts.nNodes = length(opts.edgesPerStep);
         else
@@ -1216,11 +1216,11 @@ function opts = parseOptionsLastCit(opts)
         opts.isdirected (1, 1) logical = false;
     end
 
-    if ~igraph.args.isoptionset(opts, "agingBins")
+    if ~igutils.isoptionset(opts, "agingBins")
         opts.agingBins = opts.nNodes;
     end
 
-    if ~igraph.args.isoptionset(opts, "preference")
+    if ~igutils.isoptionset(opts, "preference")
         opts.preference = ones(1, opts.agingBins + 1);
     end
 
@@ -1240,7 +1240,7 @@ function opts = parseOptionsCitedType(opts)
 
     opts.nNodes = length(opts.types);
 
-    if ~igraph.args.isoptionset(opts, "preference")
+    if ~igutils.isoptionset(opts, "preference")
         opts.preference = ones(1, max(opts.types));
     end
 
@@ -1261,7 +1261,7 @@ function opts = parseOptionsCitingCitedType(opts)
 
     opts.nNodes = length(opts.types);
 
-    if ~igraph.args.isoptionset(opts, "preference")
+    if ~igutils.isoptionset(opts, "preference")
         opts.preference = ones(max(opts.types), max(opts.types));
     end
 
@@ -1282,7 +1282,7 @@ function opts = parseOptionsSBM(opts)
         opts.loops (1, 1) logical = false;
     end
 
-    if ~igraph.args.isoptionset(opts, "preference")
+    if ~igutils.isoptionset(opts, "preference")
         opts.preference = ones(length(opts.blockSizes)) / ...
             (length(opts.blockSizes) ^ 2);
     end
@@ -1306,7 +1306,7 @@ function opts = parseOptionsHSBM(opts)
         opts.pOut (1, 1) {mustBeInRange(opts.pOut, 0, 1)} = 0.3;
     end
 
-    if ~igraph.args.isoptionset(opts, "preference")
+    if ~igutils.isoptionset(opts, "preference")
         opts.preference = ones(length(opts.rho));
     end
 end

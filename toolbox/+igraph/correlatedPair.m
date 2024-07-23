@@ -35,7 +35,7 @@ function varargout = correlatedPair(x, graphOpts, methodOpts)
 
     arguments
         x
-        graphOpts.?igraph.args.GraphOutProps;
+        graphOpts.?igutils.GraphOutProps;
         graphOpts.isdirected (1, 1) logical;
         methodOpts.correlation (1, 1) ...
             {mustBeInRange(methodOpts.correlation, -1, 1)} = 0.25;
@@ -59,15 +59,15 @@ end
 
 function g2 = correlateWith(g1, graphOpts, methodOpts)
     arguments
-        g1 = {igraph.args.mustBeGraph}
-        graphOpts.?igraph.args.GraphOutProps;
+        g1 = {igutils.mustBeGraph}
+        graphOpts.?igutils.GraphOutProps;
         graphOpts.isdirected = igraph.isdirected(g1);
         methodOpts.correlation;
         methodOpts.density = igraph.edgeDensity(g1);
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphOutProps(graphOpts{:}, template = g1);
+    graphOpts = igutils.setGraphOutProps(graphOpts{:}, template = g1);
 
     g2 = mexIgraphDispatcher(mfunctionname(), g1, graphOpts, methodOpts);
 end
@@ -75,14 +75,14 @@ end
 function [g1, g2] = generatePair(nNodes, graphOpts, methodOpts)
     arguments
         nNodes (1, 1) {mustBeNonnegative, mustBeInteger} = 10;
-        graphOpts.?igraph.args.GraphOutProps;
+        graphOpts.?igutils.GraphOutProps;
         graphOpts.isdirected = false;
         methodOpts.correlation;
         methodOpts.density = 0.5;
     end
 
     graphOpts = namedargs2cell(graphOpts);
-    graphOpts = igraph.args.setGraphOutProps(graphOpts{:});
+    graphOpts = igutils.setGraphOutProps(graphOpts{:});
 
     [g1, g2] = mexIgraphDispatcher(mfunctionname(), nNodes, ...
                                    graphOpts, methodOpts);
