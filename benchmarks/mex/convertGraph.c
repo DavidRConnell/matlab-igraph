@@ -1,0 +1,15 @@
+#include <mxIgraph.h>
+#include "igraph.h"
+
+void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
+{
+  mxArray const* graph_options = prhs[1];
+  igraph_t graph;
+  igraph_vector_t weights;
+
+  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
+  plhs[0] = mxIgraphCreateGraph(&graph, &weights, graph_options);
+
+  igraph_vector_destroy(&weights);
+  igraph_destroy(&graph);
+}
