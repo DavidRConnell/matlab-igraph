@@ -1,5 +1,5 @@
 function mustBeMode(str)
-%MUSTBEMODE check if an allowed mode name.
+%MUSTBEMODE check if an allowed mode name
 
     modes = {'out', 'in', 'all'};
     if ~ismember(lower(str), modes)

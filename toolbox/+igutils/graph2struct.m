@@ -1,8 +1,8 @@
 function s = graph2struct(graph)
 %GRAPH2STRUCT converts a graph type to a structure
 %   This is intended for use inside mxIgraph files. It is in a public location
-%   only to ensure it is available regardless of where the MATLAB file that
-%   calls a mex function is located. Should be regarded as private.
+%   only to ensure it is available regardless of where the mex file that
+%   depends on it is located.
 %
 %   No guarantee this will collect all pertinent information from the graph
 %   type.

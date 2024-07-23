@@ -1,14 +1,25 @@
-function args = setGraphOutProps(args, graphInArgs)
-% By adding graph in props, can use a single structure for graph in and graph
-% out. This will then return the graphInArgs without modification.
+function args = setGraphOutProps(args)
+%SETGRAPHOUTPROPS set the default values for unassigned graph in options
+%   ARGS = SETGRAPHOUTPROPS(ARGS) determine defaults to use for any unset
+%   options. In the case ARGS came from a argument block, it will be in the
+%   form of a structure. To pass this to a function convert it to a cell with
+%   NAMEDARGS2CELL then call with ARGS{:}.
+%
+%   ARGS = SETGRAPHOUTPROPS(ARGS, "TEMPLATE", GRAPH) use GRAPH as a template
+%   and set defaults based on the characteristics of TEMPLATE.
+%
+%   Options for input graphs (IGUTILS.GRAPHINPROPS) can also be passed in and
+%   will be returned untouched. This allows a single graph option set to be
+%   used for both creation of the input graph and the returned graph.
+%
+%   See also IGUTILS.GRAPHOUTPROPS, IGUTILS.SETGRAPHINPROPS.
 
     arguments
+        args.?igutils.GraphInProps
         args.template
         args.repr
         args.dtype
         args.multiple
-        args.weight
-        graphInArgs.?igutils.GraphInProps
     end
 
     isoptionset = @igutils.isoptionset;
@@ -52,8 +63,6 @@ function args = setGraphOutProps(args, graphInArgs)
                                  "multigraphs, use 'graph' as " + ...
                                  "representation or set multiple to false."));
     end
-
-    args = mergeStructs(args, graphInArgs);
 end
 
 function type = dtype(graph)
@@ -71,10 +80,4 @@ function type = repr(graph)
    else
        type = 'full';
    end
-end
-
-function s1 = mergeStructs(s1, s2)
-    for fn = fieldnames(s2)'
-        s1.(fn{1}) = s2.(fn{1});
-    end
 end

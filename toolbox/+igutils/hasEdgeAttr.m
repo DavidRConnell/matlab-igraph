@@ -3,6 +3,9 @@ function tf = hasEdgeAttr(graph, name)
 %   TF = HASEDGEATTR(GRAPH) return true if graph has any edge attributes.
 %   TF = HASEDGEATTR(GRAPH, NAME) return true if graph has an edge attribute
 %   NAME.
+%
+%   See also IGUTILS.HASNODEATTR, IGUTILS.LISTEDGEATTR,
+%   IGUTILS.VALIDATEEDGEATTR.
 
     arguments
         graph

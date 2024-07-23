@@ -3,6 +3,8 @@ function tf = hasNodeAttr(graph, name)
 %   TF = HASNODEATTR(GRAPH) return true if graph has any node attributes.
 %   TF = HASNODEATTR(GRAPH, NAME) return true if graph has a node attribute
 %   NAME.
+%
+%   See also IGUTILS.HASEDGEATTR, IGUTILS.VALIDATNODEATTR.
 
     arguments
         graph

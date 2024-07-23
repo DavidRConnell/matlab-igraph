@@ -1,13 +1,21 @@
-function args = setGraphInProps(graph, args, graphOutArgs)
-% By adding graph out props, can use a single structure for graph in and graph
-% out. This will then return the graphOutArgs without modification.
+function args = setGraphInProps(graph, args)
+%SETGRAPHINPROPS set the default values for unassigned graph in options
+%   ARGS = SETGRAPHINPROPS(GRAPH, ARGS) Use GRAPH to determine defaults to use
+%   for any unset options. In the case ARGS came from a argument block, it will
+%   be in the form of a structure. To pass this to a function convert it to a
+%   cell with NAMEDARGS2CELL then call with ARGS{:}.
+%
+%   Options for output graphs (IGUTILS.GRAPHOUTPROPS) can also be passed in and
+%   will be returned untouched. This allows a single graph option set to be
+%   used for both creation of the input graph and the returned graph.
+%
+%   See also IGUTILS.GRAPHINPROPS, IGUTILS.SETGRAPHOUTPROPS.
 
     arguments
         graph
+        args.?igutils.GraphOutProps
         args.isweighted
         args.isdirected
-        args.weight
-        graphOutArgs.?igutils.GraphOutProps
     end
 
     isoptionset = @igutils.isoptionset;
@@ -43,14 +51,5 @@ function args = setGraphInProps(graph, args, graphOutArgs)
         end
     else
         args.weight = 'Weight';
-    end
-
-    args = mergeStructs(args, graphOutArgs);
-end
-
-
-function s1 = mergeStructs(s1, s2)
-    for fn = fieldnames(s2)'
-        s1.(fn{1}) = s2.(fn{1});
     end
 end
