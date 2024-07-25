@@ -49,6 +49,8 @@ static void mexIgraphSetupHook()
 {
   if (!setup_ran) {
     setup_ran = true;
+
+    mxIgraphSetRNG();
     igraph_set_error_handler(mxIgraphErrorHandlerMex);
     igraph_set_warning_handler(mxIgraphWarningHandlerMex);
     igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);

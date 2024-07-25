@@ -19,13 +19,19 @@
 #ifndef MEX_IGRAPH_H
 #define MEX_IGRAPH_H
 
-#include "mex.h"
+#include <mex.h>
 #if defined(__GNUC__)
 #  undef printf
 #  define printf(...) __attribute__((format(mexPrintf, ...)))
 #endif
 
-#include "igraph.h"
+#ifdef __cplusplus
+#  define EXTERNC extern "C"
+#else
+#  define EXTERNC
+#endif
+
+#include <igraph.h>
 
 /* Helper for passing weights when the graph might be unweighted. */
 #define MXIGRAPH_WEIGHTS(weights) \
@@ -122,9 +128,9 @@ int mxIgraphMatrixIntFromArray(const mxArray* p, igraph_matrix_int_t* mat,
 mxArray* mxIgraphMatrixIntToArray(const igraph_matrix_int_t* mat,
                                   igraph_bool_t const shift_start);
 mxArray* mxIgraphCreateCellFromVectorIntList(const igraph_vector_int_list_t
-    *list, igraph_bool_t const shift_start);
+    * list, igraph_bool_t const shift_start);
 mxArray* mxIgraphCreateMatrixFromVectorIntList(const igraph_vector_int_list_t
-    *list, igraph_bool_t const shift_start);
+    * list, igraph_bool_t const shift_start);
 
 // mxHelpers
 void mxIgraphPrintGraph(const igraph_t* graph,
@@ -157,5 +163,8 @@ void mxIgraphGetVectorBool(const mxArray* arg_struct, char const fieldname[1],
                            igraph_bool_t const shift_start);
 void mxIgraphGetMatrix(const mxArray* arg_struct, char const fieldname[1],
                        igraph_matrix_t* mat, igraph_bool_t const shift_start);
+
+/* random */
+EXTERNC void mxIgraphSetRNG(void);
 
 #endif
