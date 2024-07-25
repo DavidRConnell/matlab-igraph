@@ -17,10 +17,12 @@
  */
 
 #include <mxIgraph.h>
+#include <string.h>
 #include "utils.h"
 
 enum {
-  MXIGRAPH_GENERATOR_MT19937 = 0,
+  MXIGRAPH_GENERATOR_MATLAB = 0,
+  MXIGRAPH_GENERATOR_MT19937,
   MXIGRAPH_GENERATOR_GLIBC2,
   MXIGRAPH_GENERATOR_PCG32,
   MXIGRAPH_GENERATOR_PCG64,
@@ -28,53 +30,75 @@ enum {
 };
 
 igraph_rng_t mxIgraph_rng;
+char const* mxIgraph_rng_current_generator = "matlab";
 
 igraph_error_t mexIgraphRNG(int nlhs, mxArray* plhs[], int nrhs,
                             mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(2);
-  VERIFY_NO_OUTPUTS;
+  VERIFY_N_OUTPUTS_EQUAL(1);
 
-  igraph_integer_t seed = mxGetScalar(prhs[0]);
+  igraph_integer_t const seed = mxGetScalar(prhs[0]);
+  mxArray const* generator_name = prhs[1];
   igraph_integer_t generator;
   igraph_error_t errcode = IGRAPH_SUCCESS;
 
   const char* generators[MXIGRAPH_GENERATOR_N] = {
+    [MXIGRAPH_GENERATOR_MATLAB] = "matlab",
     [MXIGRAPH_GENERATOR_MT19937] = "mt19937",
     [MXIGRAPH_GENERATOR_GLIBC2] = "glibc2",
     [MXIGRAPH_GENERATOR_PCG32] = "pcg32",
     [MXIGRAPH_GENERATOR_PCG64] = "pcg64"
   };
-  generator = mxIgraphSelectMethod(prhs[1], generators, MXIGRAPH_GENERATOR_N);
+
+  /* When a generator name is not passed to the MATLAB calling function, the
+     string in generator_name will not be one of the known generators in the
+     above generator table, leading to the variable generator being set to
+     MXIGRAPH_GENERATOR_N. In this case, the default rng is not set but is
+     still seeded. */
+  generator = mxIgraphSelectMethod(generator_name, generators,
+                                   MXIGRAPH_GENERATOR_N);
+
+  if (generator < MXIGRAPH_GENERATOR_N) {
+    mxIgraph_rng_current_generator = generators[generator];
+  }
+  plhs[0] = mxCreateString(mxIgraph_rng_current_generator);
 
   switch (generator) {
   case MXIGRAPH_GENERATOR_MT19937:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_mt19937);
+    errcode = igraph_rng_init( & mxIgraph_rng, & igraph_rngtype_mt19937);
     break;
   case MXIGRAPH_GENERATOR_GLIBC2:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_glibc2);
+    errcode = igraph_rng_init( & mxIgraph_rng, & igraph_rngtype_glibc2);
     break;
   case MXIGRAPH_GENERATOR_PCG32:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg32);
+    errcode = igraph_rng_init( & mxIgraph_rng, & igraph_rngtype_pcg32);
     break;
   case MXIGRAPH_GENERATOR_PCG64:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg64);
+    errcode = igraph_rng_init( & mxIgraph_rng, & igraph_rngtype_pcg64);
     break;
-  }
-
-  if (generator < MXIGRAPH_GENERATOR_N) {
-    igraph_rng_set_default(&mxIgraph_rng);
   }
 
   if (errcode != IGRAPH_SUCCESS) {
-    mexErrMsgIdAndTxt("Igraph:internal:incorrectRandomGenerator",
+    mexErrMsgIdAndTxt("igraph:internal:incorrectRandomGenerator",
                       "Failed to initialize a new RNG.");
+  }
+
+  if (generator == MXIGRAPH_GENERATOR_MATLAB) {
+    mxIgraphSetRNG();
+    /* MATLAB RNG should only be seeded using the MATLAB rng function, so
+    return before seeding. */
+    return errcode;
+  } else if (generator < MXIGRAPH_GENERATOR_N) {
+    igraph_rng_set_default( & mxIgraph_rng);
+  } else if (strcmp(mxIgraph_rng_current_generator, "matlab") == 0) {
+    return errcode;
   }
 
   errcode = igraph_rng_seed(igraph_rng_default(), seed);
 
   if (errcode != IGRAPH_SUCCESS) {
-    mexErrMsgIdAndTxt("Igraph:internal:improperSeed",
+    mexErrMsgIdAndTxt("igraph:internal:improperSeed",
                       "Failed to seed the RNG.");
   }
 

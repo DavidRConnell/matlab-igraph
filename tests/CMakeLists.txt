@@ -1,6 +1,9 @@
-file(GLOB mex_files ${CMAKE_CURRENT_SOURCE_DIR}/mxIgraph/mex/*.c)
-file(GLOB mxIgraph_tests ${CMAKE_CURRENT_SOURCE_DIR}/mxIgraph/*.m)
-file(GLOB toolbox_tests ${CMAKE_CURRENT_SOURCE_DIR}/toolbox/*.m)
+file(GLOB mex_files CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/mxIgraph/mex/*.c)
+file(GLOB mxIgraph_tests CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/mxIgraph/*.m)
+file(GLOB toolbox_tests CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/toolbox/*.m)
 
 foreach(mex_file ${mex_files})
   get_filename_component(mex_name ${mex_file} NAME_WE)

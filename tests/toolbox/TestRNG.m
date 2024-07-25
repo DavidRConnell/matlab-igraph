@@ -4,7 +4,7 @@ classdef TestRNG < matlab.unittest.TestCase
     end
 
     properties (TestParameter)
-        generator = {'mt19937', 'glibc2', 'pcg32', 'pcg64'};
+        generator = {'matlab', 'mt19937', 'glibc2', 'pcg32', 'pcg64'};
     end
 
     methods (Test, TestTags = {'Unit'})
