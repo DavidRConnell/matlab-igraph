@@ -51,10 +51,67 @@ static igraph_error_t mxIgraph_rng_seed(void* state, igraph_uint_t seed)
   return IGRAPH_SUCCESS;
 }
 
+/* Cannot get the libmwmathrng dll to link correctly on Windows. For now
+calling into MATLAB will return the same values as calling mrRandu directly but
+it's slower. */
+
+#ifdef _WIN32
+void mrRandu(double* arr, mwSize len)
+{
+  mxArray* in = mxCreateDoubleMatrix(1, 2, mxREAL);
+  mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
+
+  double* in_data = mxGetDoubles(in);
+  in_data[0] = 1; in_data[1] = len;
+
+  mexCallMATLAB(1, &out, 1, &in, "rand");
+  double *tmp = mxGetDoubles(out);
+  for (mwSize i = 0; i < len; i++) {
+    arr[i] = tmp[i];
+  }
+}
+
+void mrRandi(double* arr, mwSize len, double l, double h)
+{
+  mxArray* in[2] = {
+    mxCreateDoubleMatrix(1, 2, mxREAL),
+    mxCreateDoubleMatrix(1, 2, mxREAL)
+  };
+  mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
+
+  double* in_data = mxGetDoubles(in[0]);
+  in_data[0] = l; in_data[1] = h;
+
+  in_data = mxGetDoubles(in[1]);
+  in_data[0] = 1; in_data[1] = len;
+
+  mexCallMATLAB(1, &out, 1, in, "randi");
+  double *tmp = mxGetDoubles(out);
+  for (mwSize i = 0; i < len; i++) {
+    arr[i] = tmp[i];
+  }
+}
+
+void mrRandn(double* arr, mwSize len)
+{
+  mxArray* in = mxCreateDoubleMatrix(1, 2, mxREAL);
+  mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
+
+  double* in_data = mxGetDoubles(in);
+  in_data[0] = 1; in_data[1] = len;
+
+  mexCallMATLAB(1, &out, 1, &in, "randn");
+  double *tmp = mxGetDoubles(out);
+  for (mwSize i = 0; i < len; i++) {
+    arr[i] = tmp[i];
+  }
+}
+#endif
+
 igraph_real_t mxIgraph_rng_get_real(void* state)
 {
   double x = 0;
-  mrRandu( & x, 1);
+  mrRandu(&x, 1);
 
   return x;
 }
@@ -64,11 +121,12 @@ static igraph_uint_t mxIgraph_rng_get(void* state)
   return (mxIgraph_rng_get_real(state) * 0x40000000UL);
 }
 
-igraph_integer_t mxIgraph_rng_get_integer(void* state, igraph_integer_t l,
-    igraph_integer_t h)
+static igraph_integer_t mxIgraph_rng_get_integer(void* state,
+						 igraph_integer_t l,
+						 igraph_integer_t h)
 {
   double x = 0;
-  mrRandi( & x, 1, l, h);
+  mrRandi(&x, 1, l, h);
 
   return x;
 }
@@ -90,7 +148,7 @@ static igraph_rng_type_t mxIgraph_rng_type = {
   /* get= */       mxIgraph_rng_get,
   /* get_int= */   mxIgraph_rng_get_integer,
   /* get_real= */  mxIgraph_rng_get_real,
-  /* get_norm= */  mxIgraph_rng_get_normal,
+  /* get_norm= */  NULL,
   /* get_geom= */  NULL,
   /* get_binom= */ NULL,
   /* get_exp= */   NULL,
