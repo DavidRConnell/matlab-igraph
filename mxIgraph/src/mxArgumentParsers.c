@@ -30,7 +30,7 @@ igraph_integer_t mxIgraphSelectMethod(const mxArray* p, const char* methods[],
                                       const igraph_integer_t n_methods)
 {
   if (!mxIsChar(p)) {
-    mexErrMsgIdAndTxt("Igraph:notChar",
+    mexErrMsgIdAndTxt("igraph:notChar",
                       "Method name must be specified as a string.");
   }
   char* name = mxArrayToString(p);
