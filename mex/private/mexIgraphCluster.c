@@ -53,15 +53,15 @@ static igraph_error_t mxIgraph_spinglass_i(igraph_t const *graph,
     mxArray const *opts,
     igraph_vector_int_t *membership)
 {
-  igraph_integer_t n_spins = mxIgraphGetInteger(opts, "nSpins");
-  igraph_bool_t parallel = mxIgraphGetBool(opts, "parallel");
-  igraph_real_t start_temp = mxIgraphGetReal(opts, "tempStart");
-  igraph_real_t end_temp = mxIgraphGetReal(opts, "tempEnd");
-  igraph_real_t cool_factor = mxIgraphGetReal(opts, "coolingFactor");
-  char const *update_rule_str = mxIgraphGetString(opts, "updateRule");
+  igraph_integer_t n_spins = mxIgraphIntegerFromOptions(opts, "nSpins");
+  igraph_bool_t parallel = mxIgraphBoolFromOptions(opts, "parallel");
+  igraph_real_t start_temp = mxIgraphRealFromOptions(opts, "tempStart");
+  igraph_real_t end_temp = mxIgraphRealFromOptions(opts, "tempEnd");
+  igraph_real_t cool_factor = mxIgraphRealFromOptions(opts, "coolingFactor");
+  char const *update_rule_str = mxIgraphStringFromOptions(opts, "updateRule");
   igraph_spincomm_update_t update_rule;
-  igraph_real_t gamma = mxIgraphGetReal(opts, "resolution");
-  igraph_real_t gamma_minus = mxIgraphGetReal(opts, "negResolution");
+  igraph_real_t gamma = mxIgraphRealFromOptions(opts, "resolution");
+  igraph_real_t gamma_minus = mxIgraphRealFromOptions(opts, "negResolution");
   igraph_spinglass_implementation_t implementation =
     igraph_vector_min(weights) < 0 ? IGRAPH_SPINCOMM_IMP_NEG
     : IGRAPH_SPINCOMM_IMP_ORIG;
@@ -85,11 +85,11 @@ static igraph_error_t mxIgraph_leading_eigenvector_i(
   igraph_t const *graph, igraph_vector_t const *weights, mxArray const *opts,
   igraph_vector_int_t *membership)
 {
-  igraph_integer_t steps = mxIgraphGetInteger(opts, "maxSteps");
+  igraph_integer_t steps = mxIgraphIntegerFromOptions(opts, "maxSteps");
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init, true);
+  mxIgraphVectorIntFromOptions(opts, "initial", &init, true);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
     VECTOR(*membership)[i] = VECTOR(init)[i];
   }
@@ -107,7 +107,7 @@ static igraph_error_t mxIgraph_walktrap_i(igraph_t const *graph,
     mxArray const *opts,
     igraph_vector_int_t *membership)
 {
-  igraph_integer_t steps = mxIgraphGetInteger(opts, "nSteps");
+  igraph_integer_t steps = mxIgraphIntegerFromOptions(opts, "nSteps");
   igraph_error_t errcode;
 
   errcode =
@@ -120,7 +120,7 @@ static igraph_error_t mxIgraph_edge_betweenness_i(igraph_t const *graph,
     igraph_vector_t const *weights, mxArray const *opts,
     igraph_vector_int_t *membership)
 {
-  igraph_bool_t isweighted = mxIgraphGetBool(opts, "isweighted");
+  igraph_bool_t isweighted = mxIgraphBoolFromOptions(opts, "isweighted");
   igraph_vector_t const *weights_ptr = NULL;
   igraph_error_t errcode;
 
@@ -154,7 +154,7 @@ static igraph_error_t mxIgraph_multilevel_i(igraph_t const *graph,
     mxArray const *opts,
     igraph_vector_int_t *membership)
 {
-  igraph_real_t resolution = mxIgraphGetReal(opts, "resolution");
+  igraph_real_t resolution = mxIgraphRealFromOptions(opts, "resolution");
   igraph_error_t errcode;
 
   errcode = igraph_community_multilevel(graph, weights, resolution, membership,
@@ -168,17 +168,17 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const *graph,
                                         mxArray const *opts,
                                         igraph_vector_int_t *membership)
 {
-  igraph_real_t resolution = mxIgraphGetReal(opts, "resolution");
-  igraph_real_t beta = mxIgraphGetReal(opts, "randomness");
+  igraph_real_t resolution = mxIgraphRealFromOptions(opts, "resolution");
+  igraph_real_t beta = mxIgraphRealFromOptions(opts, "randomness");
   igraph_vector_t node_weights;
   igraph_vector_t *node_weights_ptr = NULL;
-  igraph_integer_t n_iterations = mxIgraphGetInteger(opts, "nIterations");
+  igraph_integer_t n_iterations = mxIgraphIntegerFromOptions(opts, "nIterations");
   igraph_bool_t use_modularity =
-    strcmp(mxIgraphGetString(opts, "metric"), "modularity") == 0;
+    strcmp(mxIgraphStringFromOptions(opts, "metric"), "modularity") == 0;
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init, true);
+  mxIgraphVectorIntFromOptions(opts, "initial", &init, true);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
     VECTOR(*membership)[i] = VECTOR(init)[i];
   }
@@ -206,7 +206,7 @@ static igraph_error_t mxIgraph_fluid_communities_i(
   igraph_t const *graph, igraph_vector_t const *UNUSED(weights),
   mxArray const *opts, igraph_vector_int_t *membership)
 {
-  igraph_integer_t n_communities = mxIgraphGetInteger(opts, "nCommunities");
+  igraph_integer_t n_communities = mxIgraphIntegerFromOptions(opts, "nCommunities");
   igraph_error_t errcode;
 
   errcode =
@@ -220,12 +220,12 @@ static igraph_error_t mxIgraph_label_propagation_i(
   igraph_vector_int_t *membership)
 {
   igraph_vector_int_t initial;
-  igraph_neimode_t mode = mxIgraphSelectMode(opts);
+  igraph_neimode_t mode = mxIgraphModeFromOptions(opts);
   igraph_vector_bool_t fixed;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &initial, true);
-  mxIgraphGetVectorBool(opts, "fixed", &fixed, false);
+  mxIgraphVectorIntFromOptions(opts, "initial", &initial, true);
+  mxIgraphVectorBoolFromOptions(opts, "fixed", &fixed, false);
 
   errcode = igraph_community_label_propagation(graph, membership, mode, weights,
             &initial, &fixed);
@@ -241,13 +241,13 @@ static igraph_error_t mxIgraph_infomap_i(igraph_t const *graph,
     mxArray const *opts,
     igraph_vector_int_t *membership)
 {
-  igraph_integer_t n_trials = mxIgraphGetInteger(opts, "nTrials");
+  igraph_integer_t n_trials = mxIgraphIntegerFromOptions(opts, "nTrials");
   igraph_vector_t v_weights;
   /* Don't think we need codelength, but crashes Matlab when NULL is used.*/
   igraph_real_t codelength = 0;
   igraph_error_t errcode;
 
-  mxIgraphGetVector(opts, "nodeWeights", &v_weights, false);
+  mxIgraphVectorFromOptions(opts, "nodeWeights", &v_weights, false);
 
   errcode = igraph_community_infomap(graph, weights, &v_weights, n_trials,
                                      membership, &codelength);

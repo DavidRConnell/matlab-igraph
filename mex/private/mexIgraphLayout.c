@@ -96,7 +96,7 @@ static igraph_error_t mxIgraph_star_i(igraph_t const *graph,
                                       mxArray const *opts,
                                       igraph_matrix_t *pos)
 {
-  igraph_integer_t center = mxIgraphGetInteger(opts, "center");
+  igraph_integer_t center = mxIgraphIntegerFromOptions(opts, "center");
   igraph_vector_int_t order;
   igraph_error_t errcode;
 
@@ -114,7 +114,7 @@ static igraph_error_t mxIgraph_grid_i(igraph_t const *graph,
                                       mxArray const *opts,
                                       igraph_matrix_t *pos)
 {
-  igraph_integer_t width = mxIgraphGetInteger(opts, "width");
+  igraph_integer_t width = mxIgraphIntegerFromOptions(opts, "width");
   return igraph_layout_grid(graph, pos, width);
 }
 
@@ -122,12 +122,12 @@ static igraph_error_t mxIgraph_graphopt_i(igraph_t const *graph,
     igraph_vector_t const *UNUSED(weights), mxArray const *opts,
     igraph_matrix_t *pos)
 {
-  igraph_integer_t n_iterations = mxIgraphGetInteger(opts, "nIterations");
-  igraph_real_t node_charge = mxIgraphGetReal(opts, "charge");
-  igraph_real_t node_mass = mxIgraphGetReal(opts, "mass");
-  igraph_real_t spring_length = mxIgraphGetReal(opts, "springLength");
-  igraph_real_t spring_constant = mxIgraphGetReal(opts, "springConstant");
-  igraph_real_t max_sa_movement = mxIgraphGetReal(opts, "stepMax");
+  igraph_integer_t n_iterations = mxIgraphIntegerFromOptions(opts, "nIterations");
+  igraph_real_t node_charge = mxIgraphRealFromOptions(opts, "charge");
+  igraph_real_t node_mass = mxIgraphRealFromOptions(opts, "mass");
+  igraph_real_t spring_length = mxIgraphRealFromOptions(opts, "springLength");
+  igraph_real_t spring_constant = mxIgraphRealFromOptions(opts, "springConstant");
+  igraph_real_t max_sa_movement = mxIgraphRealFromOptions(opts, "stepMax");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
 
   return igraph_layout_graphopt(graph, pos, n_iterations, node_charge,
@@ -140,12 +140,12 @@ static igraph_error_t mxIgraph_bipartite_i(igraph_t const *graph,
     mxArray const *opts, igraph_matrix_t *pos)
 {
   igraph_vector_bool_t types;
-  igraph_real_t hgap = mxIgraphGetReal(opts, "hgap");
-  igraph_real_t vgap = mxIgraphGetReal(opts, "vgap");
-  igraph_real_t max_iterations = mxIgraphGetInteger(opts, "");
+  igraph_real_t hgap = mxIgraphRealFromOptions(opts, "hgap");
+  igraph_real_t vgap = mxIgraphRealFromOptions(opts, "vgap");
+  igraph_real_t max_iterations = mxIgraphIntegerFromOptions(opts, "");
   igraph_error_t errcode;
 
-  mxIgraphGetVectorBool(opts, "types", &types, false);
+  mxIgraphVectorBoolFromOptions(opts, "types", &types, false);
 
   errcode =
     igraph_layout_bipartite(graph, &types, pos, hgap, vgap, max_iterations);
@@ -159,10 +159,10 @@ static igraph_error_t mxIgraph_fruchterman_reingold_i(igraph_t const *graph,
     igraph_vector_t const *weights,
     mxArray const *opts, igraph_matrix_t *pos)
 {
-  igraph_integer_t n_iter = mxIgraphGetInteger(opts, "nIterations");
-  igraph_real_t start_temp = mxIgraphGetReal(opts, "startTemp");
+  igraph_integer_t n_iter = mxIgraphIntegerFromOptions(opts, "nIterations");
+  igraph_real_t start_temp = mxIgraphRealFromOptions(opts, "startTemp");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
-  char const *grid_method = mxIgraphGetString(opts, "grid");
+  char const *grid_method = mxIgraphStringFromOptions(opts, "grid");
   igraph_layout_grid_t grid;
 
   if (strcmp(grid_method, "auto") == 0) {
@@ -189,9 +189,9 @@ static igraph_error_t mxIgraph_kamada_kawai_i(igraph_t const *graph,
     mxArray const *opts,
     igraph_matrix_t *pos)
 {
-  igraph_integer_t max_iter = mxIgraphGetInteger(opts, "maxIterations");
-  igraph_real_t epsilon = mxIgraphGetReal(opts, "epsilon");
-  igraph_real_t kkconst = mxIgraphGetReal(opts, "constant");
+  igraph_integer_t max_iter = mxIgraphIntegerFromOptions(opts, "maxIterations");
+  igraph_real_t epsilon = mxIgraphRealFromOptions(opts, "epsilon");
+  igraph_real_t kkconst = mxIgraphRealFromOptions(opts, "constant");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
 
   return igraph_layout_kamada_kawai(graph, pos, use_seed, max_iter, epsilon,
@@ -203,10 +203,10 @@ static igraph_error_t mxIgraph_gem_i(igraph_t const *graph,
                                      mxArray const *opts,
                                      igraph_matrix_t *pos)
 {
-  igraph_integer_t max_iter = mxIgraphGetInteger(opts, "maxIterations");
-  igraph_real_t temp_max = mxIgraphGetReal(opts, "tempMax");
-  igraph_real_t temp_min = mxIgraphGetReal(opts, "tempMin");
-  igraph_real_t temp_init = mxIgraphGetReal(opts, "tempInit");
+  igraph_integer_t max_iter = mxIgraphIntegerFromOptions(opts, "maxIterations");
+  igraph_real_t temp_max = mxIgraphRealFromOptions(opts, "tempMax");
+  igraph_real_t temp_min = mxIgraphRealFromOptions(opts, "tempMin");
+  igraph_real_t temp_init = mxIgraphRealFromOptions(opts, "tempInit");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
 
   return igraph_layout_gem(graph, pos, use_seed, max_iter, temp_max, temp_min,
@@ -217,17 +217,17 @@ static igraph_error_t mxIgraph_davidson_harel_i(igraph_t const *graph,
     igraph_vector_t const *UNUSED(weights),
     mxArray const *opts, igraph_matrix_t *pos)
 {
-  igraph_integer_t max_iter = mxIgraphGetInteger(opts, "maxIterations");
-  igraph_integer_t fine_iter = mxIgraphGetInteger(opts, "fineIterations");
-  igraph_real_t cool_factor = mxIgraphGetReal(opts, "coolingFactor");
+  igraph_integer_t max_iter = mxIgraphIntegerFromOptions(opts, "maxIterations");
+  igraph_integer_t fine_iter = mxIgraphIntegerFromOptions(opts, "fineIterations");
+  igraph_real_t cool_factor = mxIgraphRealFromOptions(opts, "coolingFactor");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
-  igraph_real_t weight_node_dist = mxIgraphGetReal(opts, "weightNodeDist");
-  igraph_real_t weight_border = mxIgraphGetReal(opts, "weightBorder");
-  igraph_real_t weight_edge_lengths = mxIgraphGetReal(opts, "weightEdgeLen");
+  igraph_real_t weight_node_dist = mxIgraphRealFromOptions(opts, "weightNodeDist");
+  igraph_real_t weight_border = mxIgraphRealFromOptions(opts, "weightBorder");
+  igraph_real_t weight_edge_lengths = mxIgraphRealFromOptions(opts, "weightEdgeLen");
   igraph_real_t weight_edge_crossings =
-    mxIgraphGetReal(opts, "weightEdgeCross");
+    mxIgraphRealFromOptions(opts, "weightEdgeCross");
   igraph_real_t weight_node_edge_dist =
-    mxIgraphGetReal(opts, "weightNodeEdgeDist");
+    mxIgraphRealFromOptions(opts, "weightNodeEdgeDist");
 
   return igraph_layout_davidson_harel(
            graph, pos, use_seed, max_iter, fine_iter, cool_factor, weight_node_dist,
@@ -261,13 +261,13 @@ static igraph_error_t mxIgraph_lgl_i(igraph_t const *graph,
                                      mxArray const *opts,
                                      igraph_matrix_t *pos)
 {
-  igraph_integer_t max_iter = mxIgraphGetInteger(opts, "maxIterations");
-  igraph_real_t max_delta = mxIgraphGetReal(opts, "stepMax");
-  igraph_real_t area = mxIgraphGetReal(opts, "area");
-  igraph_real_t coolexp = mxIgraphGetReal(opts, "coolExp");
-  igraph_real_t repulserad = mxIgraphGetReal(opts, "repulseRadius");
-  igraph_real_t cellsize = mxIgraphGetReal(opts, "cellSize");
-  igraph_integer_t root = mxIgraphGetInteger(opts, "root");
+  igraph_integer_t max_iter = mxIgraphIntegerFromOptions(opts, "maxIterations");
+  igraph_real_t max_delta = mxIgraphRealFromOptions(opts, "stepMax");
+  igraph_real_t area = mxIgraphRealFromOptions(opts, "area");
+  igraph_real_t coolexp = mxIgraphRealFromOptions(opts, "coolExp");
+  igraph_real_t repulserad = mxIgraphRealFromOptions(opts, "repulseRadius");
+  igraph_real_t cellsize = mxIgraphRealFromOptions(opts, "cellSize");
+  igraph_integer_t root = mxIgraphIntegerFromOptions(opts, "root");
 
   return igraph_layout_lgl(graph, pos, max_iter, max_delta, area, coolexp,
                            repulserad, cellsize, root);
@@ -277,7 +277,7 @@ static igraph_error_t mxIgraph_reingold_tilford_i(igraph_t const *graph,
     igraph_vector_t const *UNUSED(weights),
     mxArray const *opts, igraph_matrix_t *pos)
 {
-  igraph_neimode_t mode = mxIgraphSelectMode(opts);
+  igraph_neimode_t mode = mxIgraphModeFromOptions(opts);
   igraph_vector_int_t roots;
   igraph_error_t errcode;
 
@@ -293,7 +293,7 @@ static igraph_error_t mxIgraph_reingold_tilford_circular_i(
   igraph_t const *graph, igraph_vector_t const *UNUSED(weights),
   mxArray const *opts, igraph_matrix_t *pos)
 {
-  igraph_neimode_t mode = mxIgraphSelectMode(opts);
+  igraph_neimode_t mode = mxIgraphModeFromOptions(opts);
   igraph_vector_int_t roots;
   igraph_error_t errcode;
 

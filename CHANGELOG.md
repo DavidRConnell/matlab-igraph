@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump igraph version to 0.10.13.
 - Move argument parsers into namespace below igraph to expose them igraph users to writing igraph to functions in extension toolboxes.
 - (Breaking) Remove mxIgraph's membership functions in favor of general vector functions.
+- (Breaking) Rename public mxIgraph functions to have a more consistent naming convention.
 
 ## [0.1.13] 2024-04-01
 

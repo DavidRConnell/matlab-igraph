@@ -110,22 +110,32 @@ int mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec,
                             igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorToArray(const igraph_vector_t *vec,
                                igraph_bool_t const shift_start);
+
 int mxIgraphVectorIntFromArray(const mxArray *p, igraph_vector_int_t *vec,
                                igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorIntToArray(const igraph_vector_int_t *vec,
                                   igraph_bool_t const shift_start);
+
 int mxIgraphVectorBoolFromArray(const mxArray *p, igraph_vector_bool_t *vec,
                                 igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorBoolToArray(const igraph_vector_bool_t *vec,
                                    igraph_bool_t const shift_start);
+
 int mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat,
                             igraph_bool_t const shift_start);
 mxArray *mxIgraphMatrixToArray(const igraph_matrix_t *mat,
                                igraph_bool_t const shift_start);
+
 int mxIgraphMatrixIntFromArray(const mxArray *p, igraph_matrix_int_t *mat,
                                igraph_bool_t const shift_start);
 mxArray *mxIgraphMatrixIntToArray(const igraph_matrix_int_t *mat,
                                   igraph_bool_t const shift_start);
+
+int mxIgraphMatrixBoolFromArray(const mxArray *p, igraph_matrix_bool_t *mat,
+                                igraph_bool_t const shift_start);
+mxArray *mxIgraphMatrixBoolToArray(const igraph_matrix_bool_t *mat,
+                                   igraph_bool_t const shift_start);
+
 int mxIgraphVectorListFromArray(const mxArray *p,
                                 igraph_vector_int_list_t *mat,
                                 igraph_bool_t const shift_start);
@@ -143,25 +153,44 @@ mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p);
 
 mxArray *mxIgraphGetArgument(mxArray const *arg_struct,
                              char const fieldname[1]);
-mxIgraphRepr_t mxIgraphSelectRepr(const mxArray *arg_struct);
-mxIgraphDType_t mxIgraphSelectDType(const mxArray *arg_struct);
-igraph_neimode_t mxIgraphSelectMode(const mxArray *arg_struct);
-igraph_integer_t mxIgraphGetInteger(const mxArray *arg_struct,
-                                    char const fieldname[1]);
-igraph_real_t mxIgraphGetReal(const mxArray *arg_struct,
-                              char const fieldname[1]);
-igraph_bool_t mxIgraphGetBool(const mxArray *arg_struct,
-                              char const fieldname[1]);
-char *mxIgraphGetString(const mxArray *arg_struct, char const fieldname[1]);
-void mxIgraphGetVector(const mxArray *arg_struct, char const fieldname[1],
-                       igraph_vector_t *vec, igraph_bool_t const shift_start);
-void mxIgraphGetVectorInt(const mxArray *arg_struct, char const fieldname[1],
-                          igraph_vector_int_t *vec,
-                          igraph_bool_t const shift_start);
-void mxIgraphGetVectorBool(const mxArray *arg_struct, char const fieldname[1],
-                           igraph_vector_bool_t *vec,
-                           igraph_bool_t const shift_start);
-void mxIgraphGetMatrix(const mxArray *arg_struct, char const fieldname[1],
-                       igraph_matrix_t *mat, igraph_bool_t const shift_start);
+
+mxIgraphRepr_t mxIgraphReprFromOptions(const mxArray *arg_struct);
+mxIgraphDType_t mxIgraphDTypeFromOptions(const mxArray *arg_struct);
+igraph_neimode_t mxIgraphModeFromOptions(const mxArray *arg_struct);
+
+igraph_integer_t mxIgraphIntegerFromOptions(const mxArray *arg_struct,
+    char const fieldname[1]);
+igraph_real_t mxIgraphRealFromOptions(const mxArray *arg_struct,
+                                      char const fieldname[1]);
+igraph_bool_t mxIgraphBoolFromOptions(const mxArray *arg_struct,
+                                      char const fieldname[1]);
+char *mxIgraphStringFromOptions(const mxArray *arg_struct,
+                                char const fieldname[1]);
+
+void mxIgraphVectorFromOptions(const mxArray *arg_struct,
+                               char const fieldname[1],
+                               igraph_vector_t *vec,
+                               igraph_bool_t const shift_start);
+void mxIgraphVectorIntFromOptions(const mxArray *arg_struct,
+                                  char const fieldname[1],
+                                  igraph_vector_int_t *vec,
+                                  igraph_bool_t const shift_start);
+void mxIgraphVectorBoolFromOptions(const mxArray *arg_struct,
+                                   char const fieldname[1],
+                                   igraph_vector_bool_t *vec,
+                                   igraph_bool_t const shift_start);
+
+void mxIgraphMatrixFromOptions(const mxArray *arg_struct,
+                               char const fieldname[1],
+                               igraph_matrix_t *mat,
+                               igraph_bool_t const shift_start);
+void mxIgraphMatrixIntFromOptions(const mxArray *arg_struct,
+                                  char const fieldname[1],
+                                  igraph_matrix_int_t *mat,
+                                  igraph_bool_t const shift_start);
+void mxIgraphMatrixBoolFromOptions(const mxArray *arg_struct,
+                                   char const fieldname[1],
+                                   igraph_matrix_bool_t *mat,
+                                   igraph_bool_t const shift_start);
 
 #endif

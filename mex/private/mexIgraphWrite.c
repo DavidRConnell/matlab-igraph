@@ -38,7 +38,8 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray *plhs[], int nrhs,
   igraph_vector_t weights;
   char *filename = mxArrayToString(prhs[0]);
   mxIgraphFileFormat_t format = mxIgraphSelectFileFormat(prhs[2]);
-  igraph_bool_t is_weighted = mxIgraphGetBool(graph_options, "isweighted");
+  igraph_bool_t is_weighted = mxIgraphBoolFromOptions(graph_options,
+                              "isweighted");
   FILE *fptr;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
   igraph_error_handler_t *oldhandler;

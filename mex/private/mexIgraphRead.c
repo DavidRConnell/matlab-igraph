@@ -41,10 +41,10 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray *plhs[], int nrhs,
   char *filename = mxArrayToString(prhs[0]);
   mxIgraphFileFormat_t format =
     mxIgraphSelectFileFormat(mxIgraphGetArgument(method_options, "format"));
-  igraph_integer_t index = mxIgraphGetInteger(method_options, "index");
+  igraph_integer_t index = mxIgraphIntegerFromOptions(method_options, "index");
 
-  igraph_bool_t is_weighted = mxIgraphGetBool(graph_options, "isweighted");
-  igraph_bool_t is_directed = mxIgraphGetBool(graph_options, "isdirected");
+  igraph_bool_t is_weighted = mxIgraphBoolFromOptions(graph_options, "isweighted");
+  igraph_bool_t is_directed = mxIgraphBoolFromOptions(graph_options, "isdirected");
   FILE *fptr;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
   igraph_error_handler_t *oldhandler;

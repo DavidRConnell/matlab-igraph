@@ -31,8 +31,8 @@ igraph_error_t mexIgraphModularity(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph;
   igraph_vector_t weights;
   igraph_vector_int_t membership;
-  igraph_real_t resolution = mxIgraphGetReal(method_options, "resolution");
-  igraph_bool_t directed = mxIgraphGetBool(graph_options, "isdirected");
+  igraph_real_t resolution = mxIgraphRealFromOptions(method_options, "resolution");
+  igraph_bool_t directed = mxIgraphBoolFromOptions(graph_options, "isdirected");
   igraph_real_t modularity;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 

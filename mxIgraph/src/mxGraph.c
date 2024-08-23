@@ -76,8 +76,8 @@ static void get_graph_i(mxArray const *p, igraph_t *graph,
 
   mxArray const *nodeTable = mxGetField(mxGraph, 0, "Nodes");
   mxArray const *edgeTable = mxGetField(mxGraph, 0, "Edges");
-  igraph_integer_t const n_nodes = mxIgraphGetInteger(nodeTable, "n");
-  igraph_integer_t const n_edges = mxIgraphGetInteger(edgeTable, "n");
+  igraph_integer_t const n_nodes = mxIgraphIntegerFromOptions(nodeTable, "n");
+  igraph_integer_t const n_edges = mxIgraphIntegerFromOptions(edgeTable, "n");
 
   double *mxEdges = mxGetDoubles(mxGetField(edgeTable, 0, "EndNodes"));
   double *mxWeights;
@@ -155,13 +155,13 @@ void mxIgraphFromArray(mxArray const *p, igraph_t *graph,
                       igraph_vector_t *weights, mxArray const *graph_options)
 {
   igraph_bool_t const is_directed =
-    mxIgraphGetBool(graph_options, "isdirected");
+    mxIgraphBoolFromOptions(graph_options, "isdirected");
   igraph_bool_t is_weighted;
   char *weight_att;
 
   if (mxGetField(graph_options, 0, "isweighted")) {
-    is_weighted = mxIgraphGetBool(graph_options, "isweighted");
-    weight_att = is_weighted ? mxIgraphGetString(graph_options, "weight") : "";
+    is_weighted = mxIgraphBoolFromOptions(graph_options, "isweighted");
+    weight_att = is_weighted ? mxIgraphStringFromOptions(graph_options, "weight") : "";
   } else {
     /* Add defaults so we can get away with not setting weight related fields
     for methods where weights are never used. */
@@ -383,10 +383,10 @@ mxArray *mxIgraphToArray(igraph_t const *graph,
                              igraph_vector_t const *weights,
                              mxArray const *graphOpts)
 {
-  mxIgraphRepr_t repr = mxIgraphSelectRepr(graphOpts);
-  mxIgraphDType_t dtype = mxIgraphSelectDType(graphOpts);
+  mxIgraphRepr_t repr = mxIgraphReprFromOptions(graphOpts);
+  mxIgraphDType_t dtype = mxIgraphDTypeFromOptions(graphOpts);
   char const *weight_attr = mxGetField(graphOpts, 0, "weight")
-                            ? mxIgraphGetString(graphOpts, "weight")
+                            ? mxIgraphStringFromOptions(graphOpts, "weight")
                             : "Weight";
 
   igraph_bool_t const is_weighted =

@@ -30,13 +30,13 @@ igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
 
   igraph_t graph;
   igraph_bool_t const preserve_degree =
-    mxIgraphGetBool(method_options, "preserveDegree");
+    mxIgraphBoolFromOptions(method_options, "preserveDegree");
   igraph_real_t const probability =
-    mxIgraphGetReal(method_options, "probability");
+    mxIgraphRealFromOptions(method_options, "probability");
   igraph_integer_t const n_rewires =
-    mxIgraphGetInteger(method_options, "nRewires");
-  igraph_neimode_t const mode = mxIgraphSelectMode(method_options);
-  igraph_bool_t const loops = mxIgraphGetBool(method_options, "loops");
+    mxIgraphIntegerFromOptions(method_options, "nRewires");
+  igraph_neimode_t const mode = mxIgraphModeFromOptions(method_options);
+  igraph_bool_t const loops = mxIgraphBoolFromOptions(method_options, "loops");
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 
   mxIgraphFromArray(prhs[0], &graph, NULL, graph_options);

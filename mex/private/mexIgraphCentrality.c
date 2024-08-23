@@ -55,15 +55,17 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
   igraph_vector_int_t vertices;
   igraph_vs_t vids;
   igraph_bool_t warning;
-  igraph_bool_t const directed = mxIgraphGetBool(graph_options, "isdirected");
-  igraph_neimode_t const mode = mxIgraphSelectMode(method_options);
+  igraph_bool_t const directed = mxIgraphBoolFromOptions(graph_options,
+                                 "isdirected");
+  igraph_neimode_t const mode = mxIgraphModeFromOptions(method_options);
   igraph_bool_t const normalized =
-    mxIgraphGetBool(method_options, "normalized");
-  igraph_real_t const damping = mxIgraphGetReal(method_options, "damping");
+    mxIgraphBoolFromOptions(method_options, "normalized");
+  igraph_real_t const damping = mxIgraphRealFromOptions(method_options,
+                                "damping");
   igraph_error_t errorcode;
 
   mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
-  mxIgraphGetVectorInt(method_options, "vids", &vertices, true);
+  mxIgraphVectorIntFromOptions(method_options, "vids", &vertices, true);
   igraph_vs_vector(&vids, &vertices);
 
   igraph_vector_init(&res, 0);

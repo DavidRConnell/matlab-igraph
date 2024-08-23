@@ -52,10 +52,10 @@ static igraph_error_t mxIgraph_star_i(mxArray const *opts, igraph_t *graph)
                          [IGRAPH_STAR_UNDIRECTED] = "undirected"
                         };
   const igraph_integer_t n_modes = 4;
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_star_mode_t mode =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), modes, n_modes);
-  igraph_integer_t center = mxIgraphGetInteger(opts, "center");
+  igraph_integer_t center = mxIgraphIntegerFromOptions(opts, "center");
 
   if (mode == n_modes) {
     mexErrMsgIdAndTxt("Igraph:unknownMode", "Unknown mode passed to star.");
@@ -72,10 +72,10 @@ static igraph_error_t mxIgraph_wheel_i(mxArray const *opts, igraph_t *graph)
                          [IGRAPH_WHEEL_UNDIRECTED] = "undirected"
                         };
   const igraph_integer_t n_modes = 4;
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_wheel_mode_t mode =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), modes, n_modes);
-  igraph_integer_t center = mxIgraphGetInteger(opts, "center");
+  igraph_integer_t center = mxIgraphIntegerFromOptions(opts, "center");
 
   if (mode == n_modes) {
     mexErrMsgIdAndTxt("Igraph:unknownMode", "Unknown mode passed to wheel.");
@@ -86,10 +86,10 @@ static igraph_error_t mxIgraph_wheel_i(mxArray const *opts, igraph_t *graph)
 
 static igraph_error_t mxIgraph_ring_i(mxArray const *opts, igraph_t *graph)
 {
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
-  igraph_bool_t is_directed = mxIgraphGetBool(opts, "isdirected");
-  igraph_bool_t is_mutual = mxIgraphGetBool(opts, "ismutual");
-  igraph_bool_t is_circular = mxIgraphGetBool(opts, "iscircular");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
+  igraph_bool_t is_directed = mxIgraphBoolFromOptions(opts, "isdirected");
+  igraph_bool_t is_mutual = mxIgraphBoolFromOptions(opts, "ismutual");
+  igraph_bool_t is_circular = mxIgraphBoolFromOptions(opts, "iscircular");
 
   return igraph_ring(graph, n_nodes, is_directed, is_mutual, is_circular);
 }
@@ -102,8 +102,8 @@ static igraph_error_t mxIgraph_kary_tree_i(mxArray const *opts,
                          [IGRAPH_TREE_UNDIRECTED] = "undirected"
                         };
   const igraph_integer_t n_types = 3;
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
-  igraph_integer_t children = mxIgraphGetInteger(opts, "children");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
+  igraph_integer_t children = mxIgraphIntegerFromOptions(opts, "children");
   igraph_tree_mode_t type =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), types, n_types);
 
@@ -123,8 +123,8 @@ static igraph_error_t mxIgraph_regular_tree_i(mxArray const *opts,
                          [IGRAPH_TREE_UNDIRECTED] = "undirected"
                         };
   const igraph_integer_t n_types = 3;
-  igraph_integer_t height = mxIgraphGetInteger(opts, "height");
-  igraph_integer_t degree = mxIgraphGetInteger(opts, "degree");
+  igraph_integer_t height = mxIgraphIntegerFromOptions(opts, "height");
+  igraph_integer_t degree = mxIgraphIntegerFromOptions(opts, "degree");
   igraph_tree_mode_t type =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), types, n_types);
 
@@ -138,9 +138,9 @@ static igraph_error_t mxIgraph_regular_tree_i(mxArray const *opts,
 
 static igraph_error_t mxIgraph_full_i(mxArray const *opts, igraph_t *graph)
 {
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
-  igraph_bool_t is_directed = mxIgraphGetInteger(opts, "isdirected");
-  igraph_bool_t loops = mxIgraphGetInteger(opts, "loops");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
+  igraph_bool_t is_directed = mxIgraphIntegerFromOptions(opts, "isdirected");
+  igraph_bool_t loops = mxIgraphIntegerFromOptions(opts, "loops");
 
   return igraph_full(graph, n_nodes, is_directed, loops);
 }
@@ -148,8 +148,8 @@ static igraph_error_t mxIgraph_full_i(mxArray const *opts, igraph_t *graph)
 static igraph_error_t mxIgraph_citation_i(mxArray const *opts,
     igraph_t *graph)
 {
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
-  igraph_bool_t is_directed = mxIgraphGetInteger(opts, "isdirected");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
+  igraph_bool_t is_directed = mxIgraphIntegerFromOptions(opts, "isdirected");
 
   return igraph_full_citation(graph, n_nodes, is_directed);
 }
@@ -159,7 +159,7 @@ static igraph_error_t mxIgraph_prufer_i(mxArray const *opts, igraph_t *graph)
   igraph_vector_int_t prufer;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "prufer", &prufer, true);
+  mxIgraphVectorIntFromOptions(opts, "prufer", &prufer, true);
 
   errcode = igraph_from_prufer(graph, &prufer);
   igraph_vector_int_destroy(&prufer);
@@ -169,7 +169,7 @@ static igraph_error_t mxIgraph_prufer_i(mxArray const *opts, igraph_t *graph)
 
 static igraph_error_t mxIgraph_atlas_i(mxArray const *opts, igraph_t *graph)
 {
-  igraph_integer_t atlas_id = mxIgraphGetInteger(opts, "atlasId");
+  igraph_integer_t atlas_id = mxIgraphIntegerFromOptions(opts, "atlasId");
 
   return igraph_atlas(graph, atlas_id);
 }
@@ -177,16 +177,16 @@ static igraph_error_t mxIgraph_atlas_i(mxArray const *opts, igraph_t *graph)
 static igraph_error_t mxIgraph_de_bruijn_i(mxArray const *opts,
     igraph_t *graph)
 {
-  igraph_integer_t n_letters = mxIgraphGetInteger(opts, "nLetters");
-  igraph_integer_t str_len = mxIgraphGetInteger(opts, "stringLength");
+  igraph_integer_t n_letters = mxIgraphIntegerFromOptions(opts, "nLetters");
+  igraph_integer_t str_len = mxIgraphIntegerFromOptions(opts, "stringLength");
 
   return igraph_de_bruijn(graph, n_letters, str_len);
 }
 
 static igraph_error_t mxIgraph_kautz_i(mxArray const *opts, igraph_t *graph)
 {
-  igraph_integer_t n_letters = mxIgraphGetInteger(opts, "nLetters");
-  igraph_integer_t str_len = mxIgraphGetInteger(opts, "stringLength");
+  igraph_integer_t n_letters = mxIgraphIntegerFromOptions(opts, "nLetters");
+  igraph_integer_t str_len = mxIgraphIntegerFromOptions(opts, "stringLength");
 
   return igraph_kautz(graph, n_letters, str_len);
 }
@@ -194,12 +194,12 @@ static igraph_error_t mxIgraph_kautz_i(mxArray const *opts, igraph_t *graph)
 static igraph_error_t mxIgraph_circulant_i(mxArray const *opts,
     igraph_t *graph)
 {
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_vector_int_t shifts;
-  igraph_bool_t is_directed = mxIgraphGetBool(opts, "isdirected");
+  igraph_bool_t is_directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "shifts", &shifts, false);
+  mxIgraphVectorIntFromOptions(opts, "shifts", &shifts, false);
 
   errcode = igraph_circulant(graph, n_nodes, &shifts, is_directed);
   igraph_vector_int_destroy(&shifts);
@@ -210,8 +210,8 @@ static igraph_error_t mxIgraph_circulant_i(mxArray const *opts,
 static igraph_error_t mxIgraph_petersen_i(mxArray const *opts,
     igraph_t *graph)
 {
-  igraph_integer_t n_nodes = mxIgraphGetInteger(opts, "nNodes");
-  igraph_integer_t shift = mxIgraphGetInteger(opts, "shift");
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
+  igraph_integer_t shift = mxIgraphIntegerFromOptions(opts, "shift");
 
   return igraph_generalized_petersen(graph, n_nodes, shift);
 }
