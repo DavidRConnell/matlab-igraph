@@ -99,11 +99,11 @@ igraph_bool_t mxIgraphIsSymmetric(const mxArray *p);
 igraph_integer_t mxIgraphVCount(mxArray const *p);
 igraph_integer_t mxIgraphECount(mxArray const *p,
                                 const igraph_bool_t is_directed);
-void mxIgraphGetGraph(mxArray const *p, igraph_t *graph,
-                      igraph_vector_t *weights, mxArray const *graph_options);
-mxArray *mxIgraphCreateGraph(igraph_t const *graph,
-                             igraph_vector_t const *weights,
-                             mxArray const *graphOpts);
+void mxIgraphFromArray(mxArray const *p, igraph_t *graph,
+                       igraph_vector_t *weights, mxArray const *graph_options);
+mxArray *mxIgraphToArray(igraph_t const *graph,
+                         igraph_vector_t const *weights,
+                         mxArray const *graphOpts);
 
 // mxStructures
 int mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec,

@@ -90,7 +90,7 @@ static igraph_error_t mxIgraph_grg_i(mxArray const *opts, igraph_t *graph)
   }                                                                            \
                                                                                \
   if (!mxIsEmpty(start_argument)) {                                            \
-    mxIgraphGetGraph(start_argument, &start_from, NULL, opts);                 \
+    mxIgraphFromArray(start_argument, &start_from, NULL, opts);                 \
   }                                                                            \
                                                                                \
   errcode =                                                                    \
@@ -761,7 +761,7 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
 
   game_method(method_options, &graph);
 
-  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
+  plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
   return errorcode;

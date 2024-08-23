@@ -317,7 +317,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
+  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
   igraph_vector_int_init(&membership, igraph_vcount(&graph));
 
   errorcode = cluster_method(&graph, MXIGRAPH_WEIGHTS(&weights), method_options,

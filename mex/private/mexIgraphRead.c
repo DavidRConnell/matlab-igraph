@@ -121,7 +121,7 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray *plhs[], int nrhs,
     }
   }
 
-  plhs[0] = mxIgraphCreateGraph(&graph, &weights, graph_options);
+  plhs[0] = mxIgraphToArray(&graph, &weights, graph_options);
 
   fclose(fptr);
   igraph_vector_destroy(&weights);

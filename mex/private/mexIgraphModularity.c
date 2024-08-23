@@ -36,7 +36,7 @@ igraph_error_t mexIgraphModularity(int nlhs, mxArray *plhs[], int nrhs,
   igraph_real_t modularity;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
+  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
   mxIgraphVectorIntFromArray(prhs[1], &membership, MXIGRAPH_IDX_SHIFT);
 
   igraph_modularity(&graph, &membership, MXIGRAPH_WEIGHTS(&weights), resolution,

@@ -286,7 +286,7 @@ igraph_error_t mexIgraphGenerate(int nlhs, mxArray *plhs[], int nrhs,
 
   generator_method(method_options, &graph);
 
-  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
+  plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
   return errorcode;

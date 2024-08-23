@@ -151,7 +151,7 @@ static void get_adj_i(mxArray const *p, igraph_t *graph,
 
    Both the graph and weight vector should be uninitialized but it's the
    callers responsibility to destroy them when done. */
-void mxIgraphGetGraph(mxArray const *p, igraph_t *graph,
+void mxIgraphFromArray(mxArray const *p, igraph_t *graph,
                       igraph_vector_t *weights, mxArray const *graph_options)
 {
   igraph_bool_t const is_directed =
@@ -378,8 +378,8 @@ static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
    If the weights vector is `NULL` the resulting adjacency matrix will use
    `1` for the weight of all edges.
 
-   See `mxIgraphGetGraph` to convert an matlab adj into an igraph graph. */
-mxArray *mxIgraphCreateGraph(igraph_t const *graph,
+   See `mxIgraphFromArray` to convert an matlab adj into an igraph graph. */
+mxArray *mxIgraphToArray(igraph_t const *graph,
                              igraph_vector_t const *weights,
                              mxArray const *graphOpts)
 {

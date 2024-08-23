@@ -29,8 +29,8 @@ igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
-  mxIgraphGetGraph(prhs[0], &graph1, NULL, graph_options);
-  mxIgraphGetGraph(prhs[1], &graph2, NULL, graph_options);
+  mxIgraphFromArray(prhs[0], &graph1, NULL, graph_options);
+  mxIgraphFromArray(prhs[1], &graph2, NULL, graph_options);
 
   igraph_isomorphic(&graph1, &graph2, &flag);
   igraph_destroy(&graph1);
@@ -51,8 +51,8 @@ igraph_error_t mexIgraphIsSubIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
-  mxIgraphGetGraph(prhs[0], &graph1, NULL, graph_options);
-  mxIgraphGetGraph(prhs[1], &graph2, NULL, graph_options);
+  mxIgraphFromArray(prhs[0], &graph1, NULL, graph_options);
+  mxIgraphFromArray(prhs[1], &graph2, NULL, graph_options);
 
   igraph_subisomorphic(&graph1, &graph2, &flag);
   igraph_destroy(&graph1);

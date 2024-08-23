@@ -373,7 +373,7 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray *plhs[], int nrhs,
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
+  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
   igraph_matrix_init(&pos, 0, 0);
 
   errorcode =

@@ -33,7 +33,7 @@ igraph_error_t mexIgraphIsTree(int nlhs, mxArray *plhs[], int nrhs,
   igraph_bool_t flag;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphGetGraph(prhs[0], &graph, NULL, opts);
+  mxIgraphFromArray(prhs[0], &graph, NULL, opts);
 
   if (find_root) {
     igraph_is_tree(&graph, &flag, &root, mode);

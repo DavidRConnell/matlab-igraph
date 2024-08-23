@@ -62,7 +62,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
   igraph_real_t const damping = mxIgraphGetReal(method_options, "damping");
   igraph_error_t errorcode;
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
+  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
   mxIgraphGetVectorInt(method_options, "vids", &vertices, true);
   igraph_vs_vector(&vids, &vertices);
 

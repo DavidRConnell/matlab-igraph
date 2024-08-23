@@ -34,7 +34,7 @@ igraph_error_t mexIgraphFamous(int nlhs, mxArray *plhs[], int nrhs,
     return errorcode;
   };
 
-  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
+  plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
   return errorcode;

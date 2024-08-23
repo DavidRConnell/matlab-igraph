@@ -7,8 +7,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   igraph_t graph;
   igraph_vector_t weights;
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
-  plhs[0] = mxIgraphCreateGraph(&graph, &weights, graph_options);
+  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
+  plhs[0] = mxIgraphToArray(&graph, &weights, graph_options);
 
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);

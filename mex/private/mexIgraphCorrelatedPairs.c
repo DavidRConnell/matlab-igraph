@@ -37,7 +37,7 @@ igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t template;
   igraph_t result;
 
-  mxIgraphGetGraph(prhs[0], &template, NULL, graph_options);
+  mxIgraphFromArray(prhs[0], &template, NULL, graph_options);
 
   errorcode = igraph_correlated_game(&template, &result, correlation,
                                      probability, NULL);
@@ -48,7 +48,7 @@ igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
 
   igraph_destroy(&template);
 
-  plhs[0] = mxIgraphCreateGraph(&result, NULL, graph_options);
+  plhs[0] = mxIgraphToArray(&result, NULL, graph_options);
   igraph_destroy(&result);
 
   return errorcode;
@@ -78,8 +78,8 @@ igraph_error_t mexIgraphGeneratePair(int nlhs, mxArray *plhs[], int nrhs,
     return errorcode;
   }
 
-  plhs[0] = mxIgraphCreateGraph(&graph1, NULL, graph_options);
-  plhs[1] = mxIgraphCreateGraph(&graph2, NULL, graph_options);
+  plhs[0] = mxIgraphToArray(&graph1, NULL, graph_options);
+  plhs[1] = mxIgraphToArray(&graph2, NULL, graph_options);
 
   igraph_destroy(&graph1);
   igraph_destroy(&graph2);

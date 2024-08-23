@@ -39,7 +39,7 @@ igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
   igraph_bool_t const loops = mxIgraphGetBool(method_options, "loops");
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphGetGraph(prhs[0], &graph, NULL, graph_options);
+  mxIgraphFromArray(prhs[0], &graph, NULL, graph_options);
 
   if (preserve_degree) {
     errorcode = igraph_rewire(&graph, n_rewires,
@@ -49,7 +49,7 @@ igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
     errorcode = igraph_rewire_directed_edges(&graph, probability, loops, mode);
   }
 
-  plhs[0] = mxIgraphCreateGraph(&graph, NULL, graph_options);
+  plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
 
   igraph_destroy(&graph);
 

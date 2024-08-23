@@ -52,8 +52,8 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray *plhs[], int nrhs,
     igraph_set_attribute_table(&igraph_cattribute_table);
   }
 
-  mxIgraphGetGraph(prhs[1], &graph, is_weighted ? &weights : NULL,
-                   graph_options);
+  mxIgraphFromArray(prhs[1], &graph, is_weighted ? &weights : NULL,
+                    graph_options);
 
   if (is_weighted) {
     SETEANV(&graph, "weight", &weights);
