@@ -75,6 +75,9 @@ igraph_progress_handler_t mxIgraphProgressHandlerIgnoreMex;
 igraph_status_handler_t mxIgraphStatusHandlerMex;
 igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
 
+/* random */
+EXTERNC void mxIgraphSetRNG(void);
+
 // mxError
 void mxIgraphErrorNotImplemented(const char* caller, const char* method);
 void mxIgraphErrorUnknownMethod(const char* caller, const char* method);
@@ -90,12 +93,6 @@ igraph_bool_t mxIgraphIsTriU(const mxArray* p);
 igraph_bool_t mxIgraphIsTriL(const mxArray* p);
 igraph_bool_t mxIgraphIsSymmetric(const mxArray* p);
 
-// mxPartition
-igraph_integer_t mxIgraphVectorLength(const mxArray* p);
-int mxIgraphMembershipFromArray(const mxArray* p,
-                                igraph_vector_int_t* membership);
-mxArray* mxIgraphMembershipToArray(igraph_vector_int_t const* membership);
-
 // mxGraph
 igraph_integer_t mxIgraphVCount(mxArray const* p);
 igraph_integer_t mxIgraphECount(mxArray const* p,
@@ -107,6 +104,7 @@ mxArray* mxIgraphCreateGraph(igraph_t const* graph,
                              mxArray const* graphOpts);
 
 // mxStructures
+igraph_integer_t mxIgraphVectorLength(const mxArray* p);
 int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec,
                             igraph_bool_t const shift_start);
 mxArray* mxIgraphVectorToArray(const igraph_vector_t* vec,
@@ -163,8 +161,5 @@ void mxIgraphGetVectorBool(const mxArray* arg_struct, char const fieldname[1],
                            igraph_bool_t const shift_start);
 void mxIgraphGetMatrix(const mxArray* arg_struct, char const fieldname[1],
                        igraph_matrix_t* mat, igraph_bool_t const shift_start);
-
-/* random */
-EXTERNC void mxIgraphSetRNG(void);
 
 #endif

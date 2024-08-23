@@ -23,6 +23,20 @@
 
 #include <mxIgraph.h>
 
+/* Return the length of the vector pointed to by p. */
+igraph_integer_t mxIgraphVectorLength(const mxArray* p)
+{
+  mwSize n = mxGetN(p);
+  mwSize m = mxGetM(p);
+
+  if ((n != 1) && (m != 1)) {
+    mexErrMsgIdAndTxt("Igraph:NotVector",
+                      "Inputs should be a vector not a matrix");
+  }
+
+  return n > m ? n : m;
+}
+
 /* Copy a matlab vector to an igraph real vector.
 
  The igraph vector should be uninitialized, but it's the callers responsibility
@@ -49,7 +63,7 @@ int mxIgraphVectorFromArray(const mxArray* p, igraph_vector_t* vec,
 
   igraph_vector_init(vec, n);
   for (igraph_integer_t i = 0; i < n; i++) {
-    VECTOR(*vec)[i] = (igraph_real_t)x_mat[i] - shift;
+    VECTOR( * vec)[i] = (igraph_real_t)x_mat[i] - shift;
   }
 
   return EXIT_SUCCESS;
@@ -65,7 +79,7 @@ mxArray* mxIgraphVectorToArray(igraph_vector_t const* vec,
   double* mxVector = mxGetDoubles(p);
 
   for (igraph_integer_t i = 0; i < len; i++) {
-    mxVector[(mwIndex)i] = (double)VECTOR(*vec)[i] + shift;
+    mxVector[(mwIndex)i] = (double)VECTOR( * vec)[i] + shift;
   }
 
   return p;
@@ -97,7 +111,7 @@ int mxIgraphVectorIntFromArray(const mxArray* p, igraph_vector_int_t* vec,
 
   igraph_vector_int_init(vec, n);
   for (igraph_integer_t i = 0; i < n; i++) {
-    VECTOR(*vec)[i] = (igraph_integer_t)x_mat[i] - shift;
+    VECTOR( * vec)[i] = (igraph_integer_t)x_mat[i] - shift;
   }
 
   return EXIT_SUCCESS;
@@ -113,7 +127,7 @@ mxArray* mxIgraphVectorIntToArray(igraph_vector_int_t const* vec,
   double* mxVector = mxGetDoubles(p);
 
   for (igraph_integer_t i = 0; i < len; i++) {
-    mxVector[(mwIndex)i] = (double)VECTOR(*vec)[i] + shift;
+    mxVector[(mwIndex)i] = (double)VECTOR( * vec)[i] + shift;
   }
 
   return p;
@@ -145,7 +159,7 @@ int mxIgraphVectorBoolFromArray(const mxArray* p, igraph_vector_bool_t* vec,
 
   igraph_vector_bool_init(vec, n);
   for (igraph_integer_t i = 0; i < n; i++) {
-    VECTOR(*vec)[i] = (igraph_bool_t)x_mat[i] - shift;
+    VECTOR( * vec)[i] = (igraph_bool_t)x_mat[i] - shift;
   }
 
   return EXIT_SUCCESS;
@@ -161,7 +175,7 @@ mxArray* mxIgraphVectorBoolToArray(igraph_vector_bool_t const* vec,
   bool* mxVector = mxGetLogicals(p);
 
   for (igraph_integer_t i = 0; i < len; i++) {
-    mxVector[(mwIndex)i] = VECTOR(*vec)[i] + shift;
+    mxVector[(mwIndex)i] = VECTOR( * vec)[i] + shift;
   }
 
   return p;
@@ -191,7 +205,7 @@ int mxIgraphMatrixFromArray(const mxArray* p, igraph_matrix_t* mat,
   igraph_matrix_init(mat, m, n);
   for (igraph_integer_t i = 0; i < m; i++) {
     for (igraph_integer_t j = 0; j < n; j++) {
-      MATRIX(*mat, i, j) = (igraph_real_t)x_mat[i + (j * m)] - shift;
+      MATRIX( * mat, i, j) = (igraph_real_t)x_mat[i + (j* m)] - shift;
     }
   }
 
@@ -210,7 +224,7 @@ mxArray* mxIgraphMatrixToArray(igraph_matrix_t const* mat,
 
   for (igraph_integer_t i = 0; i < m; i++) {
     for (igraph_integer_t j = 0; j < n; j++) {
-      mxMat[(mwIndex)i + (mwIndex)(j * m)] = MATRIX(*mat, i, j) + shift;
+      mxMat[(mwIndex)i + (mwIndex)(j* m)] = MATRIX( * mat, i, j) + shift;
     }
   }
 
@@ -241,7 +255,7 @@ int mxIgraphMatrixIntFromArray(const mxArray* p, igraph_matrix_int_t* mat,
   igraph_matrix_int_init(mat, m, n);
   for (igraph_integer_t i = 0; i < m; i++) {
     for (igraph_integer_t j = 0; j < n; j++) {
-      MATRIX(*mat, i, j) = (igraph_real_t)x_mat[i + (j * m)] - shift;
+      MATRIX( * mat, i, j) = (igraph_real_t)x_mat[i + (j* m)] - shift;
     }
   }
 
@@ -260,7 +274,7 @@ mxArray* mxIgraphMatrixIntToArray(igraph_matrix_int_t const* mat,
 
   for (igraph_integer_t i = 0; i < m; i++) {
     for (igraph_integer_t j = 0; j < n; j++) {
-      mxMat[(mwIndex)i + (mwIndex)(j * m)] = MATRIX(*mat, i, j) + shift;
+      mxMat[(mwIndex)i + (mwIndex)(j* m)] = MATRIX( * mat, i, j) + shift;
     }
   }
 

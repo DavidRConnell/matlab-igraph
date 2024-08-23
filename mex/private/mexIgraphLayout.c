@@ -49,14 +49,14 @@ static igraph_bool_t set_pos_i(mxArray const* opts, igraph_matrix_t* pos)
 
   igraph_matrix_t init;
   igraph_integer_t n_nodes = mxGetM(p);
-  mxIgraphMatrixFromArray(p, &init, false);
+  mxIgraphMatrixFromArray(p, & init, false);
   igraph_matrix_resize(pos, n_nodes, 2);
   for (igraph_integer_t j = 0; j < 2; j++) {
     for (igraph_integer_t i = 0; i < n_nodes; i++) {
-      MATRIX(*pos, i, j) = MATRIX(init, i, j);
+      MATRIX( * pos, i, j) = MATRIX(init, i, j);
     }
   }
-  igraph_matrix_destroy(&init);
+  igraph_matrix_destroy( & init);
 
   return use_seed;
 }
@@ -80,13 +80,13 @@ static igraph_error_t mxIgraph_circle_i(igraph_t const* graph,
   igraph_vs_t vs;
   igraph_error_t errcode;
 
-  mxIgraphMembershipFromArray(opts, &order);
-  igraph_vs_vector(&vs, &order);
+  mxIgraphVectorIntFromArray(opts, & order, true);
+  igraph_vs_vector( & vs, & order);
 
   errcode = igraph_layout_circle(graph, pos, vs);
 
-  igraph_vs_destroy(&vs);
-  igraph_vector_int_destroy(&order);
+  igraph_vs_destroy( & vs);
+  igraph_vector_int_destroy( & order);
 
   return errcode;
 }
@@ -100,11 +100,11 @@ static igraph_error_t mxIgraph_star_i(igraph_t const* graph,
   igraph_vector_int_t order;
   igraph_error_t errcode;
 
-  mxIgraphMembershipFromArray(opts, &order);
+  mxIgraphVectorIntFromArray(opts, & order, true);
 
-  errcode = igraph_layout_star(graph, pos, center, &order);
+  errcode = igraph_layout_star(graph, pos, center, & order);
 
-  igraph_vector_int_destroy(&order);
+  igraph_vector_int_destroy( & order);
 
   return errcode;
 }
@@ -146,12 +146,12 @@ static igraph_error_t mxIgraph_bipartite_i(igraph_t const* graph,
   igraph_real_t max_iterations = mxIgraphGetInteger(opts, "");
   igraph_error_t errcode;
 
-  mxIgraphGetVectorBool(opts, "types", &types, false);
+  mxIgraphGetVectorBool(opts, "types", & types, false);
 
-  errcode = igraph_layout_bipartite(graph, &types, pos, hgap, vgap,
+  errcode = igraph_layout_bipartite(graph, & types, pos, hgap, vgap,
                                     max_iterations);
 
-  igraph_vector_bool_destroy(&types);
+  igraph_vector_bool_destroy( & types);
 
   return errcode;
 }
@@ -247,12 +247,12 @@ static igraph_error_t mxIgraph_mds_i(igraph_t const* graph,
   igraph_error_t errcode;
 
   if (!mxIgraphIsEmpty(opts)) {
-    mxIgraphMatrixFromArray(opts, &distance, false);
-    distance_ptr = &distance;
+    mxIgraphMatrixFromArray(opts, & distance, false);
+    distance_ptr = & distance;
   }
 
   errcode = igraph_layout_mds(graph, pos, distance_ptr, dim);
-  igraph_matrix_destroy(&distance);
+  igraph_matrix_destroy( & distance);
 
   return errcode;
 }
@@ -281,10 +281,10 @@ static igraph_error_t mxIgraph_reingold_tilford_i(igraph_t const* graph,
   igraph_vector_int_t roots;
   igraph_error_t errcode;
 
-  mxIgraphMembershipFromArray(opts, &roots);
+  mxIgraphVectorIntFromArray(opts, & roots, true);
 
-  errcode = igraph_layout_reingold_tilford(graph, pos, mode, &roots, NULL);
-  igraph_vector_int_destroy(&roots);
+  errcode = igraph_layout_reingold_tilford(graph, pos, mode, & roots, NULL);
+  igraph_vector_int_destroy( & roots);
 
   return errcode;
 }
@@ -297,11 +297,11 @@ static igraph_error_t mxIgraph_reingold_tilford_circular_i(
   igraph_vector_int_t roots;
   igraph_error_t errcode;
 
-  mxIgraphMembershipFromArray(opts, &roots);
+  mxIgraphVectorIntFromArray(opts, & roots, true);
 
-  errcode = igraph_layout_reingold_tilford_circular(graph, pos, mode, &roots,
+  errcode = igraph_layout_reingold_tilford_circular(graph, pos, mode, & roots,
             NULL);
-  igraph_vector_int_destroy(&roots);
+  igraph_vector_int_destroy( & roots);
 
   return errcode;
 }
@@ -318,7 +318,7 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
   mxIgraph_layout_t method;
   mxArray const* method_options = prhs[3];
   igraph_matrix_t pos;
-  typedef igraph_error_t (*layout_method_t)(igraph_t const*,
+  typedef igraph_error_t ( * layout_method_t)(igraph_t const*,
       igraph_vector_t const*, mxArray const*, igraph_matrix_t*);
   layout_method_t layout_method;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
@@ -371,16 +371,17 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray* plhs[], int nrhs,
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
-  igraph_matrix_init(&pos, 0, 0);
+  mxIgraphGetGraph(prhs[0], & graph, & weights, graph_options);
+  igraph_matrix_init( & pos, 0, 0);
 
-  errorcode = layout_method(&graph, MXIGRAPH_WEIGHTS(&weights), method_options,
-                            &pos);
-  igraph_destroy(&graph);
-  igraph_vector_destroy(&weights);
+  errorcode = layout_method( & graph, MXIGRAPH_WEIGHTS( & weights),
+                             method_options,
+                             & pos);
+  igraph_destroy( & graph);
+  igraph_vector_destroy( & weights);
 
-  plhs[0] = mxIgraphMatrixToArray(&pos, false);
-  igraph_matrix_destroy(&pos);
+  plhs[0] = mxIgraphMatrixToArray( & pos, false);
+  igraph_matrix_destroy( & pos);
 
   return errorcode;
 }

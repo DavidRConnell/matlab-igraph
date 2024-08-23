@@ -36,15 +36,15 @@ igraph_error_t mexIgraphModularity(int nlhs, mxArray* plhs[], int nrhs,
   igraph_real_t modularity;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
-  mxIgraphMembershipFromArray(prhs[1], &membership);
+  mxIgraphGetGraph(prhs[0], & graph, & weights, graph_options);
+  mxIgraphVectorIntFromArray(prhs[1], & membership, true);
 
-  igraph_modularity(&graph, &membership, MXIGRAPH_WEIGHTS(&weights),
-                    resolution, directed, &modularity);
+  igraph_modularity( & graph, & membership, MXIGRAPH_WEIGHTS( & weights),
+                     resolution, directed, & modularity);
 
   plhs[0] = mxCreateDoubleScalar(modularity);
 
-  igraph_vector_int_destroy(&membership);
-  igraph_vector_destroy(&weights);
-  igraph_destroy(&graph);
+  igraph_vector_int_destroy( & membership);
+  igraph_vector_destroy( & weights);
+  igraph_destroy( & graph);
 }

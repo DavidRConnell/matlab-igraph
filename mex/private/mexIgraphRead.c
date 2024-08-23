@@ -21,11 +21,11 @@
 #include <mxIgraph.h>
 #include "utils.h"
 
-#define mexIgraphError(eid, msg)		\
-  fclose(fptr);					\
-  igraph_destroy(&graph);			\
-  igraph_vector_destroy(&weights);		\
-  mexErrMsgIdAndTxt((eid), (msg));		\
+#define mexIgraphError(eid, msg)                                               \
+  fclose(fptr);                                                                \
+  igraph_destroy(&graph);                                                      \
+  igraph_vector_destroy(&weights);                                             \
+  mexErrMsgIdAndTxt((eid), (msg));                                             \
   exit(1)
 
 igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
@@ -39,8 +39,8 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
   igraph_t graph;
   igraph_vector_t weights;
   char* filename = mxArrayToString(prhs[0]);
-  mxIgraphFileFormat_t format = mxIgraphSelectFileFormat(mxIgraphGetArgument(
-                                  method_options, "format"));
+  mxIgraphFileFormat_t format =
+    mxIgraphSelectFileFormat(mxIgraphGetArgument(method_options, "format"));
   igraph_integer_t index = mxIgraphGetInteger(method_options, "index");
 
   igraph_bool_t is_weighted = mxIgraphGetBool(graph_options, "isweighted");
@@ -50,34 +50,35 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
   igraph_error_handler_t* oldhandler;
 
   if (!(fptr = fopen(filename, "r"))) {
-    mexErrMsgIdAndTxt("Igraph:IOError", "Could not open file %s for reading.",
+    mexErrMsgIdAndTxt("igraph:IOError", "Could not open file %s for reading.",
                       filename);
   }
 
-  igraph_set_attribute_table(&igraph_cattribute_table);
+  igraph_set_attribute_table( & igraph_cattribute_table);
 
   switch (format) {
   case MXIGRAPH_FORMAT_EDGELIST:
-    errorcode = igraph_read_graph_edgelist(&graph, fptr, 0, is_directed);
+    errorcode = igraph_read_graph_edgelist( & graph, fptr, 0, is_directed);
     break;
   case MXIGRAPH_FORMAT_NCOL:
-    errorcode = igraph_read_graph_ncol(&graph, fptr, NULL, NULL,
-                                       IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed);
+    errorcode = igraph_read_graph_ncol(
+                  & graph, fptr, NULL, NULL, IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed);
     break;
   case MXIGRAPH_FORMAT_LGL:
-    errorcode = igraph_read_graph_lgl(&graph, fptr, NULL,
-                                      IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed);
+    errorcode = igraph_read_graph_lgl(
+                  & graph, fptr, NULL, IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed);
     break;
   case MXIGRAPH_FORMAT_DIMACS:
-    mexIgraphError("igraph:notImplemented",
-                   "The DIMACS format has not been implemented in matlab-igraph");
+    mexIgraphError(
+      "igraph:notImplemented",
+      "The DIMACS format has not been implemented in matlab-igraph");
     break;
   case MXIGRAPH_FORMAT_GRAPHDB:
-    errorcode = igraph_read_graph_graphdb(&graph, fptr, is_directed);
+    errorcode = igraph_read_graph_graphdb( & graph, fptr, is_directed);
     break;
   case MXIGRAPH_FORMAT_GRAPHML:
     oldhandler = igraph_set_error_handler(igraph_error_handler_ignore);
-    errorcode = igraph_read_graph_graphml(&graph, fptr, index);
+    errorcode = igraph_read_graph_graphml( & graph, fptr, index);
     if (errorcode == IGRAPH_UNIMPLEMENTED) {
       mexIgraphError("igraph:notSupported",
                      "igraph was compiled without GraphML support.");
@@ -85,13 +86,13 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
     igraph_set_error_handler(oldhandler);
     break;
   case MXIGRAPH_FORMAT_GML:
-    errorcode = igraph_read_graph_gml(&graph, fptr);
+    errorcode = igraph_read_graph_gml( & graph, fptr);
     break;
   case MXIGRAPH_FORMAT_PAJEK:
-    errorcode = igraph_read_graph_pajek(&graph, fptr);
+    errorcode = igraph_read_graph_pajek( & graph, fptr);
     break;
   case MXIGRAPH_FORMAT_DL:
-    errorcode = igraph_read_graph_dl(&graph, fptr, is_directed);
+    errorcode = igraph_read_graph_dl( & graph, fptr, is_directed);
     break;
   case MXIGRAPH_FORMAT_DOT:
     mexIgraphError("igraph:notImplemented",
@@ -104,26 +105,27 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray* plhs[], int nrhs,
   default:
     fclose(fptr);
     mexErrMsgIdAndTxt("Igraph:unknownFileType",
-                      "Unrecognized file format %s. See `help igraph.load` for available file formats.",
+                      "Unrecognized file format %s. See `help igraph.load` for "
+                      "available file formats.",
                       format);
     exit(1);
   }
 
-  igraph_vector_init(&weights, igraph_ecount(&graph));
+  igraph_vector_init( & weights, igraph_ecount( & graph));
   if (is_weighted &&
-      igraph_cattribute_has_attr(&graph, IGRAPH_ATTRIBUTE_EDGE, "weight")) {
-    EANV(&graph, "weight", &weights);
+      igraph_cattribute_has_attr( & graph, IGRAPH_ATTRIBUTE_EDGE, "weight")) {
+    EANV( & graph, "weight", & weights);
   } else {
-    for (igraph_integer_t i = 0; i < igraph_ecount(&graph); i++) {
+    for (igraph_integer_t i = 0; i < igraph_ecount( & graph); i++) {
       VECTOR(weights)[i] = 1;
     }
   }
 
-  plhs[0] = mxIgraphCreateGraph(&graph, &weights, graph_options);
+  plhs[0] = mxIgraphCreateGraph( & graph, & weights, graph_options);
 
   fclose(fptr);
-  igraph_vector_destroy(&weights);
-  igraph_destroy(&graph);
+  igraph_vector_destroy( & weights);
+  igraph_destroy( & graph);
 
   return errorcode;
 }

@@ -88,11 +88,11 @@ static igraph_error_t mxIgraph_leading_eigenvector_i(igraph_t const* graph,
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init, true);
+  mxIgraphGetVectorInt(opts, "initial", & init, true);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
-    VECTOR(*membership)[i] = VECTOR(init)[i];
+    VECTOR( * membership)[i] = VECTOR(init)[i];
   }
-  igraph_vector_int_destroy(&init);
+  igraph_vector_int_destroy( & init);
 
   errcode = igraph_community_leading_eigenvector(graph, weights, NULL,
             membership, steps, NULL, NULL, true, NULL, NULL, NULL, NULL, NULL);
@@ -173,17 +173,17 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const* graph,
   igraph_vector_int_t init;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &init, true);
+  mxIgraphGetVectorInt(opts, "initial", & init, true);
   for (igraph_integer_t i = 0; i < igraph_vcount(graph); i++) {
-    VECTOR(*membership)[i] = VECTOR(init)[i];
+    VECTOR( * membership)[i] = VECTOR(init)[i];
   }
-  igraph_vector_int_destroy(&init);
+  igraph_vector_int_destroy( & init);
 
   if (use_modularity) {
-    igraph_vector_init(&node_weights, igraph_vcount(graph));
-    igraph_strength(graph, &node_weights, igraph_vss_all(), IGRAPH_ALL, true,
+    igraph_vector_init( & node_weights, igraph_vcount(graph));
+    igraph_strength(graph, & node_weights, igraph_vss_all(), IGRAPH_ALL, true,
                     weights);
-    node_weights_ptr = &node_weights;
+    node_weights_ptr = & node_weights;
   }
 
   errcode = igraph_community_leiden(graph, weights, node_weights_ptr,
@@ -191,7 +191,7 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const* graph,
                                     membership, NULL, NULL);
 
   if (use_modularity) {
-    igraph_vector_destroy(&node_weights);
+    igraph_vector_destroy( & node_weights);
   }
 
   return errcode;
@@ -219,14 +219,14 @@ static igraph_error_t mxIgraph_label_propagation_i(igraph_t const* graph,
   igraph_vector_bool_t fixed;
   igraph_error_t errcode;
 
-  mxIgraphGetVectorInt(opts, "initial", &initial, true);
-  mxIgraphGetVectorBool(opts, "fixed", &fixed, false);
+  mxIgraphGetVectorInt(opts, "initial", & initial, true);
+  mxIgraphGetVectorBool(opts, "fixed", & fixed, false);
 
   errcode = igraph_community_label_propagation(graph, membership, mode, weights,
-            &initial, &fixed);
+            & initial, & fixed);
 
-  igraph_vector_int_destroy(&initial);
-  igraph_vector_bool_destroy(&fixed);
+  igraph_vector_int_destroy( & initial);
+  igraph_vector_bool_destroy( & fixed);
 
   return errcode;
 }
@@ -241,12 +241,12 @@ static igraph_error_t mxIgraph_infomap_i(igraph_t const* graph,
   igraph_real_t codelength = 0;
   igraph_error_t errcode;
 
-  mxIgraphGetVector(opts, "nodeWeights", &v_weights, false);
+  mxIgraphGetVector(opts, "nodeWeights", & v_weights, false);
 
-  errcode = igraph_community_infomap(graph, weights, &v_weights, n_trials,
-                                     membership, &codelength);
+  errcode = igraph_community_infomap(graph, weights, & v_weights, n_trials,
+                                     membership, & codelength);
 
-  igraph_vector_destroy(&v_weights);
+  igraph_vector_destroy( & v_weights);
 
   return errcode;
 }
@@ -264,7 +264,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
   igraph_vector_t weights;
   igraph_vector_int_t membership;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
-  typedef igraph_error_t (*cluster_method_t)(igraph_t const*,
+  typedef igraph_error_t ( * cluster_method_t)(igraph_t const*,
       igraph_vector_t const*, mxArray const*, igraph_vector_int_t*);
   cluster_method_t cluster_method;
 
@@ -310,16 +310,16 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray* plhs[], int nrhs,
     exit(1);
   }
 
-  mxIgraphGetGraph(prhs[0], &graph, &weights, graph_options);
-  igraph_vector_int_init(&membership, igraph_vcount(&graph));
+  mxIgraphGetGraph(prhs[0], & graph, & weights, graph_options);
+  igraph_vector_int_init( & membership, igraph_vcount( & graph));
 
-  errorcode = cluster_method(&graph, MXIGRAPH_WEIGHTS(&weights),
-                             method_options, &membership);
-  igraph_destroy(&graph);
-  igraph_vector_destroy(&weights);
+  errorcode = cluster_method( & graph, MXIGRAPH_WEIGHTS( & weights),
+                              method_options, & membership);
+  igraph_destroy( & graph);
+  igraph_vector_destroy( & weights);
 
-  plhs[0] = mxIgraphMembershipToArray(&membership);
-  igraph_vector_int_destroy(&membership);
+  plhs[0] = mxIgraphVectorIntToArray( & membership, true);
+  igraph_vector_int_destroy( & membership);
 
   return errorcode;
 }
