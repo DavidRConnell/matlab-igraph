@@ -58,7 +58,7 @@ static void mexIgraphSetupHook()
   }
 }
 
-void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   mexIgraphSetupHook();
 
@@ -66,7 +66,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
   mexIgraphFunction_t function;
   igraph_error_t error = IGRAPH_SUCCESS;
 
-  const char* function_names[MXIGRAPH_FUNC_N] = {
+  const char *function_names[MXIGRAPH_FUNC_N] = {
     [MXIGRAPH_FUNC_CENTRALITY] = "centrality",
     [MXIGRAPH_FUNC_CLUSTER] = "cluster",
     [MXIGRAPH_FUNC_COMPARE] = "compare",
@@ -89,8 +89,8 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
     [MXIGRAPH_FUNC_WRITE] = "save"
   };
 
-  function_name = mxIgraphSelectMethod(prhs[0], function_names,
-                                       MXIGRAPH_FUNC_N);
+  function_name =
+    mxIgraphSelectMethod(prhs[0], function_names, MXIGRAPH_FUNC_N);
   if (function_name == MXIGRAPH_FUNC_N) {
     mxIgraphErrorUnknownMethod("Dispatcher", mxArrayToString(prhs[0]));
     exit(1);

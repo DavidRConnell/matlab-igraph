@@ -18,14 +18,15 @@
 
 #include "mxIterators.h"
 
-static void mxIgraph_eit_sparse_create(const mxArray* p, mxIgraph_eit* eit,
+static void mxIgraph_eit_sparse_create(const mxArray *p, mxIgraph_eit *eit,
                                        const igraph_bool_t directed)
 {
   eit->ir = mxGetIr(p);
   eit->jc = mxGetJc(p);
 
   mwIndex col_idx = 0;
-  while (eit->jc[col_idx] == eit->jc[col_idx + 1]) col_idx++;
+  while (eit->jc[col_idx] == eit->jc[col_idx + 1])
+    col_idx++;
   if (col_idx >= eit->n_nodes) {
     // Empty graph
     col_idx = 0;
@@ -37,13 +38,12 @@ static void mxIgraph_eit_sparse_create(const mxArray* p, mxIgraph_eit* eit,
   eit->row_start_at_col = false;
   eit->row_stop_at_col = false;
 
-  if ((!directed) &&
-      (mxIgraphIsSymmetric(p))) {
+  if ((!directed) && (mxIgraphIsSymmetric(p))) {
     eit->row_stop_at_col = true;
   }
 }
 
-static void mxIgraph_eit_full_create(const mxArray* p, mxIgraph_eit* eit,
+static void mxIgraph_eit_full_create(const mxArray *p, mxIgraph_eit *eit,
                                      const igraph_bool_t directed)
 {
   eit->ir = NULL;
@@ -62,7 +62,7 @@ static void mxIgraph_eit_full_create(const mxArray* p, mxIgraph_eit* eit,
   }
 }
 
-void mxIgraph_eit_create(const mxArray* p, mxIgraph_eit* eit,
+void mxIgraph_eit_create(const mxArray *p, mxIgraph_eit *eit,
                          const igraph_bool_t directed)
 {
   eit->n_nodes = mxIgraphVCount(p);

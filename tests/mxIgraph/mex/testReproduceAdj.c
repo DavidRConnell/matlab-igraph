@@ -1,9 +1,9 @@
-#include <mxIgraph.h>
 #include "igraph.h"
+#include <mxIgraph.h>
 
-void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  mxArray const* graph_options = prhs[1];
+  mxArray const *graph_options = prhs[1];
   igraph_t graph;
   igraph_vector_t weights;
 

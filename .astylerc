@@ -9,7 +9,7 @@ unpad-paren
 pad-header
 pad-oper
 
-align-pointer=type
+align-pointer=name
 align-reference=name
 
 attach-return-type

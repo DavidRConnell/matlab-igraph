@@ -19,13 +19,13 @@
 #include <mxIgraph.h>
 #include "utils.h"
 
-igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
-                                     mxArray const* prhs[])
+igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
+                                     mxArray const *prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const* graph_options = prhs[2];
+  mxArray const *graph_options = prhs[2];
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
@@ -41,13 +41,13 @@ igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mexIgraphIsSubIsomorphic(int nlhs, mxArray* plhs[], int nrhs,
-                                        const mxArray* prhs[])
+igraph_error_t mexIgraphIsSubIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
+                                        const mxArray *prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const* graph_options = prhs[2];
+  mxArray const *graph_options = prhs[2];
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 

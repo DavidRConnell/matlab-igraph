@@ -19,8 +19,9 @@
 #include <mxIgraph.h>
 #include "utils.h"
 
-igraph_error_t mexIgraphSetHandler(int nlhs, mxArray* UNUSED(plhs[]),
-                                   int nrhs, mxArray const* prhs[])
+igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
+                                   int nrhs,
+                                   mxArray const *prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(2);
   VERIFY_N_OUTPUTS_EQUAL(0);
@@ -35,7 +36,7 @@ igraph_error_t mexIgraphSetHandler(int nlhs, mxArray* UNUSED(plhs[]),
   mxIgraph_handler_t type;
   igraph_bool_t verbose = mxGetScalar(prhs[1]);
 
-  const char* handlers[MXIGRAPH_HANDLER_N] = {
+  const char *handlers[MXIGRAPH_HANDLER_N] = {
     [MXIGRAPH_HANDLER_WARNING] = "warning",
     [MXIGRAPH_HANDLER_PROGRESS] = "progress",
     [MXIGRAPH_HANDLER_STATUS] = "status",

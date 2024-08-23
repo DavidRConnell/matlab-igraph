@@ -19,13 +19,13 @@
 #include <mxIgraph.h>
 #include "utils.h"
 
-igraph_error_t mexIgraphIsTree(int nlhs, mxArray* plhs[], int nrhs,
-                               mxArray const* prhs[])
+igraph_error_t mexIgraphIsTree(int nlhs, mxArray *plhs[], int nrhs,
+                               mxArray const *prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(2);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const* opts = prhs[1];
+  mxArray const *opts = prhs[1];
   igraph_t graph;
   igraph_neimode_t mode = mxIgraphSelectMode(opts);
   igraph_integer_t root;
