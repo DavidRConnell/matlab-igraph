@@ -325,7 +325,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
   igraph_destroy(&graph);
   igraph_vector_destroy(&weights);
 
-  plhs[0] = mxIgraphVectorIntToArray(&membership, true);
+  plhs[0] = mxIgraphVectorIntToArray(&membership, MXIGRAPH_IDX_SHIFT);
   igraph_vector_int_destroy(&membership);
 
   return errorcode;

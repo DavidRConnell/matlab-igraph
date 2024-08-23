@@ -46,8 +46,8 @@ igraph_error_t mexIgraphCompare(int nlhs, mxArray *plhs[], int nrhs,
                       "%s is not a known method.", mxArrayToString(prhs[2]));
   }
 
-  mxIgraphVectorIntFromArray(prhs[0], &comm1, true);
-  mxIgraphVectorIntFromArray(prhs[1], &comm2, true);
+  mxIgraphVectorIntFromArray(prhs[0], &comm1, MXIGRAPH_IDX_SHIFT);
+  mxIgraphVectorIntFromArray(prhs[1], &comm2, MXIGRAPH_IDX_SHIFT);
 
   igraph_reindex_membership(&comm1, NULL, NULL);
   igraph_reindex_membership(&comm2, NULL, NULL);

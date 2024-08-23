@@ -113,7 +113,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);
 
-  plhs[0] = mxIgraphVectorToArray(&res, false);
+  plhs[0] = mxIgraphVectorToArray(&res, MXIGRAPH_IDX_KEEP);
   igraph_vector_destroy(&res);
 
   return errorcode;

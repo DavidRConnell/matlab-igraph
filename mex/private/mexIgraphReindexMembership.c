@@ -57,7 +57,7 @@ igraph_error_t mexIgraphReindexMembership(int nlhs, mxArray *plhs[], int nrhs,
   igraph_matrix_int_t membership;
   igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphMatrixIntFromArray(prhs[0], &membership, true);
+  mxIgraphMatrixIntFromArray(prhs[0], &membership, MXIGRAPH_IDX_SHIFT);
 
   igraph_vector_int_t level_memb;
   igraph_vector_int_init(&level_memb, igraph_matrix_int_ncol(&membership));
@@ -68,7 +68,7 @@ igraph_error_t mexIgraphReindexMembership(int nlhs, mxArray *plhs[], int nrhs,
   }
   igraph_vector_int_destroy(&level_memb);
 
-  plhs[0] = mxIgraphMatrixIntToArray(&membership, true);
+  plhs[0] = mxIgraphMatrixIntToArray(&membership, MXIGRAPH_IDX_SHIFT);
   igraph_matrix_int_destroy(&membership);
 
   return errorcode;
