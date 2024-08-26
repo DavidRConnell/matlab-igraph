@@ -9,6 +9,10 @@ function testTask(~)
 end
 
 function makeDocsTask(~)
+    if ~exist("docs/content/start", "dir")
+        mkdir("docs/content/start");
+    end
+
     export("toolbox/GettingStarted.mlx", "docs/content/start/_index.md");
 
     examples = dir("toolbox/examples/*.mlx");
@@ -20,7 +24,7 @@ function makeDocsTask(~)
 
     for i = 1:length(examples)
         export(fullfile("toolbox", "examples", examples(i).name), ...
-               fullfile(dest, examples(i).name))
+               replace(fullfile(dest, examples(i).name), ".mlx", ".md"));
     end
 end
 
