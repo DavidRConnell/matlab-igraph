@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow `multiple` option for algorithms that allow when using MATLAB graphs.
 - Options for storing results as node and edge attributes and using stored attributes in other functions.
 - Support for using MATLAB RNG in igraph and set it as default.
+- Interruption handler.
 
 ### Changed
 

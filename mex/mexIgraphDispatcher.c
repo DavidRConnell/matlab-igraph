@@ -55,6 +55,7 @@ static void mexIgraphSetupHook()
     igraph_set_warning_handler(mxIgraphWarningHandlerMex);
     igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
     igraph_set_status_handler(mxIgraphStatusHandlerIgnoreMex);
+    igraph_set_interruption_handler(mxIgraphInterruptionHandlerMex);
   }
 }
 

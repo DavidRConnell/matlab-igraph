@@ -99,3 +99,16 @@ igraph_error_t mxIgraphStatusHandlerIgnoreMex(const char *message,
 
   return IGRAPH_SUCCESS;
 }
+
+bool utIsInterruptPending(void); // From undocumented libut.
+igraph_error_t mxIgraphInterruptionHandlerMex(void *data)
+{
+  IGRAPH_UNUSED(data);
+
+  if (utIsInterruptPending()) {
+    IGRAPH_FINALLY_FREE();
+    return IGRAPH_INTERRUPTED;
+  }
+
+  return IGRAPH_SUCCESS;
+}

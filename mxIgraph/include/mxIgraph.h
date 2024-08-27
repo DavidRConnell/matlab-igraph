@@ -76,6 +76,7 @@ igraph_progress_handler_t mxIgraphProgressHandlerMex;
 igraph_progress_handler_t mxIgraphProgressHandlerIgnoreMex;
 igraph_status_handler_t mxIgraphStatusHandlerMex;
 igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
+igraph_interruption_handler_t mxIgraphInterruptionHandlerMex;
 
 /* random */
 EXTERNC void mxIgraphSetRNG(void);
