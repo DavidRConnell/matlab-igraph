@@ -3,17 +3,22 @@ cmake_minimum_required(VERSION 3.18)
 project(
   matlab-igraph
   DESCRIPTION "A MATLAB toolbox for using the igraph library"
-  LANGUAGES C CXX
-)
+  LANGUAGES C CXX)
 
 enable_testing()
 
-find_package(Matlab COMPONENTS MAIN_PROGRAM MAT_LIBRARY MX_LIBRARY MEX_COMPILER REQUIRED)
+find_package(
+  Matlab
+  COMPONENTS MAIN_PROGRAM MAT_LIBRARY MX_LIBRARY MEX_COMPILER
+  REQUIRED)
 
 message(STATUS "Matlab: ${Matlab_VERSION_STRING}")
 
 if(Matlab_VERSION_STRING VERSION_LESS 9.14)
-  message(WARNING "Matlab >= 9.14 (R2023a) is required for MEX tests to work due to new buildtool argument syntax.")
+  message(
+    WARNING
+    "Matlab >= 9.14 (R2023a) is required for MEX tests to work due to new buildtool argument syntax."
+  )
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -29,36 +34,36 @@ set(IGRAPH_USE_INTERNAL_GLPK ON)
 set(IGRAPH_USE_INTERNAL_plfit ON)
 add_subdirectory(vendor/igraph)
 
-if ("${CMAKE_PACKAGE_VERSION}" STREQUAL "")
-  if (NOT GIT_FOUND)
+if("${CMAKE_PACKAGE_VERSION}" STREQUAL "")
+  if(NOT GIT_FOUND)
     find_package(Git QUIET)
   endif()
 
-  execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE CMAKE_PACKAGE_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
-if ("${CMAKE_PACKAGE_VERSION}" STREQUAL "")
+if("${CMAKE_PACKAGE_VERSION}" STREQUAL "")
   set(CMAKE_PACKAGE_VERSION "NOTFOUND")
 endif()
 
 # Get name Matlab uses for the different architectures/systems.
-if ("${Matlab_MEX_EXTENSION}" STREQUAL "mexa64")
+if("${Matlab_MEX_EXTENSION}" STREQUAL "mexa64")
   set(Matlab_ARCH "glnxa64")
-elseif ("${Matlab_MEX_EXTENSION}" STREQUAL "mexarm64")
+elseif("${Matlab_MEX_EXTENSION}" STREQUAL "mexarm64")
   set(Matlab_ARCH "linux-arm-64")
-elseif ("${Matlab_MEX_EXTENSION}" STREQUAL "mexmaca64")
+elseif("${Matlab_MEX_EXTENSION}" STREQUAL "mexmaca64")
   set(Matlab_ARCH "maca64")
-elseif ("${Matlab_MEX_EXTENSION}" STREQUAL "mexmaci64")
+elseif("${Matlab_MEX_EXTENSION}" STREQUAL "mexmaci64")
   set(Matlab_ARCH "maci64")
-elseif ("${Matlab_MEX_EXTENSION}" STREQUAL "mexw32")
+elseif("${Matlab_MEX_EXTENSION}" STREQUAL "mexw32")
   set(Matlab_ARCH "win32")
-elseif ("${Matlab_MEX_EXTENSION}" STREQUAL "mexw64")
+elseif("${Matlab_MEX_EXTENSION}" STREQUAL "mexw64")
   set(Matlab_ARCH "win64")
-else ()
+else()
   set(Matlab_ARCH "NOTFOUND")
 endif()
 
@@ -74,29 +79,43 @@ add_subdirectory(tests)
 add_subdirectory(benchmarks)
 
 # Installation
-install(DIRECTORY toolbox
+install(
+  DIRECTORY toolbox
   DESTINATION matlab-igraph
   COMPONENT toolbox)
 
-install(TARGETS mexIgraphDispatcher mexIgraphVersion mexIgraphIsDirected
+install(
+  TARGETS mexIgraphDispatcher mexIgraphVersion mexIgraphIsDirected
   DESTINATION matlab-igraph/toolbox/+igraph/private
   RUNTIME_DEPENDENCY_SET toolbox_deps
   COMPONENT toolbox)
 
-if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-  install(RUNTIME_DEPENDENCY_SET toolbox_deps
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+  install(
+    RUNTIME_DEPENDENCY_SET
+    toolbox_deps
     DIRECTORIES
-    "C:\\msys64\\mingw64\\bin" "C:\\msys64\\ucrt64\\bin"
-    "D:\\msys64\\mingw64\\bin" "D:\\msys64\\ucrt64\\bin"
-    PRE_EXCLUDE_REGEXES "api-ms-*" "libmx" "libmex" "ext-ms-*"
-    DESTINATION matlab-igraph/toolbox/+igraph/private
-    COMPONENT toolbox)
+    "C:\\msys64\\mingw64\\bin"
+    "C:\\msys64\\ucrt64\\bin"
+    "D:\\msys64\\mingw64\\bin"
+    "D:\\msys64\\ucrt64\\bin"
+    PRE_EXCLUDE_REGEXES
+    "api-ms-*"
+    "libmx"
+    "libmex"
+    "ext-ms-*"
+    DESTINATION
+    matlab-igraph/toolbox/+igraph/private
+    COMPONENT
+    toolbox)
 endif()
 
 # Packaging
-set(CPACK_PACKAGE_HOMEPAGE_URL("https://github.com/DavidRConnell/matlab-igraph"))
+set(CPACK_PACKAGE_HOMEPAGE_URL ("https://github.com/DavidRConnell/matlab-igraph"
+))
 
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_source")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME
+  "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_source")
 set(CPACK_PACKAGE_FILE_NAME
   "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_${Matlab_ARCH}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
@@ -106,11 +125,8 @@ if(CMAKE_SYSTEM MATCHES Windows)
 endif()
 
 set(CPACK_SOURCE_IGNORE_FILES
-  "\\\\..*/"
-  "\\\\.${Matlab_MEX_EXTENSION}$"
-  "${CMAKE_SOURCE_DIR}/build"
-  "${CMAKE_SOURCE_DIR}/dist"
-  "compile_commands.json")
+  "\\\\..*/" "\\\\.${Matlab_MEX_EXTENSION}$" "${CMAKE_SOURCE_DIR}/build"
+  "${CMAKE_SOURCE_DIR}/dist" "compile_commands.json")
 
 # Only package files needed to run the toolbox.
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
