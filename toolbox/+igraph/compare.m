@@ -25,7 +25,6 @@ function score = compare(comm1, comm2, method)
     end
 
     method = lower(method);
-
     if strcmp(method, 'splitjoin')
         method = 'split_join';
     end

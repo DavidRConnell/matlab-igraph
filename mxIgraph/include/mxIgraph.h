@@ -94,6 +94,16 @@ char *mxIgraphGetErrorMsg(void);
     }                                                                          \
   } while (0)
 
+#define MXIGRAPH_CHECK_STATUS_RETURN(val)                                      \
+  do {                                                                         \
+    igraph_error_t code = mxIgraphGetError();                                  \
+    if (code != IGRAPH_SUCCESS) {                                              \
+      char const *reason = mxIgraphGetErrorMsg();                              \
+      IGRAPH_ERROR_NO_RETURN(reason, code);                                    \
+      return val;                                                              \
+    }                                                                          \
+  } while (0)
+
 // mxRandom
 EXTERNC void mxIgraphSetRNG(void);
 
@@ -112,46 +122,51 @@ igraph_bool_t mxIgraphIsSymmetric(const mxArray *p);
 igraph_integer_t mxIgraphVCount(mxArray const *p);
 igraph_integer_t mxIgraphECount(mxArray const *p,
                                 const igraph_bool_t is_directed);
-void mxIgraphFromArray(mxArray const *p, igraph_t *graph,
-                       igraph_vector_t *weights, mxArray const *graph_options);
+igraph_error_t mxIgraphFromArray(mxArray const *p, igraph_t *graph,
+                                 igraph_vector_t *weights,
+                                 mxArray const *graph_options);
 mxArray *mxIgraphToArray(igraph_t const *graph,
                          igraph_vector_t const *weights,
                          mxArray const *graphOpts);
 
 // mxStructures
-int mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec,
-                            igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec,
+                                       igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorToArray(const igraph_vector_t *vec,
                                igraph_bool_t const shift_start);
 
-int mxIgraphVectorIntFromArray(const mxArray *p, igraph_vector_int_t *vec,
-                               igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorIntFromArray(const mxArray *p,
+    igraph_vector_int_t *vec,
+    igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorIntToArray(const igraph_vector_int_t *vec,
                                   igraph_bool_t const shift_start);
 
-int mxIgraphVectorBoolFromArray(const mxArray *p, igraph_vector_bool_t *vec,
-                                igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorBoolFromArray(const mxArray *p,
+    igraph_vector_bool_t *vec,
+    igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorBoolToArray(const igraph_vector_bool_t *vec,
                                    igraph_bool_t const shift_start);
 
-int mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat,
-                            igraph_bool_t const shift_start);
+igraph_error_t mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat,
+                                       igraph_bool_t const shift_start);
 mxArray *mxIgraphMatrixToArray(const igraph_matrix_t *mat,
                                igraph_bool_t const shift_start);
 
-int mxIgraphMatrixIntFromArray(const mxArray *p, igraph_matrix_int_t *mat,
-                               igraph_bool_t const shift_start);
+igraph_error_t mxIgraphMatrixIntFromArray(const mxArray *p,
+    igraph_matrix_int_t *mat,
+    igraph_bool_t const shift_start);
 mxArray *mxIgraphMatrixIntToArray(const igraph_matrix_int_t *mat,
                                   igraph_bool_t const shift_start);
 
-int mxIgraphMatrixBoolFromArray(const mxArray *p, igraph_matrix_bool_t *mat,
-                                igraph_bool_t const shift_start);
+igraph_error_t mxIgraphMatrixBoolFromArray(const mxArray *p,
+    igraph_matrix_bool_t *mat,
+    igraph_bool_t const shift_start);
 mxArray *mxIgraphMatrixBoolToArray(const igraph_matrix_bool_t *mat,
                                    igraph_bool_t const shift_start);
 
-int mxIgraphVectorListFromArray(const mxArray *p,
-                                igraph_vector_int_list_t *mat,
-                                igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorListFromArray(const mxArray *p,
+    igraph_vector_int_list_t *mat,
+    igraph_bool_t const shift_start);
 mxArray *mxIgraphVectorListToArray(const igraph_vector_int_list_t *list,
                                    igraph_bool_t const shift_start);
 
@@ -189,28 +204,30 @@ igraph_bool_t mxIgraphBoolFromOptions(const mxArray *arg_struct,
 char *mxIgraphStringFromOptions(const mxArray *arg_struct,
                                 char const fieldname[1]);
 
-void mxIgraphVectorFromOptions(const mxArray *arg_struct,
-                               char const fieldname[1], igraph_vector_t *vec,
-                               igraph_bool_t const shift_start);
-void mxIgraphVectorIntFromOptions(const mxArray *arg_struct,
-                                  char const fieldname[1],
-                                  igraph_vector_int_t *vec,
-                                  igraph_bool_t const shift_start);
-void mxIgraphVectorBoolFromOptions(const mxArray *arg_struct,
-                                   char const fieldname[1],
-                                   igraph_vector_bool_t *vec,
-                                   igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorFromOptions(const mxArray *arg_struct,
+    char const fieldname[1],
+    igraph_vector_t *vec,
+    igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorIntFromOptions(const mxArray *arg_struct,
+    char const fieldname[1],
+    igraph_vector_int_t *vec,
+    igraph_bool_t const shift_start);
+igraph_error_t mxIgraphVectorBoolFromOptions(const mxArray *arg_struct,
+    char const fieldname[1],
+    igraph_vector_bool_t *vec,
+    igraph_bool_t const shift_start);
 
-void mxIgraphMatrixFromOptions(const mxArray *arg_struct,
-                               char const fieldname[1], igraph_matrix_t *mat,
-                               igraph_bool_t const shift_start);
-void mxIgraphMatrixIntFromOptions(const mxArray *arg_struct,
-                                  char const fieldname[1],
-                                  igraph_matrix_int_t *mat,
-                                  igraph_bool_t const shift_start);
-void mxIgraphMatrixBoolFromOptions(const mxArray *arg_struct,
-                                   char const fieldname[1],
-                                   igraph_matrix_bool_t *mat,
-                                   igraph_bool_t const shift_start);
+igraph_error_t mxIgraphMatrixFromOptions(const mxArray *arg_struct,
+    char const fieldname[1],
+    igraph_matrix_t *mat,
+    igraph_bool_t const shift_start);
+igraph_error_t mxIgraphMatrixIntFromOptions(const mxArray *arg_struct,
+    char const fieldname[1],
+    igraph_matrix_int_t *mat,
+    igraph_bool_t const shift_start);
+igraph_error_t mxIgraphMatrixBoolFromOptions(const mxArray *arg_struct,
+    char const fieldname[1],
+    igraph_matrix_bool_t *mat,
+    igraph_bool_t const shift_start);
 
 #endif

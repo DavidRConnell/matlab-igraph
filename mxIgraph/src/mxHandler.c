@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
 #include <mxIgraph.h>
+#include <string.h>
 
 /* mxErrId
  * \brief MATLAB error ID for igraph errors.
@@ -47,7 +47,8 @@ static char *const mxErrId[IGRAPH_ENOSOL + 1] = {
 static size_t mxIgraphBaseName_i(const char *fpath)
 {
   size_t pos = strlen(fpath);
-  while (fpath[--pos] != '/');
+  while (fpath[--pos] != '/')
+    ;
   return pos + 1;
 }
 
@@ -62,7 +63,10 @@ void mxIgraphErrorHandlerMex(const char *reason, const char *file, int line,
 
   strncat(fullid, id, sizeof(fullid) - 1);
 
+  mxIgraphSetError(IGRAPH_SUCCESS);
+  mxIgraphSetErrorMsg("");
   IGRAPH_FINALLY_FREE();
+
   mexErrMsgIdAndTxt(fullid, "\n%s In %s (line %d)%s%s", errmsg, fname, line,
                     reason_given ? "\n    " : "", reason);
 }
@@ -70,12 +74,11 @@ void mxIgraphErrorHandlerMex(const char *reason, const char *file, int line,
 void mxIgraphFatelHandlerMex(const char *reason, const char *file, int line)
 {
   IGRAPH_FINALLY_FREE();
-  mexErrMsgIdAndTxt("igraph:internal",
-                    "\n%s\n\nFatal error In %s (line %d)\n    %s %s %s",
-                    reason, file + mxIgraphBaseName_i(file), line,
-                    "Process terminated due to a fatal error.",
-                    "This is likely a bug.",
-                    "Please open an issue on github with the steps needed to reproduce the error.");
+  mexErrMsgIdAndTxt(
+    "igraph:internal", "\n%s\n\nFatal error In %s (line %d)\n    %s", reason,
+    file + mxIgraphBaseName_i(file), line,
+    "Process terminated due to a fatal error. This is likely a bug. Please "
+    "open an issue on github with the steps needed to reproduce the error.");
 }
 
 void mxIgraphWarningHandlerMex(const char *reason, const char *file,

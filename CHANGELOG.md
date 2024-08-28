@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Breaking) Remove mxIgraph's membership functions in favor of general vector functions.
 - (Breaking) Rename public mxIgraph functions to have a more consistent naming convention.
 
+### Fixed
+
+- Clean memory on error.
+
 ## [0.1.13] 2024-04-01
 
 ### Added

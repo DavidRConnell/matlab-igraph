@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
                                      mxArray const *prhs[])
@@ -29,12 +29,15 @@ igraph_error_t mexIgraphIsIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
-  mxIgraphFromArray(prhs[0], &graph1, NULL, graph_options);
-  mxIgraphFromArray(prhs[1], &graph2, NULL, graph_options);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph1, NULL, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph1);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[1], &graph2, NULL, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph2);
 
-  igraph_isomorphic(&graph1, &graph2, &flag);
+  IGRAPH_CHECK(igraph_isomorphic(&graph1, &graph2, &flag));
   igraph_destroy(&graph1);
   igraph_destroy(&graph2);
+  IGRAPH_FINALLY_CLEAN(2);
 
   plhs[0] = mxCreateLogicalScalar(flag);
 
@@ -51,12 +54,15 @@ igraph_error_t mexIgraphIsSubIsomorphic(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph1, graph2;
   igraph_bool_t flag;
 
-  mxIgraphFromArray(prhs[0], &graph1, NULL, graph_options);
-  mxIgraphFromArray(prhs[1], &graph2, NULL, graph_options);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph1, NULL, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph1);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[1], &graph2, NULL, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph2);
 
-  igraph_subisomorphic(&graph1, &graph2, &flag);
+  IGRAPH_CHECK(igraph_subisomorphic(&graph1, &graph2, &flag));
   igraph_destroy(&graph1);
   igraph_destroy(&graph2);
+  IGRAPH_FINALLY_CLEAN(2);
 
   plhs[0] = mxCreateLogicalScalar(flag);
 

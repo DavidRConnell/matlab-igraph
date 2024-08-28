@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {

@@ -16,17 +16,19 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
-static void mxIgraph_reindex_membership_i(igraph_vector_int_t *memb)
+static igraph_error_t mxIgraph_reindex_membership_i(igraph_vector_int_t
+    *memb)
 {
   igraph_integer_t const comm_min = igraph_vector_int_min(memb);
   igraph_integer_t const n_comms =
     igraph_vector_int_max(memb) - igraph_vector_int_min(memb) + 1;
   igraph_vector_int_t ids;
 
-  igraph_vector_int_init(&ids, n_comms);
+  IGRAPH_CHECK(igraph_vector_int_init(&ids, n_comms));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &ids);
   for (igraph_integer_t i = 0; i < igraph_vector_int_size(memb); i++) {
     VECTOR(*memb)[i] -= comm_min;
     VECTOR(ids)[VECTOR(*memb)[i]]++;
@@ -46,6 +48,9 @@ static void mxIgraph_reindex_membership_i(igraph_vector_int_t *memb)
   }
 
   igraph_vector_int_destroy(&ids);
+  IGRAPH_FINALLY_CLEAN(1);
+
+  return IGRAPH_SUCCESS;
 }
 
 igraph_error_t mexIgraphReindexMembership(int nlhs, mxArray *plhs[], int nrhs,
@@ -55,21 +60,24 @@ igraph_error_t mexIgraphReindexMembership(int nlhs, mxArray *plhs[], int nrhs,
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   igraph_matrix_int_t membership;
-  igraph_error_t errorcode = IGRAPH_SUCCESS;
-
-  mxIgraphMatrixIntFromArray(prhs[0], &membership, MXIGRAPH_IDX_SHIFT);
-
   igraph_vector_int_t level_memb;
-  igraph_vector_int_init(&level_memb, igraph_matrix_int_ncol(&membership));
+
+  IGRAPH_CHECK(
+    mxIgraphMatrixIntFromArray(prhs[0], &membership, MXIGRAPH_IDX_SHIFT));
+  IGRAPH_FINALLY(igraph_matrix_int_destroy, &membership);
+  IGRAPH_CHECK(
+    igraph_vector_int_init(&level_memb, igraph_matrix_int_ncol(&membership)));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &level_memb);
   for (igraph_integer_t i = 0; i < igraph_matrix_int_nrow(&membership); i++) {
-    igraph_matrix_int_get_row(&membership, &level_memb, i);
-    mxIgraph_reindex_membership_i(&level_memb);
-    igraph_matrix_int_set_row(&membership, &level_memb, i);
+    IGRAPH_CHECK(igraph_matrix_int_get_row(&membership, &level_memb, i));
+    IGRAPH_CHECK(mxIgraph_reindex_membership_i(&level_memb));
+    IGRAPH_CHECK(igraph_matrix_int_set_row(&membership, &level_memb, i));
   }
   igraph_vector_int_destroy(&level_memb);
 
   plhs[0] = mxIgraphMatrixIntToArray(&membership, MXIGRAPH_IDX_SHIFT);
   igraph_matrix_int_destroy(&membership);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }

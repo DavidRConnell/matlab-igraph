@@ -61,11 +61,11 @@ static igraph_error_t mxIgraph_grg_i(mxArray const *opts, igraph_t *graph)
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_real_t radius = mxIgraphRealFromOptions(opts, "radius");
   igraph_bool_t torus = mxIgraphBoolFromOptions(opts, "torus");
-  igraph_error_t errcode;
+  MXIGRAPH_CHECK_STATUS();
 
-  errcode = igraph_grg_game(graph, n_nodes, radius, torus, NULL, NULL);
+  IGRAPH_CHECK(igraph_grg_game(graph, n_nodes, radius, torus, NULL, NULL));
 
-  return errcode;
+  return IGRAPH_SUCCESS;
 }
 
 #define BARABASI_BODY(algo)                                                    \
@@ -80,32 +80,38 @@ static igraph_error_t mxIgraph_grg_i(mxArray const *opts, igraph_t *graph)
   mxArray *start_argument = mxIgraphGetArgument(opts, "startFrom");            \
   igraph_t start_from;                                                         \
   igraph_t *start_from_ptr = NULL;                                             \
-  igraph_error_t errcode;                                                      \
+  MXIGRAPH_CHECK_STATUS();                                                     \
                                                                                \
   if (mxIsScalar(mxIgraphGetArgument(opts, "nConnections"))) {                 \
     m = mxIgraphIntegerFromOptions(opts, "nConnections");                      \
+    MXIGRAPH_CHECK_STATUS();                                                   \
   } else {                                                                     \
-    mxIgraphVectorIntFromOptions(opts, "nConnections", &outseq, false);        \
+    IGRAPH_CHECK(                                                              \
+        mxIgraphVectorIntFromOptions(opts, "nConnections", &outseq, false));   \
+    IGRAPH_FINALLY(igraph_vector_int_destroy, &outseq);                        \
     outseq_ptr = &outseq;                                                      \
   }                                                                            \
                                                                                \
   if (!mxIsEmpty(start_argument)) {                                            \
-    mxIgraphFromArray(start_argument, &start_from, NULL, opts);                \
+    IGRAPH_CHECK(mxIgraphFromArray(start_argument, &start_from, NULL, opts));  \
+    IGRAPH_FINALLY(igraph_destroy, &start_from);                               \
   }                                                                            \
                                                                                \
-  errcode =                                                                    \
-      igraph_barabasi_game(graph, n_nodes, power, m, outseq_ptr, outpref, A,   \
-                           directed, (algo), start_from_ptr);                  \
-                                                                               \
-  if (outseq_ptr) {                                                            \
-    igraph_vector_int_destroy(&outseq);                                        \
-  }                                                                            \
+  IGRAPH_CHECK(igraph_barabasi_game(graph, n_nodes, power, m, outseq_ptr,      \
+                                    outpref, A, directed, (algo),              \
+                                    start_from_ptr));                          \
                                                                                \
   if (start_from_ptr) {                                                        \
     igraph_destroy(&start_from);                                               \
+    IGRAPH_FINALLY_CLEAN(1);                                                   \
   }                                                                            \
                                                                                \
-  return errcode
+  if (outseq_ptr) {                                                            \
+    igraph_vector_int_destroy(&outseq);                                        \
+    IGRAPH_FINALLY_CLEAN(1);                                                   \
+  }                                                                            \
+                                                                               \
+  return IGRAPH_SUCCESS
 
 static igraph_error_t mxIgraph_barabasi_bag_i(mxArray const *opts,
     igraph_t *graph)
@@ -133,19 +139,21 @@ static igraph_error_t mxIgraph_erdos_renyi_i(mxArray const *opts,
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
-  igraph_error_t errcode;
+  MXIGRAPH_CHECK_STATUS();
 
   if (edge_method) {
     igraph_integer_t n_edges = mxIgraphIntegerFromOptions(opts, "nEdges");
-    errcode =
-      igraph_erdos_renyi_game_gnm(graph, n_nodes, n_edges, directed, loops);
+    MXIGRAPH_CHECK_STATUS();
+    IGRAPH_CHECK(
+      igraph_erdos_renyi_game_gnm(graph, n_nodes, n_edges, directed, loops));
   } else {
     igraph_real_t probability = mxIgraphRealFromOptions(opts, "probability");
-    errcode = igraph_erdos_renyi_game_gnp(graph, n_nodes, probability, directed,
-                                          loops);
+    MXIGRAPH_CHECK_STATUS();
+    IGRAPH_CHECK(igraph_erdos_renyi_game_gnp(graph, n_nodes, probability,
+                 directed, loops));
   }
 
-  return errcode;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_watts_strogatz_i(mxArray const *opts,
@@ -157,12 +165,12 @@ static igraph_error_t mxIgraph_watts_strogatz_i(mxArray const *opts,
   igraph_real_t probability = mxIgraphRealFromOptions(opts, "probability");
   igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
   igraph_bool_t multiple = mxIgraphBoolFromOptions(opts, "multiple");
-  igraph_error_t errcode;
+  MXIGRAPH_CHECK_STATUS();
 
-  errcode = igraph_watts_strogatz_game(graph, dim, size, n_neighbors,
-                                       probability, loops, multiple);
+  IGRAPH_CHECK(igraph_watts_strogatz_game(graph, dim, size, n_neighbors,
+                                          probability, loops, multiple));
 
-  return errcode;
+  return IGRAPH_SUCCESS;
 }
 
 #define DEGSEQ_BODY(algo)                                                      \
@@ -170,14 +178,20 @@ static igraph_error_t mxIgraph_watts_strogatz_i(mxArray const *opts,
   igraph_vector_int_t inDegree;                                                \
   igraph_error_t errcode;                                                      \
                                                                                \
-  mxIgraphVectorIntFromOptions(opts, "outDegree", &outDegree, false);          \
-  mxIgraphVectorIntFromOptions(opts, "inDegree", &inDegree, false);            \
-  errcode = igraph_degree_sequence_game(graph, &outDegree, &inDegree, (algo)); \
+  IGRAPH_CHECK(                                                                \
+      mxIgraphVectorIntFromOptions(opts, "outDegree", &outDegree, false));     \
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &outDegree);                       \
+  IGRAPH_CHECK(                                                                \
+      mxIgraphVectorIntFromOptions(opts, "inDegree", &inDegree, false));       \
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &inDegree);                        \
+  IGRAPH_CHECK(                                                                \
+      igraph_degree_sequence_game(graph, &outDegree, &inDegree, (algo)));      \
                                                                                \
   igraph_vector_int_destroy(&outDegree);                                       \
   igraph_vector_int_destroy(&inDegree);                                        \
+  IGRAPH_FINALLY_CLEAN(2);                                                     \
                                                                                \
-  return errcode
+  return IGRAPH_SUCCESS
 
 static igraph_error_t mxIgraph_degseq_configuration_i(mxArray const *opts,
     igraph_t *graph)
@@ -216,38 +230,44 @@ static igraph_error_t mxIgraph_k_regular_i(mxArray const *opts,
   igraph_integer_t degree = mxIgraphIntegerFromOptions(opts, "degree");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_bool_t multiple = mxIgraphBoolFromOptions(opts, "multiple");
-  igraph_error_t error;
+  MXIGRAPH_CHECK_STATUS();
 
-  error = igraph_k_regular_game(graph, n_nodes, degree, directed, multiple);
+  IGRAPH_CHECK(
+    igraph_k_regular_game(graph, n_nodes, degree, directed, multiple));
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_static_fitness_i(mxArray const *opts,
     igraph_t *graph)
 {
   igraph_integer_t n_edges = mxIgraphIntegerFromOptions(opts, "nEdges");
+  igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
+  igraph_bool_t multiple = mxIgraphBoolFromOptions(opts, "multiple");
+  MXIGRAPH_CHECK_STATUS();
   igraph_vector_t fitness_out;
   igraph_vector_t fitness_in;
   igraph_vector_t *fitness_in_ptr = NULL;
-  igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
-  igraph_bool_t multiple = mxIgraphBoolFromOptions(opts, "multiple");
-  igraph_error_t error;
 
-  mxIgraphVectorFromOptions(opts, "outFitness", &fitness_out, false);
-  mxIgraphVectorFromOptions(opts, "inFitness", &fitness_in, false);
+  IGRAPH_CHECK(
+    mxIgraphVectorFromOptions(opts, "outFitness", &fitness_out, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &fitness_out);
+  IGRAPH_CHECK(
+    mxIgraphVectorFromOptions(opts, "inFitness", &fitness_in, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &fitness_in);
 
   if (!mxIgraphIsEmpty(mxIgraphGetArgument(opts, "inFitness"))) {
     fitness_in_ptr = &fitness_in;
   }
 
-  error = igraph_static_fitness_game(graph, n_edges, &fitness_out,
-                                     fitness_in_ptr, loops, multiple);
+  IGRAPH_CHECK(igraph_static_fitness_game(graph, n_edges, &fitness_out,
+                                          fitness_in_ptr, loops, multiple));
 
   igraph_vector_destroy(&fitness_out);
   igraph_vector_destroy(&fitness_in);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_static_power_law_i(mxArray const *opts,
@@ -261,13 +281,13 @@ static igraph_error_t mxIgraph_static_power_law_i(mxArray const *opts,
   igraph_bool_t multiple = mxIgraphBoolFromOptions(opts, "multiple");
   igraph_bool_t finite_size_correction =
     mxIgraphBoolFromOptions(opts, "finiteSizeCorrection");
-  igraph_error_t error;
+  MXIGRAPH_CHECK_STATUS();
 
-  error = igraph_static_power_law_game(graph, n_nodes, n_edges, exponent_out,
-                                       exponent_in, loops, multiple,
-                                       finite_size_correction);
+  IGRAPH_CHECK(igraph_static_power_law_game(graph, n_nodes, n_edges,
+               exponent_out, exponent_in, loops,
+               multiple, finite_size_correction));
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 static igraph_error_t mxIgraph_forest_fire_i(mxArray const *opts,
     igraph_t *graph)
@@ -277,12 +297,12 @@ static igraph_error_t mxIgraph_forest_fire_i(mxArray const *opts,
   igraph_real_t bw_factor = mxIgraphRealFromOptions(opts, "backwardFactor");
   igraph_integer_t ambs = mxIgraphIntegerFromOptions(opts, "nAmbassadors");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  MXIGRAPH_CHECK_STATUS();
 
-  error = igraph_forest_fire_game(graph, n_nodes, fw_prob, bw_factor, ambs,
-                                  directed);
+  IGRAPH_CHECK(igraph_forest_fire_game(graph, n_nodes, fw_prob, bw_factor, ambs,
+                                       directed));
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_growing_random_i(mxArray const *opts,
@@ -292,12 +312,12 @@ static igraph_error_t mxIgraph_growing_random_i(mxArray const *opts,
   igraph_integer_t n_edges = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_bool_t citation = mxIgraphBoolFromOptions(opts, "citation");
-  igraph_error_t error;
+  MXIGRAPH_CHECK_STATUS();
 
-  error =
-    igraph_growing_random_game(graph, n_nodes, n_edges, directed, citation);
+  IGRAPH_CHECK(
+    igraph_growing_random_game(graph, n_nodes, n_edges, directed, citation));
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_callaway_traits_i(mxArray const *opts,
@@ -307,27 +327,32 @@ static igraph_error_t mxIgraph_callaway_traits_i(mxArray const *opts,
   igraph_integer_t n_types = mxIgraphIntegerFromOptions(opts, "nTypes");
   igraph_integer_t edges_per_step =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_vector_t type_dist;
   igraph_vector_t *type_dist_ptr = NULL;
   igraph_matrix_t pref_matrix;
-  igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
 
-  mxIgraphVectorFromOptions(opts, "typeDistribution", &type_dist, false);
-  mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false);
+  IGRAPH_CHECK(mxIgraphVectorFromOptions(opts, "typeDistribution", &type_dist,
+                                         MXIGRAPH_IDX_KEEP));
+  IGRAPH_FINALLY(igraph_vector_destroy, &type_dist);
+  IGRAPH_CHECK(mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix,
+                                         MXIGRAPH_IDX_KEEP));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &pref_matrix);
+  MXIGRAPH_CHECK_STATUS();
 
-  if (!mxIgraphIsEmpty(opts)) {
+  if (!mxIgraphIsEmpty(mxIgraphGetArgument(opts, "typeDistribution"))) {
     type_dist_ptr = &type_dist;
   }
 
-  error =
-    igraph_callaway_traits_game(graph, n_nodes, n_types, edges_per_step,
-                                type_dist_ptr, &pref_matrix, directed, NULL);
+  IGRAPH_CHECK(igraph_callaway_traits_game(graph, n_nodes, n_types,
+               edges_per_step, type_dist_ptr,
+               &pref_matrix, directed, NULL));
 
   igraph_vector_destroy(&type_dist);
   igraph_matrix_destroy(&pref_matrix);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_establishment_i(mxArray const *opts,
@@ -337,27 +362,32 @@ static igraph_error_t mxIgraph_establishment_i(mxArray const *opts,
   igraph_integer_t n_types = mxIgraphIntegerFromOptions(opts, "nTypes");
   igraph_integer_t edges_per_step =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_vector_t type_dist;
   igraph_vector_t *type_dist_ptr = NULL;
   igraph_matrix_t pref_matrix;
-  igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
 
-  mxIgraphVectorFromOptions(opts, "typeDistribution", &type_dist, false);
-  mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false);
+  IGRAPH_CHECK(
+    mxIgraphVectorFromOptions(opts, "typeDistribution", &type_dist, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &type_dist);
+  IGRAPH_CHECK(
+    mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &pref_matrix);
+  MXIGRAPH_CHECK_STATUS();
 
-  if (!mxIgraphIsEmpty(opts)) {
+  if (!mxIgraphIsEmpty(mxIgraphGetArgument(opts, "typeDistribution"))) {
     type_dist_ptr = &type_dist;
   }
 
-  error =
-    igraph_establishment_game(graph, n_nodes, n_types, edges_per_step,
-                              type_dist_ptr, &pref_matrix, directed, NULL);
+  IGRAPH_CHECK(igraph_establishment_game(graph, n_nodes, n_types,
+                                         edges_per_step, type_dist_ptr,
+                                         &pref_matrix, directed, NULL));
 
   igraph_vector_destroy(&type_dist);
   igraph_matrix_destroy(&pref_matrix);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_preference_i(mxArray const *opts,
@@ -365,29 +395,34 @@ static igraph_error_t mxIgraph_preference_i(mxArray const *opts,
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t n_types = mxIgraphIntegerFromOptions(opts, "nTypes");
-  igraph_vector_t type_dist;
-  igraph_vector_t *type_dist_ptr = NULL;
   igraph_bool_t fixed_sizes = mxIgraphIntegerFromOptions(opts, "fixedSizes");
-  igraph_matrix_t pref_matrix;
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
-  igraph_error_t error;
+  igraph_vector_t type_dist;
+  igraph_vector_t *type_dist_ptr = NULL;
+  igraph_matrix_t pref_matrix;
 
-  mxIgraphVectorFromOptions(opts, "typeDistribution", &type_dist, false);
-  mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false);
+  IGRAPH_CHECK(
+    mxIgraphVectorFromOptions(opts, "typeDistribution", &type_dist, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &type_dist);
+  IGRAPH_CHECK(
+    mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &pref_matrix);
+  MXIGRAPH_CHECK_STATUS();
 
-  if (!mxIgraphIsEmpty(opts)) {
+  if (!mxIgraphIsEmpty(mxIgraphGetArgument(opts, "typeDistribution"))) {
     type_dist_ptr = &type_dist;
   }
 
-  error =
-    igraph_preference_game(graph, n_nodes, n_types, type_dist_ptr,
-                           fixed_sizes, &pref_matrix, NULL, directed, loops);
+  IGRAPH_CHECK(igraph_preference_game(graph, n_nodes, n_types, type_dist_ptr,
+                                      fixed_sizes, &pref_matrix, NULL, directed,
+                                      loops));
 
   igraph_vector_destroy(&type_dist);
   igraph_matrix_destroy(&pref_matrix);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_asymmetric_preference_i(mxArray const *opts,
@@ -396,27 +431,33 @@ static igraph_error_t mxIgraph_asymmetric_preference_i(mxArray const *opts,
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t n_out_types = mxIgraphIntegerFromOptions(opts, "nOutTypes");
   igraph_integer_t n_in_types = mxIgraphIntegerFromOptions(opts, "nInTypes");
+  igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
   igraph_matrix_t type_dist;
   igraph_matrix_t *type_dist_ptr = NULL;
   igraph_matrix_t pref_matrix;
-  igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
-  igraph_error_t error;
 
-  mxIgraphMatrixFromOptions(opts, "typeDistribution", &type_dist, false);
-  mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false);
+  IGRAPH_CHECK(
+    mxIgraphMatrixFromOptions(opts, "typeDistribution", &type_dist, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &type_dist);
+  IGRAPH_CHECK(
+    mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &pref_matrix);
 
-  if (!mxIgraphIsEmpty(opts)) {
+  MXIGRAPH_CHECK_STATUS();
+
+  if (!mxIgraphIsEmpty(mxIgraphGetArgument(opts, "typeDistribution"))) {
     type_dist_ptr = &type_dist;
   }
 
-  error = igraph_asymmetric_preference_game(graph, n_nodes, n_out_types,
-          n_in_types, type_dist_ptr,
-          &pref_matrix, NULL, NULL, loops);
+  IGRAPH_CHECK(igraph_asymmetric_preference_game(
+                 graph, n_nodes, n_out_types, n_in_types, type_dist_ptr, &pref_matrix,
+                 NULL, NULL, loops));
 
   igraph_matrix_destroy(&type_dist);
   igraph_matrix_destroy(&pref_matrix);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_recent_degree_i(mxArray const *opts,
@@ -427,26 +468,29 @@ static igraph_error_t mxIgraph_recent_degree_i(mxArray const *opts,
   igraph_integer_t time_window = mxIgraphIntegerFromOptions(opts, "timeWindow");
   igraph_integer_t edges_per_time_step =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
-  igraph_vector_int_t outseq;
-  igraph_vector_int_t *outseq_ptr = NULL;
   igraph_bool_t outpref = mxIgraphBoolFromOptions(opts, "outPreference");
   igraph_real_t zero_appeal = mxIgraphRealFromOptions(opts, "zeroAppeal");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  igraph_vector_int_t outseq;
+  igraph_vector_int_t *outseq_ptr = NULL;
 
-  mxIgraphVectorIntFromOptions(opts, "outSeq", &outseq, false);
+  IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "outSeq", &outseq, false));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &outseq);
+
+  MXIGRAPH_CHECK_STATUS();
 
   if (!mxIgraphIsEmpty(mxIgraphGetArgument(opts, "outSeq"))) {
     outseq_ptr = &outseq;
   }
 
-  error = igraph_recent_degree_game(graph, n_nodes, power, time_window,
-                                    edges_per_time_step, outseq_ptr, outpref,
-                                    zero_appeal, directed);
+  IGRAPH_CHECK(igraph_recent_degree_game(graph, n_nodes, power, time_window,
+                                         edges_per_time_step, outseq_ptr,
+                                         outpref, zero_appeal, directed));
 
   igraph_vector_int_destroy(&outseq);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_barabasi_aging_i(mxArray const *opts,
@@ -455,7 +499,6 @@ static igraph_error_t mxIgraph_barabasi_aging_i(mxArray const *opts,
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t edges_per_time_step =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
-  igraph_vector_int_t outseq;
   igraph_bool_t outpref = mxIgraphBoolFromOptions(opts, "outPreference");
   igraph_real_t pa_exp = mxIgraphRealFromOptions(opts, "degreeExp");
   igraph_real_t aging_exp = mxIgraphRealFromOptions(opts, "ageExp");
@@ -467,17 +510,20 @@ static igraph_error_t mxIgraph_barabasi_aging_i(mxArray const *opts,
   igraph_real_t deg_coef = mxIgraphRealFromOptions(opts, "degreeCoef");
   igraph_real_t age_coef = mxIgraphRealFromOptions(opts, "ageCoef");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  igraph_vector_int_t outseq;
 
-  mxIgraphVectorIntFromOptions(opts, "outSeq", &outseq, false);
+  IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "outSeq", &outseq, false));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &outseq);
+  MXIGRAPH_CHECK_STATUS();
 
-  error = igraph_barabasi_aging_game(
-            graph, n_nodes, edges_per_time_step, &outseq, outpref, pa_exp, aging_exp,
-            aging_bins, zero_deg_appeal, zero_age_appeal, deg_coef, age_coef,
-            directed);
+  IGRAPH_CHECK(igraph_barabasi_aging_game(
+                 graph, n_nodes, edges_per_time_step, &outseq, outpref, pa_exp, aging_exp,
+                 aging_bins, zero_deg_appeal, zero_age_appeal, deg_coef, age_coef,
+                 directed));
   igraph_vector_int_destroy(&outseq);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_recent_degree_aging_i(mxArray const *opts,
@@ -485,7 +531,6 @@ static igraph_error_t mxIgraph_recent_degree_aging_i(mxArray const *opts,
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t n_edges = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
-  igraph_vector_int_t outseq;
   igraph_bool_t outpref = mxIgraphBoolFromOptions(opts, "outPreference");
   igraph_real_t pa_exp = mxIgraphRealFromOptions(opts, "degreeExp");
   igraph_real_t aging_exp = mxIgraphRealFromOptions(opts, "ageExp");
@@ -493,17 +538,21 @@ static igraph_error_t mxIgraph_recent_degree_aging_i(mxArray const *opts,
   igraph_integer_t time_window = mxIgraphIntegerFromOptions(opts, "timeWindow");
   igraph_real_t zero_appeal = mxIgraphRealFromOptions(opts, "zeroAppeal");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  igraph_vector_int_t outseq;
 
-  mxIgraphVectorIntFromOptions(opts, "outSeq", &outseq, false);
+  IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "outSeq", &outseq, false));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &outseq);
 
-  error = igraph_recent_degree_aging_game(
-            graph, n_nodes, n_edges, &outseq, outpref, pa_exp, aging_exp, aging_bins,
-            time_window, zero_appeal, directed);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_recent_degree_aging_game(
+                 graph, n_nodes, n_edges, &outseq, outpref, pa_exp, aging_exp, aging_bins,
+                 time_window, zero_appeal, directed));
 
   igraph_vector_int_destroy(&outseq);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_lastcit_i(mxArray const *opts,
@@ -513,85 +562,105 @@ static igraph_error_t mxIgraph_lastcit_i(mxArray const *opts,
   igraph_integer_t edges_per_node =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_integer_t aging_bins = mxIgraphIntegerFromOptions(opts, "agingBins");
-  igraph_vector_t preference;
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  igraph_vector_t preference;
 
-  mxIgraphVectorFromOptions(opts, "preference", &preference, false);
+  IGRAPH_CHECK(
+    mxIgraphVectorFromOptions(opts, "preference", &preference, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &preference);
 
-  error = igraph_lastcit_game(graph, n_nodes, edges_per_node, aging_bins,
-                              &preference, directed);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_lastcit_game(graph, n_nodes, edges_per_node, aging_bins,
+                                   &preference, directed));
 
   igraph_vector_destroy(&preference);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_cited_type_i(mxArray const *opts,
     igraph_t *graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
-  igraph_vector_int_t types;
-  igraph_vector_t preferences;
   igraph_integer_t edges_per_step =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  igraph_vector_int_t types;
+  igraph_vector_t preferences;
 
-  mxIgraphVectorIntFromOptions(opts, "types", &types, true);
-  mxIgraphVectorFromOptions(opts, "preference", &preferences, false);
+  IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "types", &types, true));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &types);
+  IGRAPH_CHECK(
+    mxIgraphVectorFromOptions(opts, "preference", &preferences, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &preferences);
 
-  error = igraph_cited_type_game(graph, n_nodes, &types, &preferences,
-                                 edges_per_step, directed);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_cited_type_game(graph, n_nodes, &types, &preferences,
+                                      edges_per_step, directed));
 
   igraph_vector_int_destroy(&types);
   igraph_vector_destroy(&preferences);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_citing_cited_type_i(mxArray const *opts,
     igraph_t *graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
-  igraph_vector_int_t types;
-  igraph_matrix_t pref_matrix;
   igraph_integer_t edges_per_step =
     mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
+  igraph_vector_int_t types;
+  igraph_matrix_t pref_matrix;
 
-  mxIgraphVectorIntFromOptions(opts, "types", &types, true);
-  mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false);
+  IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "types", &types, true));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &types);
+  IGRAPH_CHECK(
+    mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &pref_matrix);
 
-  error = igraph_citing_cited_type_game(graph, n_nodes, &types, &pref_matrix,
-                                        edges_per_step, directed);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_citing_cited_type_game(
+                 graph, n_nodes, &types, &pref_matrix, edges_per_step, directed));
 
   igraph_vector_int_destroy(&types);
   igraph_matrix_destroy(&pref_matrix);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_sbm_i(mxArray const *opts, igraph_t *graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
-  igraph_matrix_t pref_matrix;
-  igraph_vector_int_t block_sizes;
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_bool_t loops = mxIgraphBoolFromOptions(opts, "loops");
-  igraph_error_t error;
+  igraph_matrix_t pref_matrix;
+  igraph_vector_int_t block_sizes;
 
-  mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false);
-  mxIgraphVectorIntFromOptions(opts, "blockSizes", &block_sizes, false);
+  IGRAPH_CHECK(
+    mxIgraphMatrixFromOptions(opts, "preference", &pref_matrix, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &pref_matrix);
+  IGRAPH_CHECK(
+    mxIgraphVectorIntFromOptions(opts, "blockSizes", &block_sizes, false));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &block_sizes);
 
-  error = igraph_sbm_game(graph, n_nodes, &pref_matrix, &block_sizes, directed,
-                          loops);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_sbm_game(graph, n_nodes, &pref_matrix, &block_sizes,
+                               directed, loops));
 
   igraph_matrix_destroy(&pref_matrix);
   igraph_vector_int_destroy(&block_sizes);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_hsbm_i(mxArray const *opts, igraph_t *graph)
@@ -599,20 +668,24 @@ static igraph_error_t mxIgraph_hsbm_i(mxArray const *opts, igraph_t *graph)
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t edges_per_block =
     mxIgraphIntegerFromOptions(opts, "blockSizes");
+  igraph_real_t p = mxIgraphRealFromOptions(opts, "preference");
   igraph_vector_t rho;
   igraph_matrix_t c;
-  igraph_real_t p = mxIgraphRealFromOptions(opts, "preference");
-  igraph_error_t error;
 
-  mxIgraphVectorFromOptions(opts, "rho", &rho, false);
-  mxIgraphMatrixFromOptions(opts, "preference", &c, false);
+  IGRAPH_CHECK(mxIgraphVectorFromOptions(opts, "rho", &rho, false));
+  IGRAPH_FINALLY(igraph_vector_destroy, &rho);
+  IGRAPH_CHECK(mxIgraphMatrixFromOptions(opts, "preference", &c, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &c);
 
-  error = igraph_hsbm_game(graph, n_nodes, edges_per_block, &rho, &c, p);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_hsbm_game(graph, n_nodes, edges_per_block, &rho, &c, p));
 
   igraph_vector_destroy(&rho);
   igraph_matrix_destroy(&c);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_dot_product_i(mxArray const *opts,
@@ -620,34 +693,37 @@ static igraph_error_t mxIgraph_dot_product_i(mxArray const *opts,
 {
   igraph_matrix_t vecs;
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
-  igraph_error_t error;
 
-  mxIgraphMatrixFromOptions(opts, "positions", &vecs, false);
+  IGRAPH_CHECK(mxIgraphMatrixFromOptions(opts, "positions", &vecs, false));
+  IGRAPH_FINALLY(igraph_matrix_destroy, &vecs);
 
-  error = igraph_dot_product_game(graph, &vecs, directed);
+  MXIGRAPH_CHECK_STATUS();
+
+  IGRAPH_CHECK(igraph_dot_product_game(graph, &vecs, directed));
 
   igraph_matrix_destroy(&vecs);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return error;
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_tree_i(mxArray const *opts, igraph_t *graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
+  MXIGRAPH_CHECK_STATUS();
+
   igraph_integer_t const n_methods = 2;
   const char *methods[2] = {[IGRAPH_RANDOM_TREE_PRUFER] = "prufer",
                             [IGRAPH_RANDOM_TREE_LERW] = "lerw"
                            };
   igraph_random_tree_t method = mxIgraphSelectMethod(
                                   mxIgraphGetArgument(opts, "method"), methods, n_methods);
+  MXIGRAPH_CHECK_METHOD(method, mxIgraphGetArgument(opts, "method"));
 
-  if (method >= n_methods) {
-    mexErrMsgIdAndTxt("igraph:internal:unknownMethod",
-                      "Unknown method passed to tree game.");
-  }
+  IGRAPH_CHECK(igraph_tree_game(graph, n_nodes, directed, method));
 
-  return igraph_tree_game(graph, n_nodes, directed, method);
+  return IGRAPH_SUCCESS;
 }
 
 static igraph_error_t mxIgraph_simple_interconnected_islands_i(
@@ -658,9 +734,12 @@ static igraph_error_t mxIgraph_simple_interconnected_islands_i(
     mxIgraphIntegerFromOptions(opts, "islandSize");
   igraph_real_t p_in = mxIgraphRealFromOptions(opts, "pIn");
   igraph_integer_t n_inter = mxIgraphIntegerFromOptions(opts, "nInterEdges");
+  MXIGRAPH_CHECK_STATUS();
 
-  return igraph_simple_interconnected_islands_game(graph, n_islands,
-         islands_size, p_in, n_inter);
+  IGRAPH_CHECK(igraph_simple_interconnected_islands_game(
+                 graph, n_islands, islands_size, p_in, n_inter));
+
+  return IGRAPH_SUCCESS;
 }
 
 igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
@@ -673,7 +752,6 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
   mxArray const *graph_options = prhs[1];
   mxArray const *method_options = prhs[2];
   igraph_t graph;
-  igraph_error_t errorcode;
   typedef igraph_error_t (*game_method_t)(mxArray const *prhs, igraph_t *g);
   game_method_t game_method;
 
@@ -715,9 +793,8 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
     "simpleinterconnectedislands",
   };
 
-  MXIGRAPH_CHECK_METHOD(
-    (method = mxIgraphSelectMethod(prhs[0], games, MXIGRAPH_GAME_N)),
-    prhs[0]);
+  method = mxIgraphSelectMethod(prhs[0], games, MXIGRAPH_GAME_N);
+  MXIGRAPH_CHECK_METHOD(method, prhs[0]);
 
   game_method_t method_table[MXIGRAPH_GAME_N] = {
     [MXIGRAPH_GAME_GRG] = mxIgraph_grg_i,
@@ -760,14 +837,14 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
 
   game_method = method_table[method];
   if (!game_method) {
-    IGRAPH_ERRORF("Random game %s, not implemented.", IGRAPH_UNIMPLEMENTED,
+    IGRAPH_ERRORF("Random game \"%s\" not implemented.", IGRAPH_UNIMPLEMENTED,
                   mxArrayToString(prhs[0]));
   }
 
-  game_method(method_options, &graph);
+  IGRAPH_CHECK(game_method(method_options, &graph));
 
   plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
   igraph_destroy(&graph);
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }

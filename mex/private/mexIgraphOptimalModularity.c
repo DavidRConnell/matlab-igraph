@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphOptimalModularity(int nlhs, mxArray *plhs[], int nrhs,
     mxArray const *prhs[])
@@ -29,17 +29,19 @@ igraph_error_t mexIgraphOptimalModularity(int nlhs, mxArray *plhs[], int nrhs,
   mxArray const *graph_options = prhs[1];
   igraph_vector_t weights;
   igraph_real_t modularity;
-  igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph, &weights, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph);
+  IGRAPH_FINALLY(igraph_vector_destroy, &weights);
 
-  igraph_community_optimal_modularity(&graph, &modularity, NULL,
-                                      MXIGRAPH_WEIGHTS(&weights));
+  IGRAPH_CHECK(igraph_community_optimal_modularity(&graph, &modularity, NULL,
+               MXIGRAPH_WEIGHTS(&weights)));
 
   plhs[0] = mxCreateDoubleScalar(modularity);
 
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);
+  IGRAPH_FINALLY_CLEAN(2);
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }

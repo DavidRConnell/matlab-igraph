@@ -33,10 +33,6 @@ static igraph_bool_t is_weighted_sparse_i(const mxArray *p)
   mwIndex n = mxGetN(p);
   mwIndex numel = jc[n];
 
-  if (!mxIgraphIsSquare(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotSquare", "Adjacency matrix must be square.");
-  }
-
   for (mwIndex i = 0; i < numel; i++) {
     if ((adj[i] != 0) && (adj[i] != 1)) {
       return true;
@@ -50,10 +46,6 @@ static igraph_bool_t is_weighted_full_i(const mxArray *p)
 {
   mxDouble *adj = mxGetDoubles(p);
   mwSize m = mxGetM(p);
-
-  if (!mxIgraphIsSquare(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotSquare", "Adjacency matrix must be square.");
-  }
 
   mxDouble el;
   for (mwIndex i = 0; i < m; i++) {
@@ -335,11 +327,7 @@ igraph_bool_t mxIgraphIsSymmetric(const mxArray *p)
     return is_symmetric_full_logical_i(p);
   }
 
-  mexErrMsgIdAndTxt("mxIgraph:UnknownType",
-                    "Adjacency matrix is not a known type.");
-  // Keeps the compiler happy since it doesn't understand mexErr* are early
-  // terminators.
-  return false;
+  IGRAPH_FATAL("Received unexpected data type or representation");
 }
 
 // Test if the MATLAB object is of the graph or digraph type.

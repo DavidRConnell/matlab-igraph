@@ -18,8 +18,8 @@
 
 #include <string.h>
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
                                       const mxArray *prhs[])
@@ -30,28 +30,28 @@ igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
   mxArray const *graph_options = prhs[1];
   mxArray const *method_options = prhs[2];
 
-  igraph_real_t correlation = mxIgraphRealFromOptions(method_options, "correlation");
-  igraph_real_t probability = mxIgraphRealFromOptions(method_options, "density");
-  igraph_error_t errorcode;
+  igraph_real_t correlation =
+    mxIgraphRealFromOptions(method_options, "correlation");
+  igraph_real_t probability =
+    mxIgraphRealFromOptions(method_options, "density");
+  MXIGRAPH_CHECK_STATUS();
 
   igraph_t template;
   igraph_t result;
 
-  mxIgraphFromArray(prhs[0], &template, NULL, graph_options);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &template, NULL, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &template);
 
-  errorcode = igraph_correlated_game(&template, &result, correlation,
-                                     probability, NULL);
-
-  if (errorcode != IGRAPH_SUCCESS) {
-    return errorcode;
-  }
-
+  IGRAPH_CHECK(igraph_correlated_game(&template, &result, correlation,
+                                      probability, NULL));
   igraph_destroy(&template);
+  IGRAPH_FINALLY_CLEAN(1);
 
   plhs[0] = mxIgraphToArray(&result, NULL, graph_options);
   igraph_destroy(&result);
+  MXIGRAPH_CHECK_STATUS();
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }
 
 igraph_error_t mexIgraphGeneratePair(int nlhs, mxArray *plhs[], int nrhs,
@@ -66,22 +66,22 @@ igraph_error_t mexIgraphGeneratePair(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph1;
   igraph_t graph2;
   igraph_integer_t n_nodes = mxGetScalar(prhs[0]);
-  igraph_real_t correlation = mxIgraphRealFromOptions(method_options, "correlation");
-  igraph_real_t probability = mxIgraphIntegerFromOptions(method_options, "density");
+  igraph_real_t correlation =
+    mxIgraphRealFromOptions(method_options, "correlation");
+  igraph_real_t probability =
+    mxIgraphIntegerFromOptions(method_options, "density");
   igraph_bool_t directed = mxIgraphBoolFromOptions(graph_options, "directed");
-  igraph_error_t errorcode = IGRAPH_SUCCESS;
+  MXIGRAPH_CHECK_STATUS();
 
-  errorcode = igraph_correlated_pair_game(
-                &graph1, &graph2, n_nodes, correlation, probability, directed, NULL);
-
-  if (errorcode != IGRAPH_SUCCESS) {
-    return errorcode;
-  }
+  IGRAPH_CHECK(igraph_correlated_pair_game(
+                 &graph1, &graph2, n_nodes, correlation, probability, directed, NULL));
 
   plhs[0] = mxIgraphToArray(&graph1, NULL, graph_options);
   plhs[1] = mxIgraphToArray(&graph2, NULL, graph_options);
 
   igraph_destroy(&graph1);
   igraph_destroy(&graph2);
-  return errorcode;
+  MXIGRAPH_CHECK_STATUS();
+
+  return IGRAPH_SUCCESS;
 }

@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphModularity(int nlhs, mxArray *plhs[], int nrhs,
                                    mxArray const *prhs[])
@@ -31,20 +31,29 @@ igraph_error_t mexIgraphModularity(int nlhs, mxArray *plhs[], int nrhs,
   igraph_t graph;
   igraph_vector_t weights;
   igraph_vector_int_t membership;
-  igraph_real_t resolution = mxIgraphRealFromOptions(method_options, "resolution");
+  igraph_real_t resolution =
+    mxIgraphRealFromOptions(method_options, "resolution");
   igraph_bool_t directed = mxIgraphBoolFromOptions(graph_options, "isdirected");
   igraph_real_t modularity;
-  igraph_error_t errorcode = IGRAPH_SUCCESS;
+  MXIGRAPH_CHECK_STATUS();
 
-  mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);
-  mxIgraphVectorIntFromArray(prhs[1], &membership, MXIGRAPH_IDX_SHIFT);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph, &weights, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph);
+  IGRAPH_FINALLY(igraph_vector_destroy, &weights);
+  IGRAPH_CHECK(
+    mxIgraphVectorIntFromArray(prhs[1], &membership, MXIGRAPH_IDX_SHIFT));
+  IGRAPH_FINALLY(igraph_vector_int_destroy, &membership);
 
-  igraph_modularity(&graph, &membership, MXIGRAPH_WEIGHTS(&weights), resolution,
-                    directed, &modularity);
+  IGRAPH_CHECK(igraph_modularity(&graph, &membership,
+                                 MXIGRAPH_WEIGHTS(&weights), resolution,
+                                 directed, &modularity));
 
   plhs[0] = mxCreateDoubleScalar(modularity);
 
   igraph_vector_int_destroy(&membership);
   igraph_vector_destroy(&weights);
   igraph_destroy(&graph);
+  IGRAPH_FINALLY_CLEAN(3);
+
+  return IGRAPH_SUCCESS;
 }

@@ -66,7 +66,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   mexIgraph_funcname_t function_name;
   mexIgraphFunction_t function;
-  igraph_error_t error = IGRAPH_SUCCESS;
 
   const char *function_names[MXIGRAPH_FUNC_N] = {
     [MXIGRAPH_FUNC_CENTRALITY] = "centrality",
@@ -91,8 +90,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     [MXIGRAPH_FUNC_WRITE] = "save"
   };
 
-  MXIGRAPH_CHECK_METHOD((function_name = mxIgraphSelectMethod(
-      prhs[0], function_names, MXIGRAPH_FUNC_N)), prhs[0]);
+  function_name =
+    mxIgraphSelectMethod(prhs[0], function_names, MXIGRAPH_FUNC_N);
+  MXIGRAPH_CHECK_METHOD(function_name, prhs[0]);
 
   mexIgraphFunction_t function_table[MXIGRAPH_FUNC_N] = {
     [MXIGRAPH_FUNC_CENTRALITY] = mexIgraphCentrality,
@@ -124,5 +124,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   }
 
   // prhs[0] is function name, do not need to pass it on.
-  error = function(nlhs, plhs, nrhs - 1, prhs + 1);
+  igraph_error_t rs = function(nlhs, plhs, nrhs - 1, prhs + 1);
+  if (rs != IGRAPH_SUCCESS) {
+    IGRAPH_ERROR_NO_RETURN("", rs);
+  };
 }

@@ -35,7 +35,7 @@ classdef TestCompare < matlab.unittest.TestCase
         function testFailsForMatrices(testCase)
             actual = @() igraph.compare(...
                 [testCase.comm1; testCase.comm2], testCase.comm3);
-            testCase.verifyError(actual, "igraph:notVector");
+            testCase.verifyError(actual, "igraph:invalidValue");
         end
 
         function testHandlesDifferentVectorOrientation(testCase)

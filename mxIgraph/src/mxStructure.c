@@ -30,8 +30,9 @@ static igraph_integer_t mxIgraphVectorLength(const mxArray *p)
   mwSize m = mxGetM(p);
 
   if ((n != 1) && (m != 1)) {
-    mexErrMsgIdAndTxt("Igraph:NotVector",
-                      "Inputs should be a vector not a matrix");
+    mxIgraphSetError(IGRAPH_EINVAL);
+    mxIgraphSetErrorMsg("Expected a vector input not a matrix");
+    return 1;
   }
 
   return n > m ? n : m;
@@ -41,32 +42,30 @@ static igraph_integer_t mxIgraphVectorLength(const mxArray *p)
 
  The igraph vector should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec,
-                            igraph_bool_t const shift_start)
+igraph_error_t mxIgraphVectorFromArray(const mxArray *p, igraph_vector_t *vec,
+                                       igraph_bool_t const shift_start)
 {
   if (mxIgraphIsEmpty(p)) {
-    igraph_vector_init(vec, 0);
-    return EXIT_SUCCESS;
-  }
-
-  if (!mxIgraphIsVector(p)) {
-    mexErrMsgIdAndTxt("igraph:notVector", "Input should be a vector.");
+    IGRAPH_CHECK(igraph_vector_init(vec, 0));
+    return IGRAPH_SUCCESS;
   }
 
   if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("igraph:notDouble", "Input vector should be double.");
+    IGRAPH_ERROR("Expected a numeric vector.", IGRAPH_EINVAL);
   }
 
-  mxDouble *const x_mat = mxGetDoubles(p);
   igraph_integer_t const n = mxIgraphVectorLength(p);
+  MXIGRAPH_CHECK_STATUS();
+
+  mxDouble *const x_mat = mxGetDoubles(p);
   igraph_integer_t const shift = shift_start ? 1 : 0;
 
-  igraph_vector_init(vec, n);
+  IGRAPH_CHECK(igraph_vector_init(vec, n));
   for (igraph_integer_t i = 0; i < n; i++) {
     VECTOR(*vec)[i] = x_mat[i] - shift;
   }
 
-  return EXIT_SUCCESS;
+  return IGRAPH_SUCCESS;
 }
 
 /* Create a matlab vector from an igraph vector. */
@@ -89,32 +88,31 @@ mxArray *mxIgraphVectorToArray(igraph_vector_t const *vec,
 
  The igraph vector should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphVectorIntFromArray(const mxArray *p, igraph_vector_int_t *vec,
-                               igraph_bool_t const shift_start)
+igraph_error_t mxIgraphVectorIntFromArray(const mxArray *p,
+    igraph_vector_int_t *vec,
+    igraph_bool_t const shift_start)
 {
   if (mxIgraphIsEmpty(p)) {
-    igraph_vector_int_init(vec, 0);
-    return EXIT_SUCCESS;
-  }
-
-  if (!mxIgraphIsVector(p)) {
-    mexErrMsgIdAndTxt("igraph:notVector", "Input should be a vector.");
+    IGRAPH_CHECK(igraph_vector_int_init(vec, 0));
+    return IGRAPH_SUCCESS;
   }
 
   if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("igraph:notDouble", "Input vector should be double.");
+    IGRAPH_ERROR("Expected a numeric vector.", IGRAPH_EINVAL);
   }
+
+  igraph_integer_t const n = mxIgraphVectorLength(p);
+  MXIGRAPH_CHECK_STATUS();
 
   mxDouble *x_mat = mxGetDoubles(p);
   igraph_integer_t const shift = shift_start ? 1 : 0;
-  igraph_integer_t const n = mxIgraphVectorLength(p);
 
-  igraph_vector_int_init(vec, n);
+  IGRAPH_CHECK(igraph_vector_int_init(vec, n));
   for (igraph_integer_t i = 0; i < n; i++) {
     VECTOR(*vec)[i] = x_mat[i] - shift;
   }
 
-  return EXIT_SUCCESS;
+  return IGRAPH_SUCCESS;
 }
 
 /* Create a matlab vector from an igraph integer vector. */
@@ -137,27 +135,26 @@ mxArray *mxIgraphVectorIntToArray(igraph_vector_int_t const *vec,
 
  The igraph vector should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphVectorBoolFromArray(const mxArray *p, igraph_vector_bool_t *vec,
-                                igraph_bool_t const shift_start)
+igraph_error_t mxIgraphVectorBoolFromArray(const mxArray *p,
+    igraph_vector_bool_t *vec,
+    igraph_bool_t const shift_start)
 {
   if (mxIgraphIsEmpty(p)) {
-    igraph_vector_bool_init(vec, 0);
-    return EXIT_SUCCESS;
-  }
-
-  if (!mxIgraphIsVector(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotVector", "Input should be a vector.");
+    IGRAPH_CHECK(igraph_vector_bool_init(vec, 0));
+    return IGRAPH_SUCCESS;
   }
 
   if (!mxIsLogical(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input vector should be logical.");
+    IGRAPH_ERROR("Expected a logical vector.", IGRAPH_EINVAL);
   }
 
-  mxLogical *x_mat = mxGetLogicals(p);
   igraph_integer_t const n = mxIgraphVectorLength(p);
+  MXIGRAPH_CHECK_STATUS();
+
+  mxLogical *x_mat = mxGetLogicals(p);
   igraph_integer_t const shift = shift_start ? 1 : 0;
 
-  igraph_vector_bool_init(vec, n);
+  IGRAPH_CHECK(igraph_vector_bool_init(vec, n));
   for (igraph_integer_t i = 0; i < n; i++) {
     VECTOR(*vec)[i] = x_mat[i] - shift;
   }
@@ -185,16 +182,16 @@ mxArray *mxIgraphVectorBoolToArray(igraph_vector_bool_t const *vec,
 
  The igraph matrix should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat,
-                            igraph_bool_t const shift_start)
+igraph_error_t mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat,
+                                       igraph_bool_t const shift_start)
 {
   if (mxIgraphIsEmpty(p)) {
-    igraph_matrix_init(mat, 0, 0);
-    return EXIT_SUCCESS;
+    IGRAPH_CHECK(igraph_matrix_init(mat, 0, 0));
+    return IGRAPH_SUCCESS;
   }
 
   if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input matrix should be double.");
+    IGRAPH_ERROR("Expected a numeric matrix.", IGRAPH_EINVAL);
   }
 
   mxDouble *x_mat = mxGetDoubles(p);
@@ -202,14 +199,14 @@ int mxIgraphMatrixFromArray(const mxArray *p, igraph_matrix_t *mat,
   igraph_integer_t const n = mxGetN(p);
   igraph_integer_t const shift = shift_start ? 1 : 0;
 
-  igraph_matrix_init(mat, m, n);
+  IGRAPH_CHECK(igraph_matrix_init(mat, m, n));
   for (igraph_integer_t i = 0; i < m; i++) {
     for (igraph_integer_t j = 0; j < n; j++) {
       MATRIX(*mat, i, j) = x_mat[i + (j *m)] - shift;
     }
   }
 
-  return EXIT_SUCCESS;
+  return IGRAPH_SUCCESS;
 }
 
 /* Create a Matlab matrix from an igraph matrix. */
@@ -235,16 +232,17 @@ mxArray *mxIgraphMatrixToArray(igraph_matrix_t const *mat,
 
  The igraph matrix should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphMatrixIntFromArray(const mxArray *p, igraph_matrix_int_t *mat,
-                               igraph_bool_t const shift_start)
+igraph_error_t mxIgraphMatrixIntFromArray(const mxArray *p,
+    igraph_matrix_int_t *mat,
+    igraph_bool_t const shift_start)
 {
   if (mxIgraphIsEmpty(p)) {
-    igraph_matrix_int_init(mat, 0, 0);
-    return EXIT_SUCCESS;
+    IGRAPH_CHECK(igraph_matrix_int_init(mat, 0, 0));
+    return IGRAPH_SUCCESS;
   }
 
   if (!mxIsDouble(p)) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input matrix should be double.");
+    IGRAPH_ERROR("Expceted a numeric matrix.", IGRAPH_EINVAL);
   }
 
   mxDouble *x_mat = mxGetDoubles(p);
@@ -252,14 +250,14 @@ int mxIgraphMatrixIntFromArray(const mxArray *p, igraph_matrix_int_t *mat,
   igraph_integer_t const n = mxGetN(p);
   igraph_integer_t const shift = shift_start ? 1 : 0;
 
-  igraph_matrix_int_init(mat, m, n);
+  IGRAPH_CHECK(igraph_matrix_int_init(mat, m, n));
   for (igraph_integer_t i = 0; i < m; i++) {
     for (igraph_integer_t j = 0; j < n; j++) {
       MATRIX(*mat, i, j) = x_mat[i + (j *m)] - shift;
     }
   }
 
-  return EXIT_SUCCESS;
+  return IGRAPH_SUCCESS;
 }
 
 /* Create a Matlab matrix from an igraph integer matrix. */
@@ -285,29 +283,29 @@ mxArray *mxIgraphMatrixIntToArray(igraph_matrix_int_t const *mat,
 
  The igraph matrix should be uninitialized, but it's the callers responsibility
  to destroy it when done. */
-int mxIgraphMatrixBoolFromArray(const mxArray *p, igraph_matrix_bool_t *mat,
-                               igraph_bool_t const shift_start)
+igraph_error_t mxIgraphMatrixBoolFromArray(const mxArray *p,
+    igraph_matrix_bool_t *mat,
+    igraph_bool_t const shift_start)
 {
   if (mxIgraphIsEmpty(p)) {
-    igraph_matrix_bool_init(mat, 0, 0);
-    return EXIT_SUCCESS;
+    IGRAPH_CHECK(igraph_matrix_bool_init(mat, 0, 0));
+    return IGRAPH_SUCCESS;
   }
 
   if ((!mxIsDouble(p)) || (!mxIsLogical(p))) {
-    mexErrMsgIdAndTxt("Igraph:NotDouble", "Input matrix should be double.");
+    IGRAPH_ERROR("Expected a numeric or logical matrix.", IGRAPH_EINVAL);
   }
 
   igraph_integer_t const m = mxGetM(p);
   igraph_integer_t const n = mxGetN(p);
   igraph_integer_t const shift = shift_start ? 1 : 0;
 
-  igraph_matrix_bool_init(mat, m, n);
-
+  IGRAPH_CHECK(igraph_matrix_bool_init(mat, m, n));
   if (mxIsDouble(p)) {
     mxDouble *x_mat = mxGetDoubles(p);
     for (igraph_integer_t i = 0; i < m; i++) {
       for (igraph_integer_t j = 0; j < n; j++) {
-	MATRIX(*mat, i, j) = x_mat[i + (j *m)] - shift;
+        MATRIX(*mat, i, j) = x_mat[i + (j *m)] - shift;
       }
     }
 
@@ -315,12 +313,12 @@ int mxIgraphMatrixBoolFromArray(const mxArray *p, igraph_matrix_bool_t *mat,
     mxLogical *x_mat = mxGetLogicals(p);
     for (igraph_integer_t i = 0; i < m; i++) {
       for (igraph_integer_t j = 0; j < n; j++) {
-	MATRIX(*mat, i, j) = x_mat[i + (j *m)] - shift;
+        MATRIX(*mat, i, j) = x_mat[i + (j *m)] - shift;
       }
     }
   }
 
-  return EXIT_SUCCESS;
+  return IGRAPH_SUCCESS;
 }
 
 /* Create a Matlab matrix from an igraph integer matrix. */

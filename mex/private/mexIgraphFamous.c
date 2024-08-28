@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphFamous(int nlhs, mxArray *plhs[], int nrhs,
                                mxArray const *prhs[])
@@ -28,14 +28,12 @@ igraph_error_t mexIgraphFamous(int nlhs, mxArray *plhs[], int nrhs,
   char *name = mxArrayToString(prhs[0]);
   mxArray const *graph_options = prhs[1];
   igraph_t graph;
-  igraph_error_t errorcode;
 
-  if ((errorcode = igraph_famous(&graph, name)) != IGRAPH_SUCCESS) {
-    return errorcode;
-  };
+  IGRAPH_CHECK(igraph_famous(&graph, name));
 
   plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
   igraph_destroy(&graph);
+  MXIGRAPH_CHECK_STATUS();
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }

@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphIsTree(int nlhs, mxArray *plhs[], int nrhs,
                                mxArray const *prhs[])
@@ -28,22 +28,24 @@ igraph_error_t mexIgraphIsTree(int nlhs, mxArray *plhs[], int nrhs,
   mxArray const *opts = prhs[1];
   igraph_t graph;
   igraph_neimode_t mode = mxIgraphModeFromOptions(opts);
-  igraph_integer_t root;
   igraph_bool_t find_root = mxIgraphBoolFromOptions(opts, "findRoot");
+  MXIGRAPH_CHECK_STATUS();
+  igraph_integer_t root;
   igraph_bool_t flag;
-  igraph_error_t errorcode = IGRAPH_SUCCESS;
 
-  mxIgraphFromArray(prhs[0], &graph, NULL, opts);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph, NULL, opts));
+  IGRAPH_FINALLY(igraph_destroy, &graph);
 
   if (find_root) {
-    igraph_is_tree(&graph, &flag, &root, mode);
+    IGRAPH_CHECK(igraph_is_tree(&graph, &flag, &root, mode));
     plhs[0] = mxCreateDoubleScalar(flag ? root + 1 : 0);
   } else {
-    igraph_is_tree(&graph, &flag, NULL, mode);
+    IGRAPH_CHECK(igraph_is_tree(&graph, &flag, NULL, mode));
     plhs[0] = mxCreateLogicalScalar(flag);
   }
 
   igraph_destroy(&graph);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }

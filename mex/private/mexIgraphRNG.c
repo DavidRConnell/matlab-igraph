@@ -41,7 +41,6 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
   igraph_integer_t const seed = mxGetScalar(prhs[0]);
   mxArray const *generator_name = prhs[1];
   igraph_integer_t generator;
-  igraph_error_t errcode = IGRAPH_SUCCESS;
 
   const char *generators[MXIGRAPH_GENERATOR_N] = {
     [MXIGRAPH_GENERATOR_MATLAB] = "matlab",
@@ -60,26 +59,26 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
 
   if (generator >= 0) {
     mxIgraph_rng_current_generator = generators[generator];
+  } else {
+    // Clear error since generator name is allowed to not be in list.
+    mxIgraphSetError(IGRAPH_SUCCESS);
+    mxIgraphSetErrorMsg("");
   }
   plhs[0] = mxCreateString(mxIgraph_rng_current_generator);
 
   switch (generator) {
   case MXIGRAPH_GENERATOR_MT19937:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_mt19937);
+    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_mt19937));
     break;
   case MXIGRAPH_GENERATOR_GLIBC2:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_glibc2);
+    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_glibc2));
     break;
   case MXIGRAPH_GENERATOR_PCG32:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg32);
+    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg32));
     break;
   case MXIGRAPH_GENERATOR_PCG64:
-    errcode = igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg64);
+    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg64));
     break;
-  }
-
-  if (errcode != IGRAPH_SUCCESS) {
-    IGRAPH_ERROR("Failed to initialize random number generator.", errcode);
   }
 
   if (generator == MXIGRAPH_GENERATOR_MATLAB) {
@@ -93,11 +92,7 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
     return IGRAPH_SUCCESS;
   }
 
-  errcode = igraph_rng_seed(igraph_rng_default(), seed);
-
-  if (errcode != IGRAPH_SUCCESS) {
-    IGRAPH_ERROR("Failed to seed random numeber generator.", errcode);
-  }
+  IGRAPH_CHECK(igraph_rng_seed(igraph_rng_default(), seed));
 
   return IGRAPH_SUCCESS;
 }

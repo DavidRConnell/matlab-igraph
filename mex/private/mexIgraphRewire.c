@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
                                mxArray const *prhs[])
@@ -37,21 +37,24 @@ igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
     mxIgraphIntegerFromOptions(method_options, "nRewires");
   igraph_neimode_t const mode = mxIgraphModeFromOptions(method_options);
   igraph_bool_t const loops = mxIgraphBoolFromOptions(method_options, "loops");
-  igraph_error_t errorcode = IGRAPH_SUCCESS;
+  MXIGRAPH_CHECK_STATUS();
 
-  mxIgraphFromArray(prhs[0], &graph, NULL, graph_options);
+  IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph, NULL, graph_options));
+  IGRAPH_FINALLY(igraph_destroy, &graph);
 
   if (preserve_degree) {
-    errorcode = igraph_rewire(&graph, n_rewires,
-                              loops ? IGRAPH_REWIRING_SIMPLE_LOOPS
-                              : IGRAPH_REWIRING_SIMPLE);
+    IGRAPH_CHECK(igraph_rewire(&graph, n_rewires,
+                               loops ? IGRAPH_REWIRING_SIMPLE_LOOPS
+                               : IGRAPH_REWIRING_SIMPLE));
   } else {
-    errorcode = igraph_rewire_directed_edges(&graph, probability, loops, mode);
+    IGRAPH_CHECK(
+      igraph_rewire_directed_edges(&graph, probability, loops, mode));
   }
 
   plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
 
   igraph_destroy(&graph);
+  IGRAPH_FINALLY_CLEAN(1);
 
-  return errorcode;
+  return IGRAPH_SUCCESS;
 }

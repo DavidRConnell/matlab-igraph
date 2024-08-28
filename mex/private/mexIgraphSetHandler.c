@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
                                    int nrhs,
@@ -43,6 +43,7 @@ igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
   };
 
   type = mxIgraphSelectMethod(prhs[0], handlers, MXIGRAPH_HANDLER_N);
+  MXIGRAPH_CHECK_METHOD(type, prhs[0]);
 
   switch (type) {
   case MXIGRAPH_HANDLER_WARNING:
@@ -67,7 +68,7 @@ igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
     }
     break;
   default:
-    IGRAPH_FATAL("Got unexpected handler type.");
+    IGRAPH_FATAL("Got an unexpected handler type.");
   };
 
   return IGRAPH_SUCCESS;
