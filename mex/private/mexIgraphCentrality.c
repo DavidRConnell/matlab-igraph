@@ -98,16 +98,12 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
       igraph_constraint(&graph, &res, vids, MXIGRAPH_WEIGHTS(&weights));
     break;
   case MXIGRAPH_CENTRALITY_EIGENVECTOR:
-    mxIgraphErrorNotImplemented("Centrality", "eigenvector");
-    /*   errorcode = igraph_eigenvector_centrality(&graph, &res, NULL, directed,
-     */
-    /*               normalized, MXIGRAPH_WEIGHTS(&weights), NULL); */
+    IGRAPH_ERROR("Centrality not implemented", IGRAPH_UNIMPLEMENTED);
+      /* errorcode = igraph_eigenvector_centrality(&graph, &res, NULL, directed, */
+      /*             normalized, MXIGRAPH_WEIGHTS(&weights), NULL); */
     break;
   default:
-    mexErrMsgIdAndTxt("Igraph:internal:unknownMethod",
-                      "Centrality method %s not known.",
-                      mxArrayToString(prhs[0]));
-    exit(1);
+    IGRAPH_FATAL("Got unexpected method name.");
   }
 
   igraph_vs_destroy(&vids);

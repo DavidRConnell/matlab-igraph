@@ -172,7 +172,8 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const *graph,
   igraph_real_t beta = mxIgraphRealFromOptions(opts, "randomness");
   igraph_vector_t node_weights;
   igraph_vector_t *node_weights_ptr = NULL;
-  igraph_integer_t n_iterations = mxIgraphIntegerFromOptions(opts, "nIterations");
+  igraph_integer_t n_iterations = mxIgraphIntegerFromOptions(opts,
+                                  "nIterations");
   igraph_bool_t use_modularity =
     strcmp(mxIgraphStringFromOptions(opts, "metric"), "modularity") == 0;
   igraph_vector_int_t init;
@@ -206,7 +207,8 @@ static igraph_error_t mxIgraph_fluid_communities_i(
   igraph_t const *graph, igraph_vector_t const *UNUSED(weights),
   mxArray const *opts, igraph_vector_int_t *membership)
 {
-  igraph_integer_t n_communities = mxIgraphIntegerFromOptions(opts, "nCommunities");
+  igraph_integer_t n_communities = mxIgraphIntegerFromOptions(opts,
+                                   "nCommunities");
   igraph_error_t errcode;
 
   errcode =
@@ -289,12 +291,9 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
     [MXIGRAPH_CLUSTER_INFOMAP] = "infomap",
   };
 
-  method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_CLUSTER_N);
-
-  if (method == MXIGRAPH_CLUSTER_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[1]));
-    exit(1);
-  }
+  MXIGRAPH_CHECK_METHOD(
+    (method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_CLUSTER_N)),
+    prhs[1]);
 
   cluster_method_t method_table[MXIGRAPH_CLUSTER_N] = {
     [MXIGRAPH_CLUSTER_OPTIMAL] = mxIgraph_optimal_i,
@@ -313,8 +312,8 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
   cluster_method = method_table[method];
 
   if (!cluster_method) {
-    mxIgraphErrorNotImplemented("Generate", mxArrayToString(prhs[1]));
-    exit(1);
+    IGRAPH_ERRORF("Cluster method, %s, not implemented.", IGRAPH_UNIMPLEMENTED,
+                  mxArrayToString(prhs[1]));
   }
 
   mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);

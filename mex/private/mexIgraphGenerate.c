@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 typedef enum {
   MXIGRAPH_GENERATOR_STAR = 0,
@@ -57,9 +57,10 @@ static igraph_error_t mxIgraph_star_i(mxArray const *opts, igraph_t *graph)
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), modes, n_modes);
   igraph_integer_t center = mxIgraphIntegerFromOptions(opts, "center");
 
-  if (mode == n_modes) {
-    mexErrMsgIdAndTxt("Igraph:unknownMode", "Unknown mode passed to star.");
+  if (mode == -1) {
+    IGRAPH_ERROR("Invalid mode.", IGRAPH_EINVMODE);
   }
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_star(graph, n_nodes, mode, center);
 }
@@ -77,9 +78,10 @@ static igraph_error_t mxIgraph_wheel_i(mxArray const *opts, igraph_t *graph)
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), modes, n_modes);
   igraph_integer_t center = mxIgraphIntegerFromOptions(opts, "center");
 
-  if (mode == n_modes) {
-    mexErrMsgIdAndTxt("Igraph:unknownMode", "Unknown mode passed to wheel.");
+  if (mode == -1) {
+    IGRAPH_ERROR("Invalid mode.", IGRAPH_EINVMODE);
   }
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_wheel(graph, n_nodes, mode, center);
 }
@@ -90,6 +92,7 @@ static igraph_error_t mxIgraph_ring_i(mxArray const *opts, igraph_t *graph)
   igraph_bool_t is_directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_bool_t is_mutual = mxIgraphBoolFromOptions(opts, "ismutual");
   igraph_bool_t is_circular = mxIgraphBoolFromOptions(opts, "iscircular");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_ring(graph, n_nodes, is_directed, is_mutual, is_circular);
 }
@@ -107,10 +110,10 @@ static igraph_error_t mxIgraph_kary_tree_i(mxArray const *opts,
   igraph_tree_mode_t type =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), types, n_types);
 
-  if (type == n_types) {
-    mexErrMsgIdAndTxt("Igraph:unknownMode",
-                      "Unknown mode passed to kary tree.");
+  if (type == -1) {
+    IGRAPH_ERROR("Unknown tree mode.", IGRAPH_EINVMODE);
   }
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_kary_tree(graph, n_nodes, children, type);
 }
@@ -128,10 +131,10 @@ static igraph_error_t mxIgraph_regular_tree_i(mxArray const *opts,
   igraph_tree_mode_t type =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), types, n_types);
 
-  if (type == n_types) {
-    mexErrMsgIdAndTxt("Igraph:unknownMode",
-                      "Unknown mode passed to regular tree.");
+  if (type == -1) {
+    IGRAPH_ERROR("Unknown tree mode.", IGRAPH_EINVMODE);
   }
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_regular_tree(graph, height, degree, type);
 }
@@ -141,6 +144,7 @@ static igraph_error_t mxIgraph_full_i(mxArray const *opts, igraph_t *graph)
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t is_directed = mxIgraphIntegerFromOptions(opts, "isdirected");
   igraph_bool_t loops = mxIgraphIntegerFromOptions(opts, "loops");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_full(graph, n_nodes, is_directed, loops);
 }
@@ -150,6 +154,7 @@ static igraph_error_t mxIgraph_citation_i(mxArray const *opts,
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t is_directed = mxIgraphIntegerFromOptions(opts, "isdirected");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_full_citation(graph, n_nodes, is_directed);
 }
@@ -170,6 +175,7 @@ static igraph_error_t mxIgraph_prufer_i(mxArray const *opts, igraph_t *graph)
 static igraph_error_t mxIgraph_atlas_i(mxArray const *opts, igraph_t *graph)
 {
   igraph_integer_t atlas_id = mxIgraphIntegerFromOptions(opts, "atlasId");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_atlas(graph, atlas_id);
 }
@@ -179,6 +185,7 @@ static igraph_error_t mxIgraph_de_bruijn_i(mxArray const *opts,
 {
   igraph_integer_t n_letters = mxIgraphIntegerFromOptions(opts, "nLetters");
   igraph_integer_t str_len = mxIgraphIntegerFromOptions(opts, "stringLength");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_de_bruijn(graph, n_letters, str_len);
 }
@@ -187,6 +194,7 @@ static igraph_error_t mxIgraph_kautz_i(mxArray const *opts, igraph_t *graph)
 {
   igraph_integer_t n_letters = mxIgraphIntegerFromOptions(opts, "nLetters");
   igraph_integer_t str_len = mxIgraphIntegerFromOptions(opts, "stringLength");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_kautz(graph, n_letters, str_len);
 }
@@ -197,6 +205,7 @@ static igraph_error_t mxIgraph_circulant_i(mxArray const *opts,
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_vector_int_t shifts;
   igraph_bool_t is_directed = mxIgraphBoolFromOptions(opts, "isdirected");
+  MXIGRAPH_CHECK_STATUS();
   igraph_error_t errcode;
 
   mxIgraphVectorIntFromOptions(opts, "shifts", &shifts, false);
@@ -212,6 +221,7 @@ static igraph_error_t mxIgraph_petersen_i(mxArray const *opts,
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t shift = mxIgraphIntegerFromOptions(opts, "shift");
+  MXIGRAPH_CHECK_STATUS();
 
   return igraph_generalized_petersen(graph, n_nodes, shift);
 }
@@ -254,12 +264,9 @@ igraph_error_t mexIgraphGenerate(int nlhs, mxArray *plhs[], int nrhs,
     [MXIGRAPH_GENERATOR_CHORDAL_RING] = "chordalring"
   };
 
-  method = mxIgraphSelectMethod(prhs[0], generators, MXIGRAPH_GENERATOR_N);
-
-  if (method == MXIGRAPH_GENERATOR_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[0]));
-    exit(1);
-  }
+  MXIGRAPH_CHECK_METHOD((method = mxIgraphSelectMethod(prhs[0], generators,
+                                  MXIGRAPH_GENERATOR_N)),
+                        prhs[0]);
 
   generator_method_t method_table[MXIGRAPH_GENERATOR_N] = {
     [MXIGRAPH_GENERATOR_STAR] = mxIgraph_star_i,
@@ -278,10 +285,9 @@ igraph_error_t mexIgraphGenerate(int nlhs, mxArray *plhs[], int nrhs,
   };
 
   generator_method = method_table[method];
-
   if (!generator_method) {
-    mxIgraphErrorNotImplemented("Generate", mxArrayToString(prhs[0]));
-    exit(1);
+    IGRAPH_ERRORF("Generator method %s not implemented.", IGRAPH_UNIMPLEMENTED,
+                  mxArrayToString(prhs[0]));
   }
 
   generator_method(method_options, &graph);

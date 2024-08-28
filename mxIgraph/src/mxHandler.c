@@ -16,17 +16,66 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
 #include <mxIgraph.h>
+
+/* mxErrId
+ * \brief MATLAB error ID for igraph errors.
+ * Named error IDs for select igraph errors to be added to the error call.
+ *
+ * WARNING: IGRAPH_ENOSOL is last error. This could change.
+ */
+static char *const mxErrId[IGRAPH_ENOSOL + 1] = {
+  [IGRAPH_ENOMEM] = "outOfMemory",
+  [IGRAPH_PARSEERROR] = "parseError",
+  [IGRAPH_EINVAL] = "invalidValue",
+  [IGRAPH_EXISTS] = "attributeAlreadyExists",
+  [IGRAPH_EINVEVECTOR] = "invalidVertixVector",
+  [IGRAPH_EINVVID] = "invalidVertixId",
+  [IGRAPH_NONSQUARE] = "notSquare",
+  [IGRAPH_EINVMODE] = "invalidMode",
+  [IGRAPH_EFILE] = "fileError",
+  [IGRAPH_UNIMPLEMENTED] = "notImplemented",
+  [IGRAPH_DIVERGED] = "failedToConverge",
+  [IGRAPH_EDIVZERO] = "divideByZero",
+  [IGRAPH_EOVERFLOW] = "overflow",
+  [IGRAPH_CPUTIME] = "exceededMaxTime",
+  [IGRAPH_EUNDERFLOW] = "underflow",
+  [IGRAPH_ERANGE] = "outOfRange",
+};
+
+static size_t mxIgraphBaseName_i(const char *fpath)
+{
+  size_t pos = strlen(fpath);
+  while (fpath[--pos] != '/');
+  return pos + 1;
+}
 
 void mxIgraphErrorHandlerMex(const char *reason, const char *file, int line,
                              igraph_error_t igraph_errno)
 {
   const char *errmsg = igraph_strerror(igraph_errno);
-  /* May be an issue in multi-threaded code when a different thread tries to
-  call a freed object before the current thread can send the error. */
+  const igraph_bool_t reason_given = strlen(reason) > 0;
+  const char *fname = file + mxIgraphBaseName_i(file);
+  char const *id = mxErrId[igraph_errno] ? mxErrId[igraph_errno] : "internal";
+  char fullid[512] = "igraph:\0";
+
+  strncat(fullid, id, sizeof(fullid) - 1);
+
   IGRAPH_FINALLY_FREE();
-  mexErrMsgIdAndTxt("Igraph:internal", "%s: %s\n\n%s -- %d\n", errmsg, reason,
-                    file, line);
+  mexErrMsgIdAndTxt(fullid, "\n%s In %s (line %d)%s%s", errmsg, fname, line,
+                    reason_given ? "\n    " : "", reason);
+}
+
+void mxIgraphFatelHandlerMex(const char *reason, const char *file, int line)
+{
+  IGRAPH_FINALLY_FREE();
+  mexErrMsgIdAndTxt("igraph:internal",
+                    "\n%s\n\nFatal error In %s (line %d)\n    %s %s %s",
+                    reason, file + mxIgraphBaseName_i(file), line,
+                    "Process terminated due to a fatal error.",
+                    "This is likely a bug.",
+                    "Please open an issue on github with the steps needed to reproduce the error.");
 }
 
 void mxIgraphWarningHandlerMex(const char *reason, const char *file,
@@ -34,8 +83,9 @@ void mxIgraphWarningHandlerMex(const char *reason, const char *file,
 {
   int strmax = 512;
   char msg[strmax];
+  char const *fname = file + mxIgraphBaseName_i(file);
 
-  snprintf(msg, strmax - 1, "%s\n\n> In %s (line %d)\n", reason, file, line);
+  snprintf(msg, strmax - 1, "%s\n\nIn %s (line %d)", reason, fname, line);
   mexWarnMsgTxt(msg);
 }
 

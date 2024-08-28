@@ -16,9 +16,9 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
+#include <string.h>
 
 typedef enum {
   MXIGRAPH_LAYOUT_RANDOM = 0,
@@ -122,11 +122,13 @@ static igraph_error_t mxIgraph_graphopt_i(igraph_t const *graph,
     igraph_vector_t const *UNUSED(weights), mxArray const *opts,
     igraph_matrix_t *pos)
 {
-  igraph_integer_t n_iterations = mxIgraphIntegerFromOptions(opts, "nIterations");
+  igraph_integer_t n_iterations =
+    mxIgraphIntegerFromOptions(opts, "nIterations");
   igraph_real_t node_charge = mxIgraphRealFromOptions(opts, "charge");
   igraph_real_t node_mass = mxIgraphRealFromOptions(opts, "mass");
   igraph_real_t spring_length = mxIgraphRealFromOptions(opts, "springLength");
-  igraph_real_t spring_constant = mxIgraphRealFromOptions(opts, "springConstant");
+  igraph_real_t spring_constant =
+    mxIgraphRealFromOptions(opts, "springConstant");
   igraph_real_t max_sa_movement = mxIgraphRealFromOptions(opts, "stepMax");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
 
@@ -218,12 +220,15 @@ static igraph_error_t mxIgraph_davidson_harel_i(igraph_t const *graph,
     mxArray const *opts, igraph_matrix_t *pos)
 {
   igraph_integer_t max_iter = mxIgraphIntegerFromOptions(opts, "maxIterations");
-  igraph_integer_t fine_iter = mxIgraphIntegerFromOptions(opts, "fineIterations");
+  igraph_integer_t fine_iter =
+    mxIgraphIntegerFromOptions(opts, "fineIterations");
   igraph_real_t cool_factor = mxIgraphRealFromOptions(opts, "coolingFactor");
   igraph_bool_t use_seed = set_pos_i(opts, pos);
-  igraph_real_t weight_node_dist = mxIgraphRealFromOptions(opts, "weightNodeDist");
+  igraph_real_t weight_node_dist =
+    mxIgraphRealFromOptions(opts, "weightNodeDist");
   igraph_real_t weight_border = mxIgraphRealFromOptions(opts, "weightBorder");
-  igraph_real_t weight_edge_lengths = mxIgraphRealFromOptions(opts, "weightEdgeLen");
+  igraph_real_t weight_edge_lengths =
+    mxIgraphRealFromOptions(opts, "weightEdgeLen");
   igraph_real_t weight_edge_crossings =
     mxIgraphRealFromOptions(opts, "weightEdgeCross");
   igraph_real_t weight_node_edge_dist =
@@ -341,12 +346,9 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray *plhs[], int nrhs,
     [MXIGRAPH_LAYOUT_REINGOLDTILFORDCIRCULAR] = "reingoldtilfordcircular",
   };
 
-  method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_LAYOUT_N);
-
-  if (method == MXIGRAPH_LAYOUT_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[1]));
-    exit(1);
-  }
+  MXIGRAPH_CHECK_METHOD(
+    (method = mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_LAYOUT_N)),
+    prhs[1]);
 
   layout_method_t method_table[MXIGRAPH_LAYOUT_N] = {
     [MXIGRAPH_LAYOUT_RANDOM] = mxIgraph_random_i,
@@ -369,8 +371,8 @@ igraph_error_t mexIgraphLayout(int nlhs, mxArray *plhs[], int nrhs,
   layout_method = method_table[method];
 
   if (!layout_method) {
-    mxIgraphErrorNotImplemented("Layout", mxArrayToString(prhs[1]));
-    exit(1);
+    IGRAPH_ERRORF("Layout method, %s, not implemented.", IGRAPH_UNIMPLEMENTED,
+                  mxArrayToString(prhs[1]));
   }
 
   mxIgraphFromArray(prhs[0], &graph, &weights, graph_options);

@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "mexIgraphFunctions.h"
+#include <mxIgraph.h>
 
 static igraph_bool_t setup_ran = false;
 
@@ -56,6 +56,7 @@ static void mexIgraphSetupHook()
     igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
     igraph_set_status_handler(mxIgraphStatusHandlerIgnoreMex);
     igraph_set_interruption_handler(mxIgraphInterruptionHandlerMex);
+    igraph_set_fatal_handler(mxIgraphFatelHandlerMex);
   }
 }
 
@@ -90,12 +91,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     [MXIGRAPH_FUNC_WRITE] = "save"
   };
 
-  function_name =
-    mxIgraphSelectMethod(prhs[0], function_names, MXIGRAPH_FUNC_N);
-  if (function_name == MXIGRAPH_FUNC_N) {
-    mxIgraphErrorUnknownMethod("Dispatcher", mxArrayToString(prhs[0]));
-    exit(1);
-  }
+  MXIGRAPH_CHECK_METHOD((function_name = mxIgraphSelectMethod(
+      prhs[0], function_names, MXIGRAPH_FUNC_N)), prhs[0]);
 
   mexIgraphFunction_t function_table[MXIGRAPH_FUNC_N] = {
     [MXIGRAPH_FUNC_CENTRALITY] = mexIgraphCentrality,
@@ -123,8 +120,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   function = function_table[function_name];
 
   if (!function) {
-    mxIgraphErrorNotImplemented("Function", mxArrayToString(prhs[0]));
-    exit(1);
+    IGRAPH_ERROR_NO_RETURN("Function not implemented", IGRAPH_UNIMPLEMENTED);
   }
 
   // prhs[0] is function name, do not need to pass it on.

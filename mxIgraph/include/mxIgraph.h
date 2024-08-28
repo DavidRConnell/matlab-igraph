@@ -21,14 +21,14 @@
 
 #include <mex.h>
 #if defined(__GNUC__)
-#  undef printf
-#  define printf(...) __attribute__((format(mexPrintf, ...)))
+#undef printf
+#define printf(...) __attribute__((format(mexPrintf, ...)))
 #endif
 
 #ifdef __cplusplus
-#  define EXTERNC extern "C"
+#define EXTERNC extern "C"
 #else
-#  define EXTERNC
+#define EXTERNC
 #endif
 
 #include <igraph.h>
@@ -77,13 +77,25 @@ igraph_progress_handler_t mxIgraphProgressHandlerIgnoreMex;
 igraph_status_handler_t mxIgraphStatusHandlerMex;
 igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
 igraph_interruption_handler_t mxIgraphInterruptionHandlerMex;
-
-/* random */
-EXTERNC void mxIgraphSetRNG(void);
+igraph_fatal_handler_t mxIgraphFatelHandlerMex;
 
 // mxError
-void mxIgraphErrorNotImplemented(const char *caller, const char *method);
-void mxIgraphErrorUnknownMethod(const char *caller, const char *method);
+void mxIgraphSetError(igraph_error_t new_code);
+igraph_error_t mxIgraphGetError(void);
+void mxIgraphSetErrorMsg(char const *msg, ...);
+char *mxIgraphGetErrorMsg(void);
+
+#define MXIGRAPH_CHECK_STATUS()                                                \
+  do {                                                                         \
+    igraph_error_t code = mxIgraphGetError();                                  \
+    if (code != IGRAPH_SUCCESS) {                                              \
+      char const *reason = mxIgraphGetErrorMsg();                              \
+      IGRAPH_ERROR(reason, code);                                              \
+    }                                                                          \
+  } while (0)
+
+// mxRandom
+EXTERNC void mxIgraphSetRNG(void);
 
 // mxPredicate
 igraph_bool_t mxIgraphIsSquare(const mxArray *p);
@@ -148,6 +160,15 @@ void mxIgraphPrintGraph(const igraph_t *graph,
                         const igraph_vector_t *weights);
 
 // mxArgumentParsers
+#define MXIGRAPH_CHECK_METHOD(expr, name_ptr)                                  \
+  do {                                                                         \
+    igraph_integer_t res = (expr);                                             \
+    if (res == -1) {                                                           \
+      IGRAPH_FATALF("Recieved unexpected method name, %s.",                    \
+                    mxArrayToString(name_ptr));                                \
+    }                                                                          \
+  } while (0)
+
 igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
                                       const igraph_integer_t n_methods);
 mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p);
@@ -169,8 +190,7 @@ char *mxIgraphStringFromOptions(const mxArray *arg_struct,
                                 char const fieldname[1]);
 
 void mxIgraphVectorFromOptions(const mxArray *arg_struct,
-                               char const fieldname[1],
-                               igraph_vector_t *vec,
+                               char const fieldname[1], igraph_vector_t *vec,
                                igraph_bool_t const shift_start);
 void mxIgraphVectorIntFromOptions(const mxArray *arg_struct,
                                   char const fieldname[1],
@@ -182,8 +202,7 @@ void mxIgraphVectorBoolFromOptions(const mxArray *arg_struct,
                                    igraph_bool_t const shift_start);
 
 void mxIgraphMatrixFromOptions(const mxArray *arg_struct,
-                               char const fieldname[1],
-                               igraph_matrix_t *mat,
+                               char const fieldname[1], igraph_matrix_t *mat,
                                igraph_bool_t const shift_start);
 void mxIgraphMatrixIntFromOptions(const mxArray *arg_struct,
                                   char const fieldname[1],

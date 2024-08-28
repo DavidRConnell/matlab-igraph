@@ -16,9 +16,9 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
+#include <string.h>
 
 enum {
   MXIGRAPH_GENERATOR_MATLAB = 0,
@@ -53,13 +53,12 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
 
   /* When a generator name is not passed to the MATLAB calling function, the
      string in generator_name will not be one of the known generators in the
-     above generator table, leading to the variable generator being set to
-     MXIGRAPH_GENERATOR_N. In this case, the default rng is not set but is
-     still seeded. */
+     above generator table, leading to the variable generator being set to -1.
+     In this case, the default rng is not set but is still seeded. */
   generator =
     mxIgraphSelectMethod(generator_name, generators, MXIGRAPH_GENERATOR_N);
 
-  if (generator < MXIGRAPH_GENERATOR_N) {
+  if (generator >= 0) {
     mxIgraph_rng_current_generator = generators[generator];
   }
   plhs[0] = mxCreateString(mxIgraph_rng_current_generator);
@@ -80,27 +79,25 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
   }
 
   if (errcode != IGRAPH_SUCCESS) {
-    mexErrMsgIdAndTxt("igraph:internal:incorrectRandomGenerator",
-                      "Failed to initialize a new RNG.");
+    IGRAPH_ERROR("Failed to initialize random number generator.", errcode);
   }
 
   if (generator == MXIGRAPH_GENERATOR_MATLAB) {
     mxIgraphSetRNG();
     /* MATLAB RNG should only be seeded using the MATLAB rng function, so
     return before seeding. */
-    return errcode;
-  } else if (generator < MXIGRAPH_GENERATOR_N) {
+    return IGRAPH_SUCCESS;
+  } else if (generator >= 0) {
     igraph_rng_set_default(&mxIgraph_rng);
   } else if (strcmp(mxIgraph_rng_current_generator, "matlab") == 0) {
-    return errcode;
+    return IGRAPH_SUCCESS;
   }
 
   errcode = igraph_rng_seed(igraph_rng_default(), seed);
 
   if (errcode != IGRAPH_SUCCESS) {
-    mexErrMsgIdAndTxt("igraph:internal:improperSeed",
-                      "Failed to seed the RNG.");
+    IGRAPH_ERROR("Failed to seed random numeber generator.", errcode);
   }
 
-  return errcode;
+  return IGRAPH_SUCCESS;
 }

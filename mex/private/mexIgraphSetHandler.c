@@ -67,7 +67,7 @@ igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
     }
     break;
   default:
-    mxIgraphErrorNotImplemented("Handler", mxArrayToString(prhs[0]));
+    IGRAPH_FATAL("Got unexpected handler type.");
   };
 
   return IGRAPH_SUCCESS;

@@ -16,8 +16,8 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mxIgraph.h>
 #include "utils.h"
+#include <mxIgraph.h>
 
 typedef enum {
   MXIGRAPH_GAME_GRG = 0,
@@ -69,28 +69,28 @@ static igraph_error_t mxIgraph_grg_i(mxArray const *opts, igraph_t *graph)
 }
 
 #define BARABASI_BODY(algo)                                                    \
-  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");               \
-  igraph_real_t power = mxIgraphRealFromOptions(opts, "power");                        \
+  igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");       \
+  igraph_real_t power = mxIgraphRealFromOptions(opts, "power");                \
   igraph_integer_t m = 0;                                                      \
   igraph_vector_int_t outseq;                                                  \
   igraph_vector_int_t *outseq_ptr = NULL;                                      \
-  igraph_bool_t outpref = mxIgraphBoolFromOptions(opts, "outPreference");              \
-  igraph_real_t A = mxIgraphRealFromOptions(opts, "attractiveness");                   \
-  igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");                \
+  igraph_bool_t outpref = mxIgraphBoolFromOptions(opts, "outPreference");      \
+  igraph_real_t A = mxIgraphRealFromOptions(opts, "attractiveness");           \
+  igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");        \
   mxArray *start_argument = mxIgraphGetArgument(opts, "startFrom");            \
   igraph_t start_from;                                                         \
   igraph_t *start_from_ptr = NULL;                                             \
   igraph_error_t errcode;                                                      \
                                                                                \
   if (mxIsScalar(mxIgraphGetArgument(opts, "nConnections"))) {                 \
-    m = mxIgraphIntegerFromOptions(opts, "nConnections");                              \
+    m = mxIgraphIntegerFromOptions(opts, "nConnections");                      \
   } else {                                                                     \
-    mxIgraphVectorIntFromOptions(opts, "nConnections", &outseq, false);                \
+    mxIgraphVectorIntFromOptions(opts, "nConnections", &outseq, false);        \
     outseq_ptr = &outseq;                                                      \
   }                                                                            \
                                                                                \
   if (!mxIsEmpty(start_argument)) {                                            \
-    mxIgraphFromArray(start_argument, &start_from, NULL, opts);                 \
+    mxIgraphFromArray(start_argument, &start_from, NULL, opts);                \
   }                                                                            \
                                                                                \
   errcode =                                                                    \
@@ -170,8 +170,8 @@ static igraph_error_t mxIgraph_watts_strogatz_i(mxArray const *opts,
   igraph_vector_int_t inDegree;                                                \
   igraph_error_t errcode;                                                      \
                                                                                \
-  mxIgraphVectorIntFromOptions(opts, "outDegree", &outDegree, false);                  \
-  mxIgraphVectorIntFromOptions(opts, "inDegree", &inDegree, false);                    \
+  mxIgraphVectorIntFromOptions(opts, "outDegree", &outDegree, false);          \
+  mxIgraphVectorIntFromOptions(opts, "inDegree", &inDegree, false);            \
   errcode = igraph_degree_sequence_game(graph, &outDegree, &inDegree, (algo)); \
                                                                                \
   igraph_vector_int_destroy(&outDegree);                                       \
@@ -305,7 +305,8 @@ static igraph_error_t mxIgraph_callaway_traits_i(mxArray const *opts,
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t n_types = mxIgraphIntegerFromOptions(opts, "nTypes");
-  igraph_integer_t edges_per_step = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_integer_t edges_per_step =
+    mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_vector_t type_dist;
   igraph_vector_t *type_dist_ptr = NULL;
   igraph_matrix_t pref_matrix;
@@ -334,7 +335,8 @@ static igraph_error_t mxIgraph_establishment_i(mxArray const *opts,
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t n_types = mxIgraphIntegerFromOptions(opts, "nTypes");
-  igraph_integer_t edges_per_step = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_integer_t edges_per_step =
+    mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_vector_t type_dist;
   igraph_vector_t *type_dist_ptr = NULL;
   igraph_matrix_t pref_matrix;
@@ -458,8 +460,10 @@ static igraph_error_t mxIgraph_barabasi_aging_i(mxArray const *opts,
   igraph_real_t pa_exp = mxIgraphRealFromOptions(opts, "degreeExp");
   igraph_real_t aging_exp = mxIgraphRealFromOptions(opts, "ageExp");
   igraph_integer_t aging_bins = mxIgraphIntegerFromOptions(opts, "agingBins");
-  igraph_real_t zero_deg_appeal = mxIgraphRealFromOptions(opts, "zeroDegreeAppeal");
-  igraph_real_t zero_age_appeal = mxIgraphRealFromOptions(opts, "zeroAgeAppeal");
+  igraph_real_t zero_deg_appeal =
+    mxIgraphRealFromOptions(opts, "zeroDegreeAppeal");
+  igraph_real_t zero_age_appeal =
+    mxIgraphRealFromOptions(opts, "zeroAgeAppeal");
   igraph_real_t deg_coef = mxIgraphRealFromOptions(opts, "degreeCoef");
   igraph_real_t age_coef = mxIgraphRealFromOptions(opts, "ageCoef");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
@@ -506,7 +510,8 @@ static igraph_error_t mxIgraph_lastcit_i(mxArray const *opts,
     igraph_t *graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
-  igraph_integer_t edges_per_node = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_integer_t edges_per_node =
+    mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_integer_t aging_bins = mxIgraphIntegerFromOptions(opts, "agingBins");
   igraph_vector_t preference;
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
@@ -528,7 +533,8 @@ static igraph_error_t mxIgraph_cited_type_i(mxArray const *opts,
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_vector_int_t types;
   igraph_vector_t preferences;
-  igraph_integer_t edges_per_step = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_integer_t edges_per_step =
+    mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_error_t error;
 
@@ -550,7 +556,8 @@ static igraph_error_t mxIgraph_citing_cited_type_i(mxArray const *opts,
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_vector_int_t types;
   igraph_matrix_t pref_matrix;
-  igraph_integer_t edges_per_step = mxIgraphIntegerFromOptions(opts, "edgesPerStep");
+  igraph_integer_t edges_per_step =
+    mxIgraphIntegerFromOptions(opts, "edgesPerStep");
   igraph_bool_t directed = mxIgraphBoolFromOptions(opts, "isdirected");
   igraph_error_t error;
 
@@ -590,7 +597,8 @@ static igraph_error_t mxIgraph_sbm_i(mxArray const *opts, igraph_t *graph)
 static igraph_error_t mxIgraph_hsbm_i(mxArray const *opts, igraph_t *graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
-  igraph_integer_t edges_per_block = mxIgraphIntegerFromOptions(opts, "blockSizes");
+  igraph_integer_t edges_per_block =
+    mxIgraphIntegerFromOptions(opts, "blockSizes");
   igraph_vector_t rho;
   igraph_matrix_t c;
   igraph_real_t p = mxIgraphRealFromOptions(opts, "preference");
@@ -646,7 +654,8 @@ static igraph_error_t mxIgraph_simple_interconnected_islands_i(
   mxArray const *opts, igraph_t *graph)
 {
   igraph_integer_t n_islands = mxIgraphIntegerFromOptions(opts, "nIslands");
-  igraph_integer_t islands_size = mxIgraphIntegerFromOptions(opts, "islandSize");
+  igraph_integer_t islands_size =
+    mxIgraphIntegerFromOptions(opts, "islandSize");
   igraph_real_t p_in = mxIgraphRealFromOptions(opts, "pIn");
   igraph_integer_t n_inter = mxIgraphIntegerFromOptions(opts, "nInterEdges");
 
@@ -706,12 +715,9 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
     "simpleinterconnectedislands",
   };
 
-  method = mxIgraphSelectMethod(prhs[0], games, MXIGRAPH_GAME_N);
-
-  if (method == MXIGRAPH_GAME_N) {
-    mxIgraphErrorUnknownMethod(mexFunctionName(), mxArrayToString(prhs[0]));
-    exit(1);
-  }
+  MXIGRAPH_CHECK_METHOD(
+    (method = mxIgraphSelectMethod(prhs[0], games, MXIGRAPH_GAME_N)),
+    prhs[0]);
 
   game_method_t method_table[MXIGRAPH_GAME_N] = {
     [MXIGRAPH_GAME_GRG] = mxIgraph_grg_i,
@@ -753,10 +759,9 @@ igraph_error_t mexIgraphRandGame(int nlhs, mxArray *plhs[], int nrhs,
   };
 
   game_method = method_table[method];
-
   if (!game_method) {
-    mxIgraphErrorNotImplemented("RandGame", mxArrayToString(prhs[0]));
-    exit(1);
+    IGRAPH_ERRORF("Random game %s, not implemented.", IGRAPH_UNIMPLEMENTED,
+                  mxArrayToString(prhs[0]));
   }
 
   game_method(method_options, &graph);
