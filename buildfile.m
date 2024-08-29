@@ -9,21 +9,21 @@ function testTask(~)
 end
 
 function makeDocsTask(~)
-    if ~exist("docs/content/start", "dir")
-        mkdir("docs/content/start");
+    docDir = "docs/content";
+    if ~exist(fullfile(docDir, "start"), "dir")
+        mkdir(fullfile(docDir, "start"));
     end
 
-    export("toolbox/GettingStarted.mlx", "docs/content/start/_index.md");
+    export("toolbox/GettingStarted.mlx", fullfile(docDir, "start", "_index.md"));
 
     examples = dir("toolbox/examples/*.mlx");
-    dest = "docs/content/examples";
-
+    dest = fullfile(docDir, "examples");
     if ~isempty(examples) && ~exist(dest, 'dir')
         mkdir(dest);
     end
 
     for i = 1:length(examples)
-        export(fullfile("toolbox", "examples", examples(i).name), ...
+        export(fullfile(examples(i).folder, examples(i).name), ...
                replace(fullfile(dest, examples(i).name), ".mlx", ".md"));
     end
 end

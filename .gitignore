@@ -3,4 +3,7 @@ dist/
 *.o
 *.mexa64
 docs/public/
+docs/content/start
+docs/content/examples
+docs/content/changelog
 future/
