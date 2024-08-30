@@ -275,7 +275,7 @@ static mxArray *create_adj_sparse_double_i(igraph_t const *graph,
   igraph_integer_t eid;
   igraph_error_t rs;
 
-  rs = igraph_eit_create(graph, igraph_ess_all(IGRAPH_EDGEORDER_ID), &eit);
+  rs = igraph_eit_create(graph, igraph_ess_all(IGRAPH_EDGEORDER_TO), &eit);
   if (rs != IGRAPH_SUCCESS) {
     mxIgraphSetError(rs);
     mxIgraphSetErrorMsg("Failed to create edge iterator.");
@@ -297,6 +297,55 @@ static mxArray *create_adj_sparse_double_i(igraph_t const *graph,
 
     ir[count] = IGRAPH_FROM(graph, eid);
     adj[count] = (weights ? VECTOR(*weights)[eid] : 1);
+
+    IGRAPH_EIT_NEXT(eit);
+    count++;
+  }
+
+  while (column < n_nodes) {
+    jc[column + 1] = count;
+    column++;
+  }
+
+  igraph_eit_destroy(&eit);
+
+  return p;
+}
+
+static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
+{
+  mwSize n_edges = igraph_ecount(graph);
+  mwSize n_nodes = igraph_vcount(graph);
+  mxArray *p = mxCreateSparseLogicalMatrix(n_nodes, n_nodes, n_edges);
+  bool *adj = mxGetLogicals(p);
+  mwIndex *jc = mxGetJc(p);
+  mwIndex *ir = mxGetIr(p);
+  igraph_eit_t eit;
+  igraph_integer_t eid;
+  igraph_error_t rs;
+
+  rs = igraph_eit_create(graph, igraph_ess_all(IGRAPH_EDGEORDER_TO), &eit);
+  if (rs != IGRAPH_SUCCESS) {
+    mxIgraphSetError(rs);
+    mxIgraphSetErrorMsg("Failed to create edge iterator.");
+    return p;
+  }
+
+  mwIndex count = 0;
+  mwIndex column = 0, prev_column = 0;
+  jc[prev_column] = count;
+  while (!IGRAPH_EIT_END(eit)) {
+    eid = IGRAPH_EIT_GET(eit);
+    column = IGRAPH_TO(graph, eid);
+    if (prev_column != column) {
+      for (mwIndex i = prev_column; i < column; i++) {
+        jc[i + 1] = count;
+      }
+      prev_column = column;
+    }
+
+    ir[count] = IGRAPH_FROM(graph, eid);
+    adj[count] = true;
 
     IGRAPH_EIT_NEXT(eit);
     count++;
@@ -366,54 +415,6 @@ static mxArray *create_graph_i(igraph_t const *graph,
   return ret;
 }
 
-static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
-{
-  mwSize n_edges = igraph_ecount(graph);
-  mwSize n_nodes = igraph_vcount(graph);
-  mxArray *p = mxCreateSparseLogicalMatrix(n_nodes, n_nodes, n_edges);
-  bool *adj = mxGetLogicals(p);
-  mwIndex *jc = mxGetJc(p);
-  mwIndex *ir = mxGetIr(p);
-  igraph_eit_t eit;
-  igraph_integer_t eid;
-  igraph_error_t rs;
-
-  rs = igraph_eit_create(graph, igraph_ess_all(IGRAPH_EDGEORDER_ID), &eit);
-  if (rs != IGRAPH_SUCCESS) {
-    mxIgraphSetError(rs);
-    mxIgraphSetErrorMsg("Failed to create edge iterator.");
-    return p;
-  }
-
-  mwIndex count = 0;
-  mwIndex column = 0, prev_column = 0;
-  jc[prev_column] = count;
-  while (!IGRAPH_EIT_END(eit)) {
-    eid = IGRAPH_EIT_GET(eit);
-    column = IGRAPH_TO(graph, eid);
-    if (prev_column != column) {
-      for (mwIndex i = prev_column; i < column; i++) {
-        jc[i + 1] = count;
-      }
-      prev_column = column;
-    }
-
-    ir[count] = IGRAPH_FROM(graph, eid);
-    adj[count] = true;
-
-    IGRAPH_EIT_NEXT(eit);
-    count++;
-  }
-
-  while (column < n_nodes) {
-    jc[column + 1] = count;
-    column++;
-  }
-
-  igraph_eit_destroy(&eit);
-
-  return p;
-}
 
 /* Create a matlab adjacency matrix using an igraph graph and weight vector.
 

@@ -52,6 +52,7 @@ igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
   }
 
   plhs[0] = mxIgraphToArray(&graph, NULL, graph_options);
+  MXIGRAPH_CHECK_STATUS();
 
   igraph_destroy(&graph);
   IGRAPH_FINALLY_CLEAN(1);

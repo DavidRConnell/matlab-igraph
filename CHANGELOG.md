@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Clean memory on error.
+- Make sure edges are ordered when creating sparse matrices.
 
 ## [0.1.13] 2024-04-01
 
