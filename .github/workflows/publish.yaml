@@ -36,11 +36,6 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Add Changelog
-        run: |
-          [ -d docs/content/changelog ] || mkdir -p docs/content/changelog
-          cp CHANGELOG.md docs/content/changelog/_index.md
-
       - name: Run make docs task
         uses: matlab-actions/run-build@v2
         with:
