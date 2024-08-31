@@ -36,7 +36,7 @@ jobs:
         continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
-          source-folder: dist/matlab-igraph/toolbox
+          source-folder: dist/matlab-igraph/toolbox;build/tests
           select-by-folder: tests
           test-results-junit: test-results/results.xml
 
@@ -75,14 +75,14 @@ jobs:
       - name: Install packages
         uses: msys2/setup-msys2@v2
         with:
-          msystem: ucrt64
+          msystem: mingw64
           install: >-
             git
             base-devel
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-ninja
-            mingw-w64-ucrt-x86_64-toolchain
-            mingw-w64-ucrt-x86_64-libxml2
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-libxml2
           update: true
           location: D:\
 
@@ -96,14 +96,14 @@ jobs:
             --install-prefix=${GITHUB_WORKSPACE}/dist \
             -DIGRAPH_OPENMP_SUPPORT=ON \
             -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
-          cmake --build build
-          cmake --install build
+          cmake --build build --config Release
+          cmake --install build --config Release
 
       - name: Run tests
         continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
-          source-folder: dist/matlab-igraph/toolbox
+          source-folder: dist/matlab-igraph/toolbox;build/tests
           select-by-folder: tests
           test-results-junit: test-results/results.xml
 
@@ -122,7 +122,7 @@ jobs:
           path: build/matlab-igraph_*.zip
 
   build-arm-macos:
-    name: Build macOS toolbox
+    name: Build arm macOS toolbox
     runs-on: macos-latest
     env:
       LLVM_VERSION: "14.0.5"
@@ -151,7 +151,7 @@ jobs:
         continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
-          source-folder: dist/matlab-igraph/toolbox
+          source-folder: dist/matlab-igraph/toolbox;build/tests
           select-by-folder: tests
           test-results-junit: test-results/results.xml
 
@@ -170,7 +170,7 @@ jobs:
           path: build/matlab-igraph_*.tar.gz
 
   build-intel-macos:
-    name: Build macOS toolbox
+    name: Build intel macOS toolbox
     runs-on: macos-13
     env:
       LLVM_VERSION: "14.0.5"
@@ -199,7 +199,7 @@ jobs:
         continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
-          source-folder: dist/matlab-igraph/toolbox
+          source-folder: dist/matlab-igraph/toolbox;build/tests
           select-by-folder: tests
           test-results-junit: test-results/results.xml
 
