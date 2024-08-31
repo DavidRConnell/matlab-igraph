@@ -18,7 +18,7 @@ To upgrade download a newer toolbox from the release page and install it through
 For those who want to build the code themselves, this can be done by cloning the git repo and compiling with cmake.
 If the pre-built toolboxes don't support your architecture, this is the only way to get the toolbox running.
 It may take a little work to get the build correct for an unsupported architecture.
-See [[https://igraph.org/c/html/latest/igraph-Installation.html][the igraph C library's installation instructions]] for obtaining the needed dependencies (note: this toolbox uses igraph's bundled libraries so none you don't need to install any of the optional external libraries).
+See [[https://igraph.org/c/html/latest/igraph-Installation.html][the igraph C library's installation instructions]] for obtaining the needed dependencies (note: this toolbox uses igraph's bundled libraries so you won't need to install any of the optional external libraries).
 If you do work on getting this toolbox running on a new architecture, you can add an issue or pull-request to the github page to add future support to the toolbox.
 ** Getting the source code
 The first thing to do is clone the source code with git.
@@ -26,7 +26,7 @@ Go to the location you want to store the toolbox and run:
 
 #+begin_src bash
   git clone "https://github.com/davidrconnell/matlab-igraph"
-  git submodule init && git submodule update
+  git submodule update --init --recursive
 #+end_src
 
 ** Dependencies
@@ -48,18 +48,24 @@ You may want to build the package target instead of the default target to get a 
 #+end_src
 Then unzip the package and add the contained toolbox to MATLAB's path.
 ** Development
-Since the toolbox is a mix of MATLAB source files and compiled files that end up in build directory, the easiest approach for development is to build the default target then link the compiled files to the correct location in the toolbox so MATLAB can find them.
+Since the toolbox is a mix of MATLAB source files and compiled files that end up in build directory, the easiest approach for development (on Linux and macOS) is to add the source directory to MATLAB's path, build the default target, and link the compiled files to the correct location in the source directory.
 From the build directory:
+
 #+begin_src bash
-  cd ../toolbox/+igraph/private
-  ln -s ../../../build/mex/*.mexa64 .
-  cd ../../../tests/mxIgraph/private
-  ln -s ../../../build/tests/*.mexa64 .
+cd ../toolbox/+igraph/private
+ln -s ../../../build/mex/*.mexa64 .
+cd ../../../tests/mxIgraph/private
+ln -s ../../../build/tests/*.mexa64 .
 #+end_src
-Where ~mexa64~ is the linux mex extension.
-If using a different extension, make sure to add a new rule to the ~.gitignore~ file.
-Now the source toolbox directory can be added to MATLAB's path and rebuilding the mex files will be recognized by MATLAB (although new files will need to be linked).
+
+Where ~mexa64~ is the Linux mex extension.
+Now MATLAB will automatically reload compiled files when they are rebuilt.
 There will also be a ~compile_commands.json~ in the build directory that can be linked to the root of the repository.
+
+Unfortunately, this will not work on Windows since the compiled files will not be able to find their dynamic libraries.
+Instead, add a ~--install-prefix~ to the ~cmake~ config command then running ~cmake --install build~ will install all files needed to that location.
+Add the install path to MATLAB's path.
+In this case, the install command will need to be rerun whenever m files are changed.
 ** Testing
 Tests can be run using ~ctest~ with the ~--test-dir~ being set to the build directory.
 For interactive development, it's faster to run ~buildtool~ in a running MATLAB instance since it doesn't require repeatedly starting MATLAB.
@@ -77,3 +83,6 @@ For viewing the website locally, hugo can be run a local server with ~hugo serve
 When running, hugo will print an address to view the local site.
 This site will update as the markdown files under ~docs/content~ at modified.
 To make the docs locally, run ~buildtool makeDocs~, this will export MATLAB livescripts to markdown for the website.
+
+The livescripts can be editted in the MATLAB IDE.
+Other docs can be edited directly in a text editor.

@@ -4,18 +4,23 @@ A toolbox that brings the power of the [[https://igraph.org/][igraph C library]]
 
 For a quick start see [[start][Getting Started]] and the [[docs/installation][installation guide]]. Getting started also exists as a live script that can be loaded into MATLAB once the toolbox is installed.
 
-{{< callout type="warning" >}}
-This project is still in early development and may be difficult to set up. Any help getting the toolbox running in different environments would be much appreciated. Please use the [[https://github.com/DavidRConnell/matlab-igraph/issues][github issue tracker]] to start a discussion.
-{{< /callout >}}
-
 * Introduction
 The igraph library provides a large number of efficient routines written in C and C++ for working with graphs. This toolbox wraps many of those routines for use inside MATLAB, extending igraph access to the MATLAB community.
 
 This toolbox aims to follow MATLAB conventions and take advantage of MATLAB's builtin matrix syntax to make a seamless integration between igraph and MATLAB.
-As such, the toolbox uses plain matrices to store the graphs.
-This has some limitations, specifically, this means there is currently no way to track metadata about a graph (such as it's directedness) or a way to work with igraph's attributes.
-But, by using matrices, graphs fit comfortably into the MATLAB environment.
+Graphs can be represented by MATLAB's builtin graph classes (~graph~, and ~digraph~) or as adjacency matrices using full or sparse matrices.
+Use of the graph classes provides additional features over raw matrices including the ability to represent multigraphs, attach attributes to the graph object, and use graph class methods.
+When these features aren't needed, matrices fit comfortably into the MATLAB environment, allowing use of MATLAB's simple matrix syntax.
 It's possible to generate graphs using MATLAB's builtin functions that work as is with igraph's routines and work with graphs created by igraph directly in MATLAB using the functions you are already familiar with.
+
+* Use in external toolboxes
+matlab-igraph provides everything needed to produce extension toolboxes, allowing you to leverage the igraph C library to create new graph functions that work with MATLAB.
+The toolbox grants access to the ~mxIgraph~ C library to convert between igraph and MATLAB datatypes.
+
+By using this toolbox as a dependency in another toolbox, the ~+igutils~ function are made available for working with graphs in a manner consistent with this toolbox.
+~+igutils~ provides argument validators and methods for working with graph attributes independent of the graph representation.
+
+As an example see the [[https://github.com/SpeakEasy-2/speakeasy2-toolbox][SpeakEasy2 toolbox]].
 
 * Citation
 If you publish results generated with the help of this package, make sure to cite igraph:

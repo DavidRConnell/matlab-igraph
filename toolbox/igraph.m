@@ -114,6 +114,6 @@
 %          g = igraph.famous('zachary');
 %          igraph.summary(g);
 %          igraph.plot(g, 'kk');
-%          igraph.save('zkc.edge', g);
+%          igraph.save('zkc.edges', g);
 %
 %   See also GRAPH, DIGRAPH.

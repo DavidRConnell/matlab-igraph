@@ -1,0 +1,30 @@
+#+TITLE: Future goals
+#+WEIGHT: 99
+
+* Use [[https://github.com/igraph/stimulus][stimulus]] code generator
+Next major goal is to use stimulus to replace most of the source code under the ~mex~ directory.
+Use [[https://github.com/igraph/rigraph/][rigraph]] as a guide.
+* Make plotting more flexible
+Ideally there would be a way to alter how edges are displayed (i.e. different colors/transparencies) and a better why to modify other elements.
+The [[https://ggraph.data-imaginist.com/][ggraph]] package for R does this well.
+
+- Should have more useful options (edge width, edge color, node labels, ...)
+- Should be able to use either scalar (all items treated the same) or attributes / vectors (different value for each item) for all applicable options.
+- Need a way to handle multiple edges between two nodes.
+* Handle variable outputs
+Some igraph functions have optional outputs (i.e. ~igraph_grg_game~ which can return ~x~ and ~y~ vectors in addition to the graph).
+At the moment these optional outputs have been ignored.
+
+Using Matlab's ~varargout~ and the C interfaces ~nlhs~, it should be possible to add in different outputs.
+* Handle bipartite graphs
+In bipartite the source and destination are different node sets so the adjacency matrix should not be square.
+Remove requirement that adjs be square and add a ~isbipartite~ method to guess, that just compares number rows to number columns.
+Can add isbipartite to some functions.
+
+The other option is to just keep track a mask that determines which node type each node is in.
+* Reference section
+Need to add reference sections to the docs for both the toolbox and ~mxIgraph~.
+For ~mxIgraph~, public functions should be given ~doxygen~ style comments.
+The toolbox will likely be documented with livescripts that are either exported or published.
+* External documentation section
+Should have a section to describe how to use this toolbox to write extension toolboxes.

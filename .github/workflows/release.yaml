@@ -59,8 +59,8 @@ jobs:
           path: release
 
       - name: Upload assets to release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
           name: ${{ env.RELEASE_NAME }}
-          body_path: release_notes.md
-          files: release/*
+          bodyFile: release_notes.md
+          artifacts: release/*

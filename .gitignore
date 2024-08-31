@@ -2,9 +2,15 @@ build/
 dist/
 *.o
 *.mexa64
+*.mexarm64
+*.mexmaca64
+*.mexmaci64
+*.mexw32
+*.mexw64
 docs/public/
 docs/content/start
 docs/content/examples
 docs/content/changelog
 docs/content/docs/contributing.org
+docs/.hugo_build.lock
 future/

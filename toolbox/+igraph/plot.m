@@ -94,7 +94,7 @@ function plot(graph, layout, options, nodeOpts, edgeOpts, layoutOpts)
               "one element for each node in the graph.");
     end
 
-    if isscalar(nodeOpts.size)
+    if isnumeric(nodeOpts.size) && isscalar(nodeOpts.size)
         nodeOpts.size = zeros(1, igraph.numnodes(graph)) + ...
             nodeOpts.size;
     else

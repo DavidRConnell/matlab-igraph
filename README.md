@@ -1,10 +1,9 @@
 [![](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/fileexchange/v1?id=159001)
 [![](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/159001-matlab-igraph)
 
-# igraph toolbox <a href="https://davidrconnell.github.io/matlab-igraph"><img src="./images/matlab_igraph_logo.svg" align="right" height="128" /></a>
+# matlab-igraph <a href="https://davidrconnell.github.io/matlab-igraph"><img src="./images/matlab_igraph_logo.svg" align="right" height="128" /></a>
 
-A MATLAB toolbox for integrating [igraph](https://igraph.org/) C library with
-MATLAB.
+A toolbox that brings the power of the [igraph C library](https://igraph.org/) to MATLAB.
 
 See [The documentation](https://davidrconnell.github.io/matlab-igraph)
 for a more thorough introduction.
