@@ -33,7 +33,6 @@ jobs:
           cmake --install build
 
       - name: Run tests
-        continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
           source-folder: dist/matlab-igraph/toolbox;build/tests
@@ -42,7 +41,9 @@ jobs:
 
       - name: Upload test results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
         with:
+          check_name: Linux Test Results
           files: test-results/results.xml
 
       - name: Package dist
@@ -100,7 +101,6 @@ jobs:
           cmake --install build --config Release
 
       - name: Run tests
-        continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
           source-folder: dist/matlab-igraph/toolbox;build/tests
@@ -109,7 +109,9 @@ jobs:
 
       - name: Upload test results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always()
         with:
+          check_name: Windows Test Results
           files: test-results/results.xml
 
       - name: Package dist
@@ -148,7 +150,6 @@ jobs:
           cmake --install build
 
       - name: Run tests
-        continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
           source-folder: dist/matlab-igraph/toolbox;build/tests
@@ -157,7 +158,9 @@ jobs:
 
       - name: Upload test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: always()
         with:
+          check_name: macOS Arm Test Results
           files: test-results/results.xml
 
       - name: Package dist
@@ -196,7 +199,6 @@ jobs:
           cmake --install build
 
       - name: Run tests
-        continue-on-error: true
         uses: matlab-actions/run-tests@v2
         with:
           source-folder: dist/matlab-igraph/toolbox;build/tests
@@ -205,7 +207,9 @@ jobs:
 
       - name: Upload test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: always()
         with:
+          check_name: macOS Intel Test Results
           files: test-results/results.xml
 
       - name: Package dist

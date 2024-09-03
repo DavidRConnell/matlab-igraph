@@ -1,6 +1,10 @@
 function buildtoolbox(toolboxFolder, outDir, version)
     versionNumber = regexp(version, "v(\d+\.\d+\.\d+)", "tokens");
-    versionNumber = versionNumber{1};
+    if isempty(versionNumber) % Testing branch; not a tagged release.
+        versionNumber = "0.0.1";
+    else
+        versionNumber = versionNumber{1};
+    end
 
     releaseName = strjoin(['matlab-igraph', version], '_');
 
