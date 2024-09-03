@@ -36,8 +36,6 @@ function copyDocFilesTask(~)
 end
 
 function exportLivescriptsTask(~)
-    oldPath = addpath("toolbox");
-
     dest = "docs/content/start";
     if ~exist(dest, "dir")
         mkdir(dest);
@@ -52,8 +50,6 @@ function exportLivescriptsTask(~)
         export(fullfile(examples(i).folder, examples(i).name), outfile);
         mlx2hugoFilter(outfile);
     end
-
-    path(oldPath);
 end
 
 function mlx2hugoFilter(fname)
@@ -68,7 +64,7 @@ end
 function content = title2frontmatter(content)
 % Convert the title produced by export to Hugo legible frontmatter.
 
-    span_open = "# <span style=""color:rgb\(213,80,0\)"">";
+    span_open = "# <span style=""color:rgb\(\d{1,3},\d{1,3},\d{1,3}\)"">";
     span_close = "</span>";
 
     [title, pos] = regexp(content, span_open + "(.*)" + span_close, ...
