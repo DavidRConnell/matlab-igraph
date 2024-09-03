@@ -17,7 +17,7 @@ message(STATUS "Matlab: ${Matlab_VERSION_STRING}")
 if(Matlab_VERSION_STRING VERSION_LESS 9.14)
   message(
     WARNING
-    "Matlab >= 9.14 (R2023a) is required for MEX tests to work due to new buildtool argument syntax."
+      "Matlab >= 9.14 (R2023a) is required for MEX tests to work due to new buildtool argument syntax."
   )
 endif()
 
@@ -101,10 +101,12 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     "D:\\msys64\\ucrt64\\bin"
     "${Matlab_ROOT_DIR}\\bin\\win64"
     PRE_EXCLUDE_REGEXES
-    "api-ms-*"
+    "api-ms-"
+    "ext-ms-"
     "libmx"
     "libmex"
-    "ext-ms-*"
+    POST_EXCLUDE_REGEXES
+    ".*system32/.*\\.dll"
     DESTINATION
     matlab-igraph/toolbox/+igraph/private
     COMPONENT
@@ -113,12 +115,12 @@ endif()
 
 # Packaging
 set(CPACK_PACKAGE_HOMEPAGE_URL ("https://github.com/DavidRConnell/matlab-igraph"
-))
+                               ))
 
 set(CPACK_SOURCE_PACKAGE_FILE_NAME
-  "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_source")
+    "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_source")
 set(CPACK_PACKAGE_FILE_NAME
-  "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_${Matlab_ARCH}")
+    "${CMAKE_PROJECT_NAME}_${CMAKE_PACKAGE_VERSION}_${Matlab_ARCH}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_GENERATOR "TGZ")
 if(CMAKE_SYSTEM MATCHES Windows)
@@ -126,8 +128,8 @@ if(CMAKE_SYSTEM MATCHES Windows)
 endif()
 
 set(CPACK_SOURCE_IGNORE_FILES
-  "\\\\..*/" "\\\\.${Matlab_MEX_EXTENSION}$" "${CMAKE_SOURCE_DIR}/build"
-  "${CMAKE_SOURCE_DIR}/dist" "compile_commands.json")
+    "\\\\..*/" "\\\\.${Matlab_MEX_EXTENSION}$" "${CMAKE_SOURCE_DIR}/build"
+    "${CMAKE_SOURCE_DIR}/dist" "compile_commands.json")
 
 # Only package files needed to run the toolbox.
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
