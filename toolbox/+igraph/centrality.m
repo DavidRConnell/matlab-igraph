@@ -2,7 +2,8 @@ function values = centrality(graph, method, graphOpts, methodOpts, attribute)
 %CENTRALITY calculate centrality measure in a graph
 %   VALUES = CENTRALITY(GRAPH, METHOD) calculate the centrality for all nodes
 %   in GRAPH using METHOD. METHOD can be one of 'closeness', 'harmonic',
-%   'betweenness', 'pagerank', 'burt' (equivalently 'constraint').
+%   'betweenness', 'pagerank', 'burt' (equivalently 'constraint'),
+%   'eigenvector'.
 %
 %   VALUES = CENTRALITY(GRAPH, METHOD, ..., 'vids', NODES) select a subset of
 %   nodes in the graph to calculate centrality on.
@@ -33,7 +34,8 @@ function values = centrality(graph, method, graphOpts, methodOpts, attribute)
        method (1, :) char ...
            {igutils.mustBeMemberi(method, ...
                                   {'closeness', 'harmonic', 'betweenness', ...
-                                   'pagerank', 'burt', 'constraint'})};
+                                   'pagerank', 'burt', 'constraint', ...
+                                   'eigenvector'})};
        graphOpts.isdirected = igraph.isdirected(graph);
        methodOpts.vids (1, :) {mustBePositive, mustBeInteger} = ...
            1:igraph.numnodes(graph);
