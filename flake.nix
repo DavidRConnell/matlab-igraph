@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     nix-matlab = {
-      url = "/home/voidee/clones/nix-matlab";
+      url = "gitlab:doronbehar/nix-matlab";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
