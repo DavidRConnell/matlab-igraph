@@ -140,7 +140,7 @@ igraph_error_t mxIgraphStatusHandlerMex(const char *message, void *data)
 {
   IGRAPH_UNUSED(data);
 
-  mexPrintf("%s\n", message);
+  mexPrintf("%s", message);
   return IGRAPH_SUCCESS;
 }
 
