@@ -41,24 +41,23 @@ function exportLivescriptsTask(~)
         mkdir(dest);
     end
 
-    export("toolbox/GettingStarted.mlx", fullfile(dest, "_index.md"));
-    mlx2hugoFilter(fullfile(dest, "_index.md"));
+    mlx2hugo("toolbox/GettingStarted.mlx", fullfile(dest, "_index.md"));
 
     examples = dir("toolbox/examples/*.mlx");
     for i = 1:length(examples)
         outfile = replace(fullfile(dest, examples(i).name), ".mlx", ".md");
-        export(fullfile(examples(i).folder, examples(i).name), outfile);
-        mlx2hugoFilter(outfile);
+        mlx2hugo(fullfile(examples(i).folder, examples(i).name), outfile);
     end
 end
 
-function mlx2hugoFilter(fname)
-    content = strip(fileread(fname));
+function mlx2hugo(input, output)
+    export(input, output, EmbedImages=true);
+    content = strip(fileread(output));
 
     content = title2frontmatter(content);
     content = rewriteLinks(content);
 
-    writelines(content, fname);
+    writelines(content, output);
 end
 
 function content = title2frontmatter(content)
@@ -75,7 +74,7 @@ function content = title2frontmatter(content)
     frontmatter = sprintf("---\ntitle: " + title + ...
                           "\ncascade:\n  type: docs\n---\n");
 
-    content = frontmatter + content(pos:end);
+    content = frontmatter + content((pos + 1):end);
 end
 
 function content = rewriteLinks(content)
