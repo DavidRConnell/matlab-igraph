@@ -159,7 +159,6 @@ igraph_error_t mxIgraphInterruptionHandlerMex(void *data)
   IGRAPH_UNUSED(data);
 
   if (utIsInterruptPending()) {
-    IGRAPH_FINALLY_FREE();
     return IGRAPH_INTERRUPTED;
   }
 
