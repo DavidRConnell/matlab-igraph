@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Status handler no longer adds a newline character to the message, that is left to the caller to do.
+- Misspelling of fatal.
 
 ## [0.2.0] 2024-09-03
 

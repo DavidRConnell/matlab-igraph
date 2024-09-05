@@ -71,7 +71,7 @@ void mxIgraphErrorHandlerMex(const char *reason, const char *file, int line,
                     reason_given ? "\n    " : "", reason);
 }
 
-void mxIgraphFatelHandlerMex(const char *reason, const char *file, int line)
+void mxIgraphFatalHandlerMex(const char *reason, const char *file, int line)
 {
   IGRAPH_FINALLY_FREE();
   mexErrMsgIdAndTxt(

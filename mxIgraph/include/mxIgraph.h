@@ -78,6 +78,7 @@ igraph_status_handler_t mxIgraphStatusHandlerMex;
 igraph_status_handler_t mxIgraphStatusHandlerIgnoreMex;
 igraph_interruption_handler_t mxIgraphInterruptionHandlerMex;
 igraph_fatal_handler_t mxIgraphFatelHandlerMex;
+void mxIgraphSetDefaultHandlers(void);
 
 // mxError
 void mxIgraphSetError(igraph_error_t new_code);
