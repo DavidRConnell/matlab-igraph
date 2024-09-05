@@ -51,12 +51,7 @@ static void mexIgraphSetupHook()
     setup_ran = true;
 
     mxIgraphSetRNG();
-    igraph_set_error_handler(mxIgraphErrorHandlerMex);
-    igraph_set_warning_handler(mxIgraphWarningHandlerMex);
-    igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
-    igraph_set_status_handler(mxIgraphStatusHandlerIgnoreMex);
-    igraph_set_interruption_handler(mxIgraphInterruptionHandlerMex);
-    igraph_set_fatal_handler(mxIgraphFatelHandlerMex);
+    mxIgraphSetDefaultHandlers();
   }
 }
 

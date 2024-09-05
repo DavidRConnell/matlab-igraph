@@ -164,3 +164,16 @@ igraph_error_t mxIgraphInterruptionHandlerMex(void *data)
 
   return IGRAPH_SUCCESS;
 }
+
+// NOTE: defaults to silent progress handler. Should explicit turn on progress
+// handler if desired. Since progress handler is useful when dealing with slow
+// tasks but can clutter stdout when always on.
+void mxIgraphSetDefaultHandlers(void)
+{
+  igraph_set_error_handler(mxIgraphErrorHandlerMex);
+  igraph_set_warning_handler(mxIgraphWarningHandlerMex);
+  igraph_set_fatal_handler(mxIgraphFatalHandlerMex);
+  igraph_set_status_handler(mxIgraphStatusHandlerMex);
+  igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
+  igraph_set_interruption_handler(mxIgraphInterruptionHandlerMex);
+}

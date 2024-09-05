@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Add
+
+- Add default handler setting function to set all the mxIgraph handlers at once.
+
 ### Fixed
 
 - Status handler no longer adds a newline character to the message, that is left to the caller to do.
