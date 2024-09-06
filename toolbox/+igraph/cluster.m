@@ -193,9 +193,6 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
       case 'spinglass'
         methodOpts = parseSpinglassOptions(graph, methodOpts{:});
       case 'leadingeigenvector'
-        % Currently crashing Matlab with an memalloc error.
-        error("igraph:notImplemented", ...
-              "LeadingEigenvector currently not implemented.");
         methodOpts = parseLeadingEigenvectorOptions(graph, methodOpts{:});
       case 'walktrap'
         methodOpts = parseWalktrapOptions(graph, methodOpts{:});
