@@ -25,8 +25,10 @@ static void mxIgraph_eit_sparse_create(const mxArray *p, mxIgraph_eit *eit,
   eit->jc = mxGetJc(p);
 
   mwIndex col_idx = 0;
-  while (eit->jc[col_idx] == eit->jc[col_idx + 1])
+  while (eit->jc[col_idx] == eit->jc[col_idx + 1]) {
     col_idx++;
+  }
+
   if (col_idx >= eit->n_nodes) {
     // Empty graph
     col_idx = 0;

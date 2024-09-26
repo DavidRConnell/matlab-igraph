@@ -415,7 +415,6 @@ static mxArray *create_graph_i(igraph_t const *graph,
   return ret;
 }
 
-
 /* Create a matlab adjacency matrix using an igraph graph and weight vector.
 
    See `mxIgraphFromArray` to convert an matlab adj into an igraph graph. */

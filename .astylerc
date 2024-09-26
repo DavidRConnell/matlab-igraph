@@ -6,8 +6,16 @@ max-code-length=78
 break-after-logical
 
 unpad-paren
+unpad-brackets
 pad-header
 pad-oper
+pad-include
+
+squeeze-lines=1
+squeeze-ws
+
+add-braces
+attach-closing-while
 
 align-pointer=name
 align-reference=name
@@ -16,5 +24,7 @@ attach-return-type
 attach-return-type-decl
 
 indent-col1-comments
+indent-preproc-block
+convert-tabs
 
 lineend=linux
