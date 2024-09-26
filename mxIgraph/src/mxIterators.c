@@ -42,6 +42,15 @@ static void mxIgraph_eit_sparse_create(const mxArray *p, mxIgraph_eit *eit,
 
   if ((!directed) && (mxIgraphIsSymmetric(p))) {
     eit->row_stop_at_col = true;
+
+    while (eit->row_idx > eit->col_idx) {
+      eit->col_idx++;
+      while (eit->jc[eit->col_idx] == eit->jc[eit->col_idx + 1]) {
+        eit->col_idx++;
+      }
+      eit->flat_idx = eit->jc[eit->col_idx];
+      eit->row_idx = eit->ir[eit->flat_idx];
+    }
   }
 }
 

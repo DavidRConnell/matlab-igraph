@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Status handler no longer adds a newline character to the message, that is left to the caller to do.
 - Misspelling of fatal.
+- Prevent collecting a duplicate edge when converting symmetric sparse matrices to igraph graphs.
 
 ## [0.2.0] 2024-09-03
 
