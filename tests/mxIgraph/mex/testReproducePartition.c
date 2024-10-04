@@ -1,7 +1,8 @@
 #include "igraph.h"
+
 #include <mxIgraph.h>
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+void mexFunction(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   igraph_vector_int_t membership;
 

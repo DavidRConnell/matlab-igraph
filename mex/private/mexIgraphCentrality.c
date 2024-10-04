@@ -17,10 +17,11 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 
-igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
-                                   mxArray const *prhs[])
+igraph_error_t mexIgraphCentrality(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
@@ -35,7 +36,7 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
     MXIGRAPH_CENTRALITY_N
   };
 
-  const char *methods[MXIGRAPH_CENTRALITY_N] = {
+  char const* methods[MXIGRAPH_CENTRALITY_N] = {
     [MXIGRAPH_CENTRALITY_CLOSENESS] = "closeness",
     [MXIGRAPH_CENTRALITY_HARMONIC] = "harmonic",
     [MXIGRAPH_CENTRALITY_BETWEENNESS] = "betweenness",
@@ -48,8 +49,8 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
     mxIgraphSelectMethod(prhs[1], methods, MXIGRAPH_CENTRALITY_N);
   MXIGRAPH_CHECK_METHOD(method, prhs[1]);
 
-  mxArray const *graph_options = prhs[2];
-  mxArray const *method_options = prhs[3];
+  mxArray const* graph_options = prhs[2];
+  mxArray const* method_options = prhs[3];
 
   igraph_t graph;
   igraph_vector_t weights;
@@ -79,39 +80,38 @@ igraph_error_t mexIgraphCentrality(int nlhs, mxArray *plhs[], int nrhs,
   IGRAPH_FINALLY(igraph_vector_destroy, &res);
 
   switch (method) {
-  case MXIGRAPH_CENTRALITY_CLOSENESS:
-    IGRAPH_CHECK(igraph_closeness(&graph, &res, NULL, &warning, vids, mode,
-                                  MXIGRAPH_WEIGHTS(&weights), normalized));
+    case MXIGRAPH_CENTRALITY_CLOSENESS:
+      IGRAPH_CHECK(igraph_closeness(&graph, &res, NULL, &warning, vids, mode,
+        MXIGRAPH_WEIGHTS(&weights), normalized));
 
-    if (warning) {
-      IGRAPH_WARNING("Graph not connected; not all nodes could reach "
-                     "all other nodes.");
-    }
-    break;
-  case MXIGRAPH_CENTRALITY_HARMONIC:
-    IGRAPH_CHECK(igraph_harmonic_centrality(
-                   &graph, &res, vids, mode, MXIGRAPH_WEIGHTS(&weights), normalized));
-    break;
-  case MXIGRAPH_CENTRALITY_BETWEENNESS:
-    IGRAPH_CHECK(igraph_betweenness(&graph, &res, vids, directed,
-                                    MXIGRAPH_WEIGHTS(&weights)));
-    break;
-  case MXIGRAPH_CENTRALITY_PAGERANK:
-    IGRAPH_CHECK(igraph_pagerank(&graph, IGRAPH_PAGERANK_ALGO_PRPACK, &res,
-                                 NULL, vids, directed, damping,
-                                 MXIGRAPH_WEIGHTS(&weights), NULL));
-    break;
-  case MXIGRAPH_CENTRALITY_BURT:
-    IGRAPH_CHECK(
-      igraph_constraint(&graph, &res, vids, MXIGRAPH_WEIGHTS(&weights)));
-    break;
-  case MXIGRAPH_CENTRALITY_EIGENVECTOR:
-    IGRAPH_CHECK(
-      igraph_eigenvector_centrality(&graph, &res, NULL, directed, normalized,
-                                    MXIGRAPH_WEIGHTS(&weights), NULL));
-    break;
-  default:
-    IGRAPH_FATAL("Got unexpected method name.");
+      if (warning) {
+        IGRAPH_WARNING(
+          "Graph not connected; not all nodes could reach "
+          "all other nodes.");
+      }
+      break;
+    case MXIGRAPH_CENTRALITY_HARMONIC:
+      IGRAPH_CHECK(igraph_harmonic_centrality(
+        &graph, &res, vids, mode, MXIGRAPH_WEIGHTS(&weights), normalized));
+      break;
+    case MXIGRAPH_CENTRALITY_BETWEENNESS:
+      IGRAPH_CHECK(igraph_betweenness(
+        &graph, &res, vids, directed, MXIGRAPH_WEIGHTS(&weights)));
+      break;
+    case MXIGRAPH_CENTRALITY_PAGERANK:
+      IGRAPH_CHECK(igraph_pagerank(&graph, IGRAPH_PAGERANK_ALGO_PRPACK, &res,
+        NULL, vids, directed, damping, MXIGRAPH_WEIGHTS(&weights), NULL));
+      break;
+    case MXIGRAPH_CENTRALITY_BURT:
+      IGRAPH_CHECK(
+        igraph_constraint(&graph, &res, vids, MXIGRAPH_WEIGHTS(&weights)));
+      break;
+    case MXIGRAPH_CENTRALITY_EIGENVECTOR:
+      IGRAPH_CHECK(igraph_eigenvector_centrality(&graph, &res, NULL, directed,
+        normalized, MXIGRAPH_WEIGHTS(&weights), NULL));
+      break;
+    default:
+      IGRAPH_FATAL("Got unexpected method name.");
   }
 
   igraph_vs_destroy(&vids);

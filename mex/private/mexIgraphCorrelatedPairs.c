@@ -16,19 +16,19 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "utils.h"
+
+#include <mxIgraph.h>
 #include <string.h>
 
-#include "utils.h"
-#include <mxIgraph.h>
-
-igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
-                                      const mxArray *prhs[])
+igraph_error_t mexIgraphCorrelateWith(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const *graph_options = prhs[1];
-  mxArray const *method_options = prhs[2];
+  mxArray const* graph_options = prhs[1];
+  mxArray const* method_options = prhs[2];
 
   igraph_real_t correlation =
     mxIgraphRealFromOptions(method_options, "correlation");
@@ -42,8 +42,8 @@ igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
   IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &template, NULL, graph_options));
   IGRAPH_FINALLY(igraph_destroy, &template);
 
-  IGRAPH_CHECK(igraph_correlated_game(&template, &result, correlation,
-                                      probability, NULL));
+  IGRAPH_CHECK(igraph_correlated_game(
+    &template, &result, correlation, probability, NULL));
   igraph_destroy(&template);
   IGRAPH_FINALLY_CLEAN(1);
 
@@ -54,14 +54,14 @@ igraph_error_t mexIgraphCorrelateWith(int nlhs, mxArray *plhs[], int nrhs,
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mexIgraphGeneratePair(int nlhs, mxArray *plhs[], int nrhs,
-                                     const mxArray *prhs[])
+igraph_error_t mexIgraphGeneratePair(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(2);
 
-  mxArray const *graph_options = prhs[1];
-  mxArray const *method_options = prhs[2];
+  mxArray const* graph_options = prhs[1];
+  mxArray const* method_options = prhs[2];
 
   igraph_t graph1;
   igraph_t graph2;
@@ -74,7 +74,7 @@ igraph_error_t mexIgraphGeneratePair(int nlhs, mxArray *plhs[], int nrhs,
   MXIGRAPH_CHECK_STATUS();
 
   IGRAPH_CHECK(igraph_correlated_pair_game(
-                 &graph1, &graph2, n_nodes, correlation, probability, directed, NULL));
+    &graph1, &graph2, n_nodes, correlation, probability, directed, NULL));
 
   plhs[0] = mxIgraphToArray(&graph1, NULL, graph_options);
   plhs[1] = mxIgraphToArray(&graph2, NULL, graph_options);

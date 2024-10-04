@@ -17,6 +17,7 @@
  */
 
 #include "mexIgraphFunctions.h"
+
 #include <mxIgraph.h>
 
 static igraph_bool_t setup_ran = false;
@@ -55,14 +56,14 @@ static void mexIgraphSetupHook()
   }
 }
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+void mexFunction(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   mexIgraphSetupHook();
 
   mexIgraph_funcname_t function_name;
   mexIgraphFunction_t function;
 
-  const char *function_names[MXIGRAPH_FUNC_N] = {
+  char const* function_names[MXIGRAPH_FUNC_N] = {
     [MXIGRAPH_FUNC_CENTRALITY] = "centrality",
     [MXIGRAPH_FUNC_CLUSTER] = "cluster",
     [MXIGRAPH_FUNC_COMPARE] = "compare",

@@ -17,6 +17,7 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 
 typedef enum {
@@ -44,14 +45,13 @@ typedef enum {
   MXIGRAPH_GENERATOR_N
 } mxIgraph_generator_t;
 
-static igraph_error_t mxIgraph_star_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_star_i(mxArray const* opts, igraph_t* graph)
 {
-  const char *modes[] = {[IGRAPH_STAR_OUT] = "out",
-                         [IGRAPH_STAR_IN] = "in",
-                         [IGRAPH_STAR_MUTUAL] = "mutual",
-                         [IGRAPH_STAR_UNDIRECTED] = "undirected"
-                        };
-  const igraph_integer_t n_modes = 4;
+  char const* modes[] = { [IGRAPH_STAR_OUT] = "out",
+    [IGRAPH_STAR_IN] = "in",
+    [IGRAPH_STAR_MUTUAL] = "mutual",
+    [IGRAPH_STAR_UNDIRECTED] = "undirected" };
+  igraph_integer_t const n_modes = 4;
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_star_mode_t mode =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), modes, n_modes);
@@ -67,14 +67,13 @@ static igraph_error_t mxIgraph_star_i(mxArray const *opts, igraph_t *graph)
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_wheel_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_wheel_i(mxArray const* opts, igraph_t* graph)
 {
-  const char *modes[] = {[IGRAPH_WHEEL_OUT] = "out",
-                         [IGRAPH_WHEEL_IN] = "in",
-                         [IGRAPH_WHEEL_MUTUAL] = "mutual",
-                         [IGRAPH_WHEEL_UNDIRECTED] = "undirected"
-                        };
-  const igraph_integer_t n_modes = 4;
+  char const* modes[] = { [IGRAPH_WHEEL_OUT] = "out",
+    [IGRAPH_WHEEL_IN] = "in",
+    [IGRAPH_WHEEL_MUTUAL] = "mutual",
+    [IGRAPH_WHEEL_UNDIRECTED] = "undirected" };
+  igraph_integer_t const n_modes = 4;
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_wheel_mode_t mode =
     mxIgraphSelectMethod(mxIgraphGetArgument(opts, "mode"), modes, n_modes);
@@ -90,7 +89,7 @@ static igraph_error_t mxIgraph_wheel_i(mxArray const *opts, igraph_t *graph)
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_ring_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_ring_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t is_directed = mxIgraphBoolFromOptions(opts, "isdirected");
@@ -104,14 +103,13 @@ static igraph_error_t mxIgraph_ring_i(mxArray const *opts, igraph_t *graph)
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_kary_tree_i(mxArray const *opts,
-    igraph_t *graph)
+static igraph_error_t mxIgraph_kary_tree_i(
+  mxArray const* opts, igraph_t* graph)
 {
-  const char *types[] = {[IGRAPH_TREE_OUT] = "out",
-                         [IGRAPH_TREE_IN] = "in",
-                         [IGRAPH_TREE_UNDIRECTED] = "undirected"
-                        };
-  const igraph_integer_t n_types = 3;
+  char const* types[] = { [IGRAPH_TREE_OUT] = "out",
+    [IGRAPH_TREE_IN] = "in",
+    [IGRAPH_TREE_UNDIRECTED] = "undirected" };
+  igraph_integer_t const n_types = 3;
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t children = mxIgraphIntegerFromOptions(opts, "children");
   igraph_tree_mode_t type =
@@ -127,14 +125,13 @@ static igraph_error_t mxIgraph_kary_tree_i(mxArray const *opts,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_regular_tree_i(mxArray const *opts,
-    igraph_t *graph)
+static igraph_error_t mxIgraph_regular_tree_i(
+  mxArray const* opts, igraph_t* graph)
 {
-  const char *types[] = {[IGRAPH_TREE_OUT] = "out",
-                         [IGRAPH_TREE_IN] = "in",
-                         [IGRAPH_TREE_UNDIRECTED] = "undirected"
-                        };
-  const igraph_integer_t n_types = 3;
+  char const* types[] = { [IGRAPH_TREE_OUT] = "out",
+    [IGRAPH_TREE_IN] = "in",
+    [IGRAPH_TREE_UNDIRECTED] = "undirected" };
+  igraph_integer_t const n_types = 3;
   igraph_integer_t height = mxIgraphIntegerFromOptions(opts, "height");
   igraph_integer_t degree = mxIgraphIntegerFromOptions(opts, "degree");
   igraph_tree_mode_t type =
@@ -150,7 +147,7 @@ static igraph_error_t mxIgraph_regular_tree_i(mxArray const *opts,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_full_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_full_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t is_directed = mxIgraphIntegerFromOptions(opts, "isdirected");
@@ -160,8 +157,7 @@ static igraph_error_t mxIgraph_full_i(mxArray const *opts, igraph_t *graph)
   return igraph_full(graph, n_nodes, is_directed, loops);
 }
 
-static igraph_error_t mxIgraph_citation_i(mxArray const *opts,
-    igraph_t *graph)
+static igraph_error_t mxIgraph_citation_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_bool_t is_directed = mxIgraphIntegerFromOptions(opts, "isdirected");
@@ -172,7 +168,7 @@ static igraph_error_t mxIgraph_citation_i(mxArray const *opts,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_prufer_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_prufer_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_vector_int_t prufer;
 
@@ -187,7 +183,7 @@ static igraph_error_t mxIgraph_prufer_i(mxArray const *opts, igraph_t *graph)
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_atlas_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_atlas_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t atlas_id = mxIgraphIntegerFromOptions(opts, "atlasId");
   MXIGRAPH_CHECK_STATUS();
@@ -197,8 +193,8 @@ static igraph_error_t mxIgraph_atlas_i(mxArray const *opts, igraph_t *graph)
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_de_bruijn_i(mxArray const *opts,
-    igraph_t *graph)
+static igraph_error_t mxIgraph_de_bruijn_i(
+  mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_letters = mxIgraphIntegerFromOptions(opts, "nLetters");
   igraph_integer_t str_len = mxIgraphIntegerFromOptions(opts, "stringLength");
@@ -209,7 +205,7 @@ static igraph_error_t mxIgraph_de_bruijn_i(mxArray const *opts,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_kautz_i(mxArray const *opts, igraph_t *graph)
+static igraph_error_t mxIgraph_kautz_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_letters = mxIgraphIntegerFromOptions(opts, "nLetters");
   igraph_integer_t str_len = mxIgraphIntegerFromOptions(opts, "stringLength");
@@ -220,8 +216,8 @@ static igraph_error_t mxIgraph_kautz_i(mxArray const *opts, igraph_t *graph)
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_circulant_i(mxArray const *opts,
-    igraph_t *graph)
+static igraph_error_t mxIgraph_circulant_i(
+  mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_vector_int_t shifts;
@@ -238,8 +234,7 @@ static igraph_error_t mxIgraph_circulant_i(mxArray const *opts,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_petersen_i(mxArray const *opts,
-    igraph_t *graph)
+static igraph_error_t mxIgraph_petersen_i(mxArray const* opts, igraph_t* graph)
 {
   igraph_integer_t n_nodes = mxIgraphIntegerFromOptions(opts, "nNodes");
   igraph_integer_t shift = mxIgraphIntegerFromOptions(opts, "shift");
@@ -250,20 +245,20 @@ static igraph_error_t mxIgraph_petersen_i(mxArray const *opts,
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mexIgraphGenerate(int nlhs, mxArray *plhs[], int nrhs,
-                                 mxArray const *prhs[])
+igraph_error_t mexIgraphGenerate(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   mxIgraph_generator_t method;
-  mxArray const *graph_options = prhs[1];
-  mxArray const *method_options = prhs[2];
+  mxArray const* graph_options = prhs[1];
+  mxArray const* method_options = prhs[2];
   igraph_t graph;
-  typedef igraph_error_t (*generator_method_t)(mxArray const *prhs, igraph_t *);
+  typedef igraph_error_t (*generator_method_t)(mxArray const* prhs, igraph_t*);
   generator_method_t generator_method;
 
-  const char *generators[MXIGRAPH_GENERATOR_N] = {
+  char const* generators[MXIGRAPH_GENERATOR_N] = {
     [MXIGRAPH_GENERATOR_STAR] = "star",
     [MXIGRAPH_GENERATOR_WHEEL] = "wheel",
     [MXIGRAPH_GENERATOR_RING] = "ring",
@@ -309,7 +304,7 @@ igraph_error_t mexIgraphGenerate(int nlhs, mxArray *plhs[], int nrhs,
   generator_method = method_table[method];
   if (!generator_method) {
     IGRAPH_ERRORF("Generator method \"%s\" not implemented.",
-                  IGRAPH_UNIMPLEMENTED, mxArrayToString(prhs[0]));
+      IGRAPH_UNIMPLEMENTED, mxArrayToString(prhs[0]));
   }
 
   IGRAPH_CHECK(generator_method(method_options, &graph));

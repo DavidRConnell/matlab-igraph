@@ -16,36 +16,37 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "utils.h"
+
+#include <mxIgraph.h>
 #include <string.h>
 
-#include "utils.h"
-#include <mxIgraph.h>
-
-igraph_error_t mexIgraphCompare(int nlhs, mxArray *plhs[], int nrhs,
-                                mxArray const *prhs[])
+igraph_error_t mexIgraphCompare(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const *method_name = prhs[2];
+  mxArray const* method_name = prhs[2];
   igraph_vector_int_t comm1;
   igraph_vector_int_t comm2;
   igraph_community_comparison_t method;
   igraph_real_t res;
 
-  const char *methods[] = {[IGRAPH_COMMCMP_VI] = "vi",
-                           [IGRAPH_COMMCMP_NMI] = "nmi",
-                           [IGRAPH_COMMCMP_RAND] = "rand",
-                           [IGRAPH_COMMCMP_SPLIT_JOIN] = "split_join",
-                           [IGRAPH_COMMCMP_ADJUSTED_RAND] = "adjusted_rand"
-                          };
+  char const* methods[] = { [IGRAPH_COMMCMP_VI] = "vi",
+    [IGRAPH_COMMCMP_NMI] = "nmi",
+    [IGRAPH_COMMCMP_RAND] = "rand",
+    [IGRAPH_COMMCMP_SPLIT_JOIN] = "split_join",
+    [IGRAPH_COMMCMP_ADJUSTED_RAND] = "adjusted_rand" };
   igraph_integer_t n_methods = sizeof(methods) / sizeof(*methods);
   method = mxIgraphSelectMethod(method_name, methods, n_methods);
   MXIGRAPH_CHECK_METHOD(method, method_name);
 
-  IGRAPH_CHECK(mxIgraphVectorIntFromArray(prhs[0], &comm1, MXIGRAPH_IDX_SHIFT));
+  IGRAPH_CHECK(
+    mxIgraphVectorIntFromArray(prhs[0], &comm1, MXIGRAPH_IDX_SHIFT));
   IGRAPH_FINALLY(igraph_vector_int_destroy, &comm1);
-  IGRAPH_CHECK(mxIgraphVectorIntFromArray(prhs[1], &comm2, MXIGRAPH_IDX_SHIFT));
+  IGRAPH_CHECK(
+    mxIgraphVectorIntFromArray(prhs[1], &comm2, MXIGRAPH_IDX_SHIFT));
   IGRAPH_FINALLY(igraph_vector_int_destroy, &comm2);
 
   IGRAPH_CHECK(igraph_reindex_membership(&comm1, NULL, NULL));

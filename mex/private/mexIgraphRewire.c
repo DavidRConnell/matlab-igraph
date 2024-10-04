@@ -17,16 +17,17 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 
-igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
-                               mxArray const *prhs[])
+igraph_error_t mexIgraphRewire(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const *graph_options = prhs[1];
-  mxArray const *method_options = prhs[2];
+  mxArray const* graph_options = prhs[1];
+  mxArray const* method_options = prhs[2];
 
   igraph_t graph;
   igraph_bool_t const preserve_degree =
@@ -44,8 +45,7 @@ igraph_error_t mexIgraphRewire(int nlhs, mxArray *plhs[], int nrhs,
 
   if (preserve_degree) {
     IGRAPH_CHECK(igraph_rewire(&graph, n_rewires,
-                               loops ? IGRAPH_REWIRING_SIMPLE_LOOPS
-                               : IGRAPH_REWIRING_SIMPLE));
+      loops ? IGRAPH_REWIRING_SIMPLE_LOOPS : IGRAPH_REWIRING_SIMPLE));
   } else {
     IGRAPH_CHECK(
       igraph_rewire_directed_edges(&graph, probability, loops, mode));

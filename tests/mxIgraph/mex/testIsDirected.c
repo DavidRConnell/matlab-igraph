@@ -1,7 +1,8 @@
-#include <mxIgraph.h>
 #include "igraph.h"
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+#include <mxIgraph.h>
+
+void mexFunction(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   igraph_bool_t flag = mxIgraphIsDirected(prhs[0]);
 

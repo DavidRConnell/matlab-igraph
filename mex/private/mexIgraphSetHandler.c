@@ -17,11 +17,11 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 
-igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
-                                   int nrhs,
-                                   mxArray const *prhs[])
+igraph_error_t mexIgraphSetHandler(
+  int nlhs, mxArray* UNUSED(plhs[]), int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(2);
   VERIFY_N_OUTPUTS_EQUAL(0);
@@ -36,7 +36,7 @@ igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
   mxIgraph_handler_t type;
   igraph_bool_t verbose = mxGetScalar(prhs[1]);
 
-  const char *handlers[MXIGRAPH_HANDLER_N] = {
+  char const* handlers[MXIGRAPH_HANDLER_N] = {
     [MXIGRAPH_HANDLER_WARNING] = "warning",
     [MXIGRAPH_HANDLER_PROGRESS] = "progress",
     [MXIGRAPH_HANDLER_STATUS] = "status",
@@ -46,29 +46,29 @@ igraph_error_t mexIgraphSetHandler(int nlhs, mxArray *UNUSED(plhs[]),
   MXIGRAPH_CHECK_METHOD(type, prhs[0]);
 
   switch (type) {
-  case MXIGRAPH_HANDLER_WARNING:
-    if (verbose) {
-      igraph_set_warning_handler(mxIgraphWarningHandlerMex);
-    } else {
-      igraph_set_warning_handler(mxIgraphWarningHandlerIgnoreMex);
-    }
-    break;
-  case MXIGRAPH_HANDLER_PROGRESS:
-    if (verbose) {
-      igraph_set_progress_handler(mxIgraphProgressHandlerMex);
-    } else {
-      igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
-    }
-    break;
-  case MXIGRAPH_HANDLER_STATUS:
-    if (verbose) {
-      igraph_set_status_handler(mxIgraphStatusHandlerMex);
-    } else {
-      igraph_set_status_handler(mxIgraphStatusHandlerIgnoreMex);
-    }
-    break;
-  default:
-    IGRAPH_FATAL("Got an unexpected handler type.");
+    case MXIGRAPH_HANDLER_WARNING:
+      if (verbose) {
+        igraph_set_warning_handler(mxIgraphWarningHandlerMex);
+      } else {
+        igraph_set_warning_handler(mxIgraphWarningHandlerIgnoreMex);
+      }
+      break;
+    case MXIGRAPH_HANDLER_PROGRESS:
+      if (verbose) {
+        igraph_set_progress_handler(mxIgraphProgressHandlerMex);
+      } else {
+        igraph_set_progress_handler(mxIgraphProgressHandlerIgnoreMex);
+      }
+      break;
+    case MXIGRAPH_HANDLER_STATUS:
+      if (verbose) {
+        igraph_set_status_handler(mxIgraphStatusHandlerMex);
+      } else {
+        igraph_set_status_handler(mxIgraphStatusHandlerIgnoreMex);
+      }
+      break;
+    default:
+      IGRAPH_FATAL("Got an unexpected handler type.");
   };
 
   return IGRAPH_SUCCESS;

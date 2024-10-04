@@ -17,10 +17,10 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 
-static igraph_error_t mxIgraph_reindex_membership_i(igraph_vector_int_t
-    *memb)
+static igraph_error_t mxIgraph_reindex_membership_i(igraph_vector_int_t* memb)
 {
   igraph_integer_t const comm_min = igraph_vector_int_min(memb);
   igraph_integer_t const n_comms =
@@ -53,8 +53,8 @@ static igraph_error_t mxIgraph_reindex_membership_i(igraph_vector_int_t
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mexIgraphReindexMembership(int nlhs, mxArray *plhs[], int nrhs,
-    mxArray const *prhs[])
+igraph_error_t mexIgraphReindexMembership(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(1);
   VERIFY_N_OUTPUTS_EQUAL(1);

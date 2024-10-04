@@ -25,8 +25,8 @@
    switch statement.
 
    If no match found, returns -1. */
-igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
-                                      const igraph_integer_t n_methods)
+igraph_integer_t mxIgraphSelectMethod(
+  mxArray const* p, char const* methods[], igraph_integer_t const n_methods)
 {
   if (!mxIsChar(p)) {
     mxIgraphSetError(IGRAPH_EINVAL);
@@ -34,7 +34,7 @@ igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
     return -1;
   }
 
-  char *name = mxArrayToString(p);
+  char* name = mxArrayToString(p);
   for (igraph_integer_t i = 0; i < n_methods; i++) {
     if (methods[i] && strcmp(name, methods[i]) == 0) {
       return i;
@@ -47,10 +47,10 @@ igraph_integer_t mxIgraphSelectMethod(const mxArray *p, const char *methods[],
 }
 
 // Select a file format.
-mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p)
+mxIgraphFileFormat_t mxIgraphSelectFileFormat(mxArray const* p)
 {
   mxIgraphFileFormat_t res;
-  const char *file_formats[MXIGRAPH_FORMAT_N] = {
+  char const* file_formats[MXIGRAPH_FORMAT_N] = {
     [MXIGRAPH_FORMAT_EDGELIST] = "edgelist",
     [MXIGRAPH_FORMAT_NCOL] = "ncol",
     [MXIGRAPH_FORMAT_LGL] = "lgl",
@@ -68,55 +68,52 @@ mxIgraphFileFormat_t mxIgraphSelectFileFormat(const mxArray *p)
 }
 
 // Select a graph representation.
-mxIgraphRepr_t mxIgraphReprFromOptions(const mxArray *p)
+mxIgraphRepr_t mxIgraphReprFromOptions(mxArray const* p)
 {
   mxIgraphRepr_t res;
-  const char *reps[MXIGRAPH_REPR_N] = {[MXIGRAPH_REPR_GRAPH] = "graph",
-                                       [MXIGRAPH_REPR_FULL] = "full",
-                                       [MXIGRAPH_REPR_SPARSE] = "sparse"
-                                      };
+  char const* reps[MXIGRAPH_REPR_N] = { [MXIGRAPH_REPR_GRAPH] = "graph",
+    [MXIGRAPH_REPR_FULL] = "full",
+    [MXIGRAPH_REPR_SPARSE] = "sparse" };
 
   return mxIgraphSelectMethod(mxGetField(p, 0, "repr"), reps, MXIGRAPH_REPR_N);
 }
 
 // Select a data type.
-mxIgraphDType_t mxIgraphDTypeFromOptions(const mxArray *p)
+mxIgraphDType_t mxIgraphDTypeFromOptions(mxArray const* p)
 {
   mxIgraphDType_t res;
-  const char *dtypes[MXIGRAPH_DTYPE_N] = {
+  char const* dtypes[MXIGRAPH_DTYPE_N] = {
     [MXIGRAPH_DTYPE_LOGICAL] = "logical", [MXIGRAPH_DTYPE_DOUBLE] = "double"
   };
 
-  return mxIgraphSelectMethod(mxGetField(p, 0, "dtype"), dtypes,
-                              MXIGRAPH_DTYPE_N);
+  return mxIgraphSelectMethod(
+    mxGetField(p, 0, "dtype"), dtypes, MXIGRAPH_DTYPE_N);
 }
 
 // Select a neighbor mode.
-igraph_neimode_t mxIgraphModeFromOptions(const mxArray *p)
+igraph_neimode_t mxIgraphModeFromOptions(mxArray const* p)
 {
   igraph_neimode_t res;
   igraph_integer_t n_modes = 3;
   // Mode enum starts at 1 not 0.
-  const char *modes[3] = {[IGRAPH_OUT - 1] = "out",
-                          [IGRAPH_IN - 1] = "in",
-                          [IGRAPH_ALL - 1] = "all"
-                         };
+  char const* modes[3] = {
+    [IGRAPH_OUT - 1] = "out", [IGRAPH_IN - 1] = "in", [IGRAPH_ALL - 1] = "all"
+  };
 
   res = mxIgraphSelectMethod(mxGetField(p, 0, "mode"), modes, n_modes);
 
   if (res == -1) {
     mxIgraphSetError(IGRAPH_EINVMODE);
-    mxIgraphSetErrorMsg("Received invalid mode name \"%s\".",
-                        mxGetField(p, 0, "mode"));
+    mxIgraphSetErrorMsg(
+      "Received invalid mode name \"%s\".", mxGetField(p, 0, "mode"));
   }
 
   return res + 1;
 }
 
-mxArray *mxIgraphGetArgument(mxArray const *arg_struct,
-                             char const *fieldname)
+mxArray* mxIgraphGetArgument(mxArray const* arg_struct, char const* fieldname)
 {
-  mxArray *arg = NULL;
+  mxArray* arg = NULL;
   if (!(arg = mxGetField(arg_struct, 0, fieldname))) {
     mxIgraphSetError(IGRAPH_EINVAL);
     mxIgraphSetErrorMsg("Received invalid argument name \"%s\".", fieldname);
@@ -125,84 +122,78 @@ mxArray *mxIgraphGetArgument(mxArray const *arg_struct,
   return arg;
 }
 
-igraph_integer_t mxIgraphIntegerFromOptions(const mxArray *arg_struct,
-    char const fieldname[1])
+igraph_integer_t mxIgraphIntegerFromOptions(
+  mxArray const* arg_struct, char const fieldname[1])
 {
-  mxArray *arg = mxIgraphGetArgument(arg_struct, fieldname);
+  mxArray* arg = mxIgraphGetArgument(arg_struct, fieldname);
   return arg ? mxGetScalar(arg) : -1;
 }
 
-igraph_real_t mxIgraphRealFromOptions(const mxArray *arg_struct,
-                                      char const fieldname[1])
+igraph_real_t mxIgraphRealFromOptions(
+  mxArray const* arg_struct, char const fieldname[1])
 {
-  mxArray *arg = mxIgraphGetArgument(arg_struct, fieldname);
+  mxArray* arg = mxIgraphGetArgument(arg_struct, fieldname);
   return arg ? mxGetScalar(arg) : -1;
 }
 
-igraph_bool_t mxIgraphBoolFromOptions(const mxArray *arg_struct,
-                                      char const fieldname[1])
+igraph_bool_t mxIgraphBoolFromOptions(
+  mxArray const* arg_struct, char const fieldname[1])
 {
-  mxArray *arg = mxIgraphGetArgument(arg_struct, fieldname);
+  mxArray* arg = mxIgraphGetArgument(arg_struct, fieldname);
   return arg ? mxGetScalar(arg) : 0;
 }
 
-char *mxIgraphStringFromOptions(mxArray const *arg_struct,
-                                char const fieldname[1])
+char* mxIgraphStringFromOptions(
+  mxArray const* arg_struct, char const fieldname[1])
 {
-  mxArray *arg = mxIgraphGetArgument(arg_struct, fieldname);
+  mxArray* arg = mxIgraphGetArgument(arg_struct, fieldname);
   return arg ? mxArrayToString(arg) : "";
 }
 
-igraph_error_t mxIgraphVectorFromOptions(const mxArray *arg_struct,
-    char const fieldname[1],
-    igraph_vector_t *vec,
-    igraph_bool_t const shift_start)
+igraph_error_t mxIgraphVectorFromOptions(mxArray const* arg_struct,
+  char const fieldname[1], igraph_vector_t* vec,
+  igraph_bool_t const shift_start)
 {
-  return mxIgraphVectorFromArray(mxIgraphGetArgument(arg_struct, fieldname),
-                                 vec, shift_start);
+  return mxIgraphVectorFromArray(
+    mxIgraphGetArgument(arg_struct, fieldname), vec, shift_start);
 }
 
-igraph_error_t mxIgraphVectorIntFromOptions(const mxArray *arg_struct,
-    char const fieldname[1],
-    igraph_vector_int_t *vec,
-    igraph_bool_t const shift_start)
+igraph_error_t mxIgraphVectorIntFromOptions(mxArray const* arg_struct,
+  char const fieldname[1], igraph_vector_int_t* vec,
+  igraph_bool_t const shift_start)
 {
-  return mxIgraphVectorIntFromArray(mxIgraphGetArgument(arg_struct, fieldname),
-                                    vec, shift_start);
+  return mxIgraphVectorIntFromArray(
+    mxIgraphGetArgument(arg_struct, fieldname), vec, shift_start);
 }
 
-igraph_error_t mxIgraphVectorBoolFromOptions(const mxArray *arg_struct,
-    char const fieldname[1],
-    igraph_vector_bool_t *vec,
-    igraph_bool_t const shift_start)
+igraph_error_t mxIgraphVectorBoolFromOptions(mxArray const* arg_struct,
+  char const fieldname[1], igraph_vector_bool_t* vec,
+  igraph_bool_t const shift_start)
 {
-  return mxIgraphVectorBoolFromArray(mxIgraphGetArgument(arg_struct, fieldname),
-                                     vec, shift_start);
+  return mxIgraphVectorBoolFromArray(
+    mxIgraphGetArgument(arg_struct, fieldname), vec, shift_start);
 }
 
-igraph_error_t mxIgraphMatrixFromOptions(const mxArray *arg_struct,
-    char const fieldname[1],
-    igraph_matrix_t *mat,
-    igraph_bool_t const shift_start)
+igraph_error_t mxIgraphMatrixFromOptions(mxArray const* arg_struct,
+  char const fieldname[1], igraph_matrix_t* mat,
+  igraph_bool_t const shift_start)
 {
-  return mxIgraphMatrixFromArray(mxIgraphGetArgument(arg_struct, fieldname),
-                                 mat, shift_start);
+  return mxIgraphMatrixFromArray(
+    mxIgraphGetArgument(arg_struct, fieldname), mat, shift_start);
 }
 
-igraph_error_t mxIgraphMatrixIntFromOptions(const mxArray *arg_struct,
-    char const fieldname[1],
-    igraph_matrix_int_t *mat,
-    igraph_bool_t const shift_start)
+igraph_error_t mxIgraphMatrixIntFromOptions(mxArray const* arg_struct,
+  char const fieldname[1], igraph_matrix_int_t* mat,
+  igraph_bool_t const shift_start)
 {
-  return mxIgraphMatrixIntFromArray(mxIgraphGetArgument(arg_struct, fieldname),
-                                    mat, shift_start);
+  return mxIgraphMatrixIntFromArray(
+    mxIgraphGetArgument(arg_struct, fieldname), mat, shift_start);
 }
 
-igraph_error_t mxIgraphMatrixBoolFromOptions(const mxArray *arg_struct,
-    char const fieldname[1],
-    igraph_matrix_bool_t *mat,
-    igraph_bool_t const shift_start)
+igraph_error_t mxIgraphMatrixBoolFromOptions(mxArray const* arg_struct,
+  char const fieldname[1], igraph_matrix_bool_t* mat,
+  igraph_bool_t const shift_start)
 {
-  return mxIgraphMatrixBoolFromArray(mxIgraphGetArgument(arg_struct, fieldname),
-                                     mat, shift_start);
+  return mxIgraphMatrixBoolFromArray(
+    mxIgraphGetArgument(arg_struct, fieldname), mat, shift_start);
 }

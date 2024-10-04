@@ -8,12 +8,9 @@ void mxIgraphSetError(igraph_error_t const new_code)
   mxIgraphError = new_code;
 }
 
-igraph_error_t mxIgraphGetError(void)
-{
-  return mxIgraphError;
-}
+igraph_error_t mxIgraphGetError(void) { return mxIgraphError; }
 
-void mxIgraphSetErrorMsg(char const *fmt, ...)
+void mxIgraphSetErrorMsg(char const* fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
@@ -21,7 +18,4 @@ void mxIgraphSetErrorMsg(char const *fmt, ...)
   va_end(ap);
 }
 
-char *mxIgraphGetErrorMsg(void)
-{
-  return mxIgraphErrorMsg;
-}
+char* mxIgraphGetErrorMsg(void) { return mxIgraphErrorMsg; }

@@ -16,30 +16,30 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "utils.h"
+
+#include <mxIgraph.h>
 #include <stdio.h>
 
-#include "utils.h"
-#include <mxIgraph.h>
-
-igraph_error_t mexIgraphWrite(int nlhs, mxArray *plhs[], int nrhs,
-                              mxArray const *prhs[])
+igraph_error_t mexIgraphWrite(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_NO_OUTPUTS;
 
-  mxArray const *graph_options = prhs[3];
+  mxArray const* graph_options = prhs[3];
   igraph_t graph;
   igraph_vector_t weights;
-  char *filename = mxArrayToString(prhs[0]);
+  char* filename = mxArrayToString(prhs[0]);
   mxIgraphFileFormat_t format = mxIgraphSelectFileFormat(prhs[2]);
   igraph_bool_t is_weighted =
     mxIgraphBoolFromOptions(graph_options, "isweighted");
   MXIGRAPH_CHECK_STATUS();
 
-  FILE *fptr;
+  FILE* fptr;
   if (!(fptr = fopen(filename, "w"))) {
-    IGRAPH_ERRORF("Could not open file \"%s\" for writing.", IGRAPH_EFILE,
-                  filename);
+    IGRAPH_ERRORF(
+      "Could not open file \"%s\" for writing.", IGRAPH_EFILE, filename);
   }
   IGRAPH_FINALLY(fclose, fptr);
 
@@ -47,8 +47,8 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray *plhs[], int nrhs,
     igraph_set_attribute_table(&igraph_cattribute_table);
   }
 
-  IGRAPH_CHECK(mxIgraphFromArray(prhs[1], &graph, is_weighted ? &weights : NULL,
-                                 graph_options));
+  IGRAPH_CHECK(mxIgraphFromArray(
+    prhs[1], &graph, is_weighted ? &weights : NULL, graph_options));
   IGRAPH_FINALLY(igraph_destroy, &graph);
 
   if (is_weighted) {
@@ -57,46 +57,48 @@ igraph_error_t mexIgraphWrite(int nlhs, mxArray *plhs[], int nrhs,
   }
 
   switch (format) {
-  case MXIGRAPH_FORMAT_EDGELIST:
-    IGRAPH_CHECK(igraph_write_graph_edgelist(&graph, fptr));
-    break;
-  case MXIGRAPH_FORMAT_NCOL:
-    if (is_weighted) {
-      IGRAPH_CHECK(igraph_write_graph_ncol(&graph, fptr, NULL, "weight"));
-    } else {
-      IGRAPH_CHECK(igraph_write_graph_ncol(&graph, fptr, NULL, NULL));
-    }
-    break;
-  case MXIGRAPH_FORMAT_LGL:
-    if (is_weighted) {
-      IGRAPH_CHECK(igraph_write_graph_lgl(&graph, fptr, NULL, "weight", true));
-    } else {
-      IGRAPH_CHECK(igraph_write_graph_lgl(&graph, fptr, NULL, NULL, true));
-    }
-    break;
-  case MXIGRAPH_FORMAT_DIMACS:
-    IGRAPH_ERROR("The DIMACS format has not been implemented in matlab-igraph.",
-                 IGRAPH_UNIMPLEMENTED);
-    break;
-  case MXIGRAPH_FORMAT_GRAPHML:
-    IGRAPH_CHECK(igraph_write_graph_graphml(&graph, fptr, true));
-    break;
-  case MXIGRAPH_FORMAT_GML:
-    IGRAPH_CHECK(igraph_write_graph_gml(&graph, fptr,
-                                        IGRAPH_WRITE_GML_DEFAULT_SW, 0, NULL));
-    break;
-  case MXIGRAPH_FORMAT_DOT:
-    IGRAPH_CHECK(igraph_write_graph_dot(&graph, fptr));
-    break;
-  case MXIGRAPH_FORMAT_LEDA:
-    if (is_weighted) {
-      IGRAPH_CHECK(igraph_write_graph_leda(&graph, fptr, NULL, "weight"));
-    } else {
-      IGRAPH_CHECK(igraph_write_graph_leda(&graph, fptr, NULL, NULL));
-    }
-    break;
-  default:
-    IGRAPH_FATAL("Received an unknown or not implemented file format.");
+    case MXIGRAPH_FORMAT_EDGELIST:
+      IGRAPH_CHECK(igraph_write_graph_edgelist(&graph, fptr));
+      break;
+    case MXIGRAPH_FORMAT_NCOL:
+      if (is_weighted) {
+        IGRAPH_CHECK(igraph_write_graph_ncol(&graph, fptr, NULL, "weight"));
+      } else {
+        IGRAPH_CHECK(igraph_write_graph_ncol(&graph, fptr, NULL, NULL));
+      }
+      break;
+    case MXIGRAPH_FORMAT_LGL:
+      if (is_weighted) {
+        IGRAPH_CHECK(
+          igraph_write_graph_lgl(&graph, fptr, NULL, "weight", true));
+      } else {
+        IGRAPH_CHECK(igraph_write_graph_lgl(&graph, fptr, NULL, NULL, true));
+      }
+      break;
+    case MXIGRAPH_FORMAT_DIMACS:
+      IGRAPH_ERROR(
+        "The DIMACS format has not been implemented in matlab-igraph.",
+        IGRAPH_UNIMPLEMENTED);
+      break;
+    case MXIGRAPH_FORMAT_GRAPHML:
+      IGRAPH_CHECK(igraph_write_graph_graphml(&graph, fptr, true));
+      break;
+    case MXIGRAPH_FORMAT_GML:
+      IGRAPH_CHECK(igraph_write_graph_gml(
+        &graph, fptr, IGRAPH_WRITE_GML_DEFAULT_SW, 0, NULL));
+      break;
+    case MXIGRAPH_FORMAT_DOT:
+      IGRAPH_CHECK(igraph_write_graph_dot(&graph, fptr));
+      break;
+    case MXIGRAPH_FORMAT_LEDA:
+      if (is_weighted) {
+        IGRAPH_CHECK(igraph_write_graph_leda(&graph, fptr, NULL, "weight"));
+      } else {
+        IGRAPH_CHECK(igraph_write_graph_leda(&graph, fptr, NULL, NULL));
+      }
+      break;
+    default:
+      IGRAPH_FATAL("Received an unknown or not implemented file format.");
   }
 
   fclose(fptr);

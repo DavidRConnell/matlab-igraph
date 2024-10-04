@@ -17,6 +17,7 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 #include <string.h>
 
@@ -35,10 +36,9 @@ typedef enum {
   MXIGRAPH_CLUSTER_N
 } mxIgraph_cluster_t;
 
-static igraph_error_t mxIgraph_optimal_i(igraph_t const *graph,
-    igraph_vector_t const *weights,
-    mxArray const *UNUSED(opts),
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_optimal_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* UNUSED(opts),
+  igraph_vector_int_t* membership)
 {
   IGRAPH_CHECK(
     igraph_community_optimal_modularity(graph, NULL, membership, weights));
@@ -46,25 +46,25 @@ static igraph_error_t mxIgraph_optimal_i(igraph_t const *graph,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_spinglass_i(igraph_t const *graph,
-    igraph_vector_t const *weights,
-    mxArray const *opts,
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_spinglass_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_integer_t n_spins = mxIgraphIntegerFromOptions(opts, "nSpins");
   igraph_bool_t parallel = mxIgraphBoolFromOptions(opts, "parallel");
   igraph_real_t start_temp = mxIgraphRealFromOptions(opts, "tempStart");
   igraph_real_t end_temp = mxIgraphRealFromOptions(opts, "tempEnd");
   igraph_real_t cool_factor = mxIgraphRealFromOptions(opts, "coolingFactor");
-  char const *update_rule_str = mxIgraphStringFromOptions(opts, "updateRule");
+  char const* update_rule_str = mxIgraphStringFromOptions(opts, "updateRule");
   igraph_real_t gamma = mxIgraphRealFromOptions(opts, "resolution");
   igraph_real_t gamma_minus = mxIgraphRealFromOptions(opts, "negResolution");
   MXIGRAPH_CHECK_STATUS();
 
   igraph_spincomm_update_t update_rule;
   igraph_spinglass_implementation_t implementation =
-    igraph_vector_min(weights) < 0 ? IGRAPH_SPINCOMM_IMP_NEG
-    : IGRAPH_SPINCOMM_IMP_ORIG;
+    igraph_vector_min(weights) < 0 ?
+      IGRAPH_SPINCOMM_IMP_NEG :
+      IGRAPH_SPINCOMM_IMP_ORIG;
 
   if (strcmp(update_rule_str, "simple") == 0) {
     update_rule = IGRAPH_SPINCOMM_UPDATE_SIMPLE;
@@ -72,17 +72,16 @@ static igraph_error_t mxIgraph_spinglass_i(igraph_t const *graph,
     update_rule = IGRAPH_SPINCOMM_UPDATE_CONFIG;
   }
 
-  IGRAPH_CHECK(igraph_community_spinglass(
-                 graph, weights, NULL, NULL, membership, NULL, n_spins, parallel,
-                 start_temp, end_temp, cool_factor, update_rule, gamma, implementation,
-                 gamma_minus));
+  IGRAPH_CHECK(igraph_community_spinglass(graph, weights, NULL, NULL,
+    membership, NULL, n_spins, parallel, start_temp, end_temp, cool_factor,
+    update_rule, gamma, implementation, gamma_minus));
 
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_leading_eigenvector_i(
-  igraph_t const *graph, igraph_vector_t const *weights, mxArray const *opts,
-  igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_leading_eigenvector_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_integer_t steps = mxIgraphIntegerFromOptions(opts, "maxSteps");
   MXIGRAPH_CHECK_STATUS();
@@ -94,17 +93,15 @@ static igraph_error_t mxIgraph_leading_eigenvector_i(
   }
   igraph_vector_int_destroy(&init);
 
-  IGRAPH_CHECK(igraph_community_leading_eigenvector(
-                 graph, weights, NULL, membership, steps, NULL, NULL, true, NULL, NULL,
-                 NULL, NULL, NULL));
+  IGRAPH_CHECK(igraph_community_leading_eigenvector(graph, weights, NULL,
+    membership, steps, NULL, NULL, true, NULL, NULL, NULL, NULL, NULL));
 
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_walktrap_i(igraph_t const *graph,
-    igraph_vector_t const *weights,
-    mxArray const *opts,
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_walktrap_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_integer_t steps = mxIgraphIntegerFromOptions(opts, "nSteps");
   MXIGRAPH_CHECK_STATUS();
@@ -115,24 +112,22 @@ static igraph_error_t mxIgraph_walktrap_i(igraph_t const *graph,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_edge_betweenness_i(igraph_t const *graph,
-    igraph_vector_t const *weights, mxArray const *opts,
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_edge_betweenness_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_bool_t isweighted = mxIgraphBoolFromOptions(opts, "isweighted");
   MXIGRAPH_CHECK_STATUS();
 
-  IGRAPH_CHECK(igraph_community_edge_betweenness(
-                 graph, NULL, NULL, NULL, NULL, NULL, membership,
-                 igraph_is_directed(graph), weights));
+  IGRAPH_CHECK(igraph_community_edge_betweenness(graph, NULL, NULL, NULL, NULL,
+    NULL, membership, igraph_is_directed(graph), weights));
 
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_fastgreedy_i(igraph_t const *graph,
-    igraph_vector_t const *weights,
-    mxArray const *UNUSED(opts),
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_fastgreedy_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* UNUSED(opts),
+  igraph_vector_int_t* membership)
 {
   IGRAPH_CHECK(
     igraph_community_fastgreedy(graph, weights, NULL, NULL, membership));
@@ -140,24 +135,22 @@ static igraph_error_t mxIgraph_fastgreedy_i(igraph_t const *graph,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_multilevel_i(igraph_t const *graph,
-    igraph_vector_t const *weights,
-    mxArray const *opts,
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_multilevel_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_real_t resolution = mxIgraphRealFromOptions(opts, "resolution");
   MXIGRAPH_CHECK_STATUS();
 
-  IGRAPH_CHECK(igraph_community_multilevel(graph, weights, resolution,
-               membership, NULL, NULL));
+  IGRAPH_CHECK(igraph_community_multilevel(
+    graph, weights, resolution, membership, NULL, NULL));
 
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_leiden_i(igraph_t const *graph,
-                                        igraph_vector_t const *weights,
-                                        mxArray const *opts,
-                                        igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_leiden_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_real_t resolution = mxIgraphRealFromOptions(opts, "resolution");
   igraph_real_t beta = mxIgraphRealFromOptions(opts, "randomness");
@@ -168,7 +161,7 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const *graph,
   MXIGRAPH_CHECK_STATUS();
 
   igraph_vector_t node_weights;
-  igraph_vector_t *node_weights_ptr = NULL;
+  igraph_vector_t* node_weights_ptr = NULL;
   igraph_vector_int_t init;
 
   IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "initial", &init, true));
@@ -180,14 +173,13 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const *graph,
   if (use_modularity) {
     IGRAPH_CHECK(igraph_vector_init(&node_weights, igraph_vcount(graph)));
     IGRAPH_FINALLY(igraph_vector_destroy, &node_weights);
-    IGRAPH_CHECK(igraph_strength(graph, &node_weights, igraph_vss_all(),
-                                 IGRAPH_ALL, true, weights));
+    IGRAPH_CHECK(igraph_strength(
+      graph, &node_weights, igraph_vss_all(), IGRAPH_ALL, true, weights));
     node_weights_ptr = &node_weights;
   }
 
   IGRAPH_CHECK(igraph_community_leiden(graph, weights, node_weights_ptr,
-                                       resolution, beta, true, n_iterations,
-                                       membership, NULL, NULL));
+    resolution, beta, true, n_iterations, membership, NULL, NULL));
 
   if (use_modularity) {
     igraph_vector_destroy(&node_weights);
@@ -197,9 +189,9 @@ static igraph_error_t mxIgraph_leiden_i(igraph_t const *graph,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_fluid_communities_i(
-  igraph_t const *graph, igraph_vector_t const *UNUSED(weights),
-  mxArray const *opts, igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_fluid_communities_i(igraph_t const* graph,
+  igraph_vector_t const* UNUSED(weights), mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_integer_t n_communities =
     mxIgraphIntegerFromOptions(opts, "nCommunities");
@@ -211,9 +203,9 @@ static igraph_error_t mxIgraph_fluid_communities_i(
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_label_propagation_i(
-  igraph_t const *graph, igraph_vector_t const *weights, mxArray const *opts,
-  igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_label_propagation_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_vector_int_t initial;
   igraph_neimode_t mode = mxIgraphModeFromOptions(opts);
@@ -225,8 +217,8 @@ static igraph_error_t mxIgraph_label_propagation_i(
   IGRAPH_CHECK(mxIgraphVectorBoolFromOptions(opts, "fixed", &fixed, false));
   IGRAPH_FINALLY(igraph_vector_bool_destroy, &fixed);
 
-  IGRAPH_CHECK(igraph_community_label_propagation(graph, membership, mode,
-               weights, &initial, &fixed));
+  IGRAPH_CHECK(igraph_community_label_propagation(
+    graph, membership, mode, weights, &initial, &fixed));
 
   igraph_vector_int_destroy(&initial);
   igraph_vector_bool_destroy(&fixed);
@@ -235,22 +227,21 @@ static igraph_error_t mxIgraph_label_propagation_i(
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t mxIgraph_infomap_i(igraph_t const *graph,
-    igraph_vector_t const *weights,
-    mxArray const *opts,
-    igraph_vector_int_t *membership)
+static igraph_error_t mxIgraph_infomap_i(igraph_t const* graph,
+  igraph_vector_t const* weights, mxArray const* opts,
+  igraph_vector_int_t* membership)
 {
   igraph_integer_t n_trials = mxIgraphIntegerFromOptions(opts, "nTrials");
   MXIGRAPH_CHECK_STATUS();
   igraph_vector_t v_weights;
   igraph_real_t codelength = 0;
 
-  IGRAPH_CHECK(mxIgraphVectorFromOptions(opts, "nodeWeights", &v_weights,
-                                         MXIGRAPH_IDX_KEEP));
+  IGRAPH_CHECK(mxIgraphVectorFromOptions(
+    opts, "nodeWeights", &v_weights, MXIGRAPH_IDX_KEEP));
   IGRAPH_FINALLY(igraph_vector_destroy, &v_weights);
 
-  IGRAPH_CHECK(igraph_community_infomap(graph, weights, &v_weights, n_trials,
-                                        membership, &codelength));
+  IGRAPH_CHECK(igraph_community_infomap(
+    graph, weights, &v_weights, n_trials, membership, &codelength));
 
   igraph_vector_destroy(&v_weights);
   IGRAPH_FINALLY_CLEAN(1);
@@ -258,24 +249,23 @@ static igraph_error_t mxIgraph_infomap_i(igraph_t const *graph,
   return IGRAPH_SUCCESS;
 }
 
-igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
-                                mxArray const *prhs[])
+igraph_error_t mexIgraphCluster(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const *graph_options = prhs[2];
-  mxArray const *method_options = prhs[3];
+  mxArray const* graph_options = prhs[2];
+  mxArray const* method_options = prhs[3];
   mxIgraph_cluster_t method;
   igraph_t graph;
   igraph_vector_t weights;
   igraph_vector_int_t membership;
-  typedef igraph_error_t (*cluster_method_t)(
-    igraph_t const *, igraph_vector_t const *, mxArray const *,
-    igraph_vector_int_t *);
+  typedef igraph_error_t (*cluster_method_t)(igraph_t const*,
+    igraph_vector_t const*, mxArray const*, igraph_vector_int_t*);
   cluster_method_t cluster_method;
 
-  char const *methods[MXIGRAPH_CLUSTER_N] = {
+  char const* methods[MXIGRAPH_CLUSTER_N] = {
     [MXIGRAPH_CLUSTER_OPTIMAL] = "optimal",
     [MXIGRAPH_CLUSTER_SPINGLASS] = "spinglass",
     [MXIGRAPH_CLUSTER_LEADINGEIGENVECTOR] = "leadingeigenvector",
@@ -309,7 +299,7 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
   cluster_method = method_table[method];
   if (!cluster_method) {
     IGRAPH_ERRORF("Cluster method \"%s\" not implemented.",
-                  IGRAPH_UNIMPLEMENTED, mxArrayToString(prhs[1]));
+      IGRAPH_UNIMPLEMENTED, mxArrayToString(prhs[1]));
   }
 
   IGRAPH_CHECK(mxIgraphFromArray(prhs[0], &graph, &weights, graph_options));
@@ -319,8 +309,8 @@ igraph_error_t mexIgraphCluster(int nlhs, mxArray *plhs[], int nrhs,
   IGRAPH_CHECK(igraph_vector_int_init(&membership, igraph_vcount(&graph)));
   IGRAPH_FINALLY(igraph_vector_int_destroy, &membership);
 
-  IGRAPH_CHECK(cluster_method(&graph, MXIGRAPH_WEIGHTS(&weights),
-                              method_options, &membership));
+  IGRAPH_CHECK(cluster_method(
+    &graph, MXIGRAPH_WEIGHTS(&weights), method_options, &membership));
   igraph_destroy(&graph);
   igraph_vector_destroy(&weights);
 

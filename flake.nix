@@ -21,7 +21,7 @@
             matlab-mlint
             matlab-mex
           ]) ++ (with pkgs; [
-            astyle
+            clang-tools
             cmake
             ninja
             gdb

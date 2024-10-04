@@ -17,23 +17,25 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 
-igraph_error_t mexIgraphModularity(int nlhs, mxArray *plhs[], int nrhs,
-                                   mxArray const *prhs[])
+igraph_error_t mexIgraphModularity(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(4);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const *graph_options = prhs[2];
-  mxArray const *method_options = prhs[3];
+  mxArray const* graph_options = prhs[2];
+  mxArray const* method_options = prhs[3];
 
   igraph_t graph;
   igraph_vector_t weights;
   igraph_vector_int_t membership;
   igraph_real_t resolution =
     mxIgraphRealFromOptions(method_options, "resolution");
-  igraph_bool_t directed = mxIgraphBoolFromOptions(graph_options, "isdirected");
+  igraph_bool_t directed =
+    mxIgraphBoolFromOptions(graph_options, "isdirected");
   igraph_real_t modularity;
   MXIGRAPH_CHECK_STATUS();
 
@@ -45,8 +47,7 @@ igraph_error_t mexIgraphModularity(int nlhs, mxArray *plhs[], int nrhs,
   IGRAPH_FINALLY(igraph_vector_int_destroy, &membership);
 
   IGRAPH_CHECK(igraph_modularity(&graph, &membership,
-                                 MXIGRAPH_WEIGHTS(&weights), resolution,
-                                 directed, &modularity));
+    MXIGRAPH_WEIGHTS(&weights), resolution, directed, &modularity));
 
   plhs[0] = mxCreateDoubleScalar(modularity);
 

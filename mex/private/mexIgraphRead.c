@@ -16,22 +16,22 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "utils.h"
+
+#include <mxIgraph.h>
 #include <stdio.h>
 
-#include "utils.h"
-#include <mxIgraph.h>
-
-igraph_error_t mexIgraphRead(int nlhs, mxArray *plhs[], int nrhs,
-                             mxArray const *prhs[])
+igraph_error_t mexIgraphRead(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(3);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
-  mxArray const *method_options = prhs[1];
-  mxArray const *graph_options = prhs[2];
+  mxArray const* method_options = prhs[1];
+  mxArray const* graph_options = prhs[2];
   igraph_t graph;
   igraph_vector_t weights;
-  char *filename = mxArrayToString(prhs[0]);
+  char* filename = mxArrayToString(prhs[0]);
   mxIgraphFileFormat_t format =
     mxIgraphSelectFileFormat(mxIgraphGetArgument(method_options, "format"));
   igraph_integer_t index = mxIgraphIntegerFromOptions(method_options, "index");
@@ -40,49 +40,50 @@ igraph_error_t mexIgraphRead(int nlhs, mxArray *plhs[], int nrhs,
   igraph_bool_t is_directed =
     mxIgraphBoolFromOptions(graph_options, "isdirected");
   MXIGRAPH_CHECK_STATUS();
-  FILE *fptr;
+  FILE* fptr;
 
   if (!(fptr = fopen(filename, "r"))) {
-    IGRAPH_ERRORF("Could not open file \"%s\" for reading", IGRAPH_EFILE,
-                  filename);
+    IGRAPH_ERRORF(
+      "Could not open file \"%s\" for reading", IGRAPH_EFILE, filename);
   }
   IGRAPH_FINALLY(fclose, fptr);
 
   igraph_set_attribute_table(&igraph_cattribute_table);
 
   switch (format) {
-  case MXIGRAPH_FORMAT_EDGELIST:
-    IGRAPH_CHECK(igraph_read_graph_edgelist(&graph, fptr, 0, is_directed));
-    break;
-  case MXIGRAPH_FORMAT_NCOL:
-    IGRAPH_CHECK(igraph_read_graph_ncol(
-                   &graph, fptr, NULL, NULL, IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed));
-    break;
-  case MXIGRAPH_FORMAT_LGL:
-    IGRAPH_CHECK(igraph_read_graph_lgl(
-                   &graph, fptr, NULL, IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed));
-    break;
-  case MXIGRAPH_FORMAT_DIMACS:
-    IGRAPH_ERROR("The DIMACS format has not been implemented in matlab-igraph",
-                 IGRAPH_UNIMPLEMENTED);
-    break;
-  case MXIGRAPH_FORMAT_GRAPHDB:
-    IGRAPH_CHECK(igraph_read_graph_graphdb(&graph, fptr, is_directed));
-    break;
-  case MXIGRAPH_FORMAT_GRAPHML:
-    IGRAPH_CHECK(igraph_read_graph_graphml(&graph, fptr, index));
-    break;
-  case MXIGRAPH_FORMAT_GML:
-    IGRAPH_CHECK(igraph_read_graph_gml(&graph, fptr));
-    break;
-  case MXIGRAPH_FORMAT_PAJEK:
-    IGRAPH_CHECK(igraph_read_graph_pajek(&graph, fptr));
-    break;
-  case MXIGRAPH_FORMAT_DL:
-    IGRAPH_CHECK(igraph_read_graph_dl(&graph, fptr, is_directed));
-    break;
-  default:
-    IGRAPH_FATAL("Received an unknown or not implemented file format.");
+    case MXIGRAPH_FORMAT_EDGELIST:
+      IGRAPH_CHECK(igraph_read_graph_edgelist(&graph, fptr, 0, is_directed));
+      break;
+    case MXIGRAPH_FORMAT_NCOL:
+      IGRAPH_CHECK(igraph_read_graph_ncol(
+        &graph, fptr, NULL, NULL, IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed));
+      break;
+    case MXIGRAPH_FORMAT_LGL:
+      IGRAPH_CHECK(igraph_read_graph_lgl(
+        &graph, fptr, NULL, IGRAPH_ADD_WEIGHTS_IF_PRESENT, is_directed));
+      break;
+    case MXIGRAPH_FORMAT_DIMACS:
+      IGRAPH_ERROR(
+        "The DIMACS format has not been implemented in matlab-igraph",
+        IGRAPH_UNIMPLEMENTED);
+      break;
+    case MXIGRAPH_FORMAT_GRAPHDB:
+      IGRAPH_CHECK(igraph_read_graph_graphdb(&graph, fptr, is_directed));
+      break;
+    case MXIGRAPH_FORMAT_GRAPHML:
+      IGRAPH_CHECK(igraph_read_graph_graphml(&graph, fptr, index));
+      break;
+    case MXIGRAPH_FORMAT_GML:
+      IGRAPH_CHECK(igraph_read_graph_gml(&graph, fptr));
+      break;
+    case MXIGRAPH_FORMAT_PAJEK:
+      IGRAPH_CHECK(igraph_read_graph_pajek(&graph, fptr));
+      break;
+    case MXIGRAPH_FORMAT_DL:
+      IGRAPH_CHECK(igraph_read_graph_dl(&graph, fptr, is_directed));
+      break;
+    default:
+      IGRAPH_FATAL("Received an unknown or not implemented file format.");
   }
   IGRAPH_FINALLY(igraph_destroy, &graph);
 

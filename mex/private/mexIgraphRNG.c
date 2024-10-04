@@ -17,6 +17,7 @@
  */
 
 #include "utils.h"
+
 #include <mxIgraph.h>
 #include <string.h>
 
@@ -30,19 +31,19 @@ enum {
 };
 
 igraph_rng_t mxIgraph_rng;
-char const *mxIgraph_rng_current_generator = "matlab";
+char const* mxIgraph_rng_current_generator = "matlab";
 
-igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
-                            mxArray const *prhs[])
+igraph_error_t mexIgraphRNG(
+  int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   VERIFY_N_INPUTS_EQUAL(2);
   VERIFY_N_OUTPUTS_EQUAL(1);
 
   igraph_integer_t const seed = mxGetScalar(prhs[0]);
-  mxArray const *generator_name = prhs[1];
+  mxArray const* generator_name = prhs[1];
   igraph_integer_t generator;
 
-  const char *generators[MXIGRAPH_GENERATOR_N] = {
+  char const* generators[MXIGRAPH_GENERATOR_N] = {
     [MXIGRAPH_GENERATOR_MATLAB] = "matlab",
     [MXIGRAPH_GENERATOR_MT19937] = "mt19937",
     [MXIGRAPH_GENERATOR_GLIBC2] = "glibc2",
@@ -67,18 +68,18 @@ igraph_error_t mexIgraphRNG(int nlhs, mxArray *plhs[], int nrhs,
   plhs[0] = mxCreateString(mxIgraph_rng_current_generator);
 
   switch (generator) {
-  case MXIGRAPH_GENERATOR_MT19937:
-    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_mt19937));
-    break;
-  case MXIGRAPH_GENERATOR_GLIBC2:
-    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_glibc2));
-    break;
-  case MXIGRAPH_GENERATOR_PCG32:
-    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg32));
-    break;
-  case MXIGRAPH_GENERATOR_PCG64:
-    IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg64));
-    break;
+    case MXIGRAPH_GENERATOR_MT19937:
+      IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_mt19937));
+      break;
+    case MXIGRAPH_GENERATOR_GLIBC2:
+      IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_glibc2));
+      break;
+    case MXIGRAPH_GENERATOR_PCG32:
+      IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg32));
+      break;
+    case MXIGRAPH_GENERATOR_PCG64:
+      IGRAPH_CHECK(igraph_rng_init(&mxIgraph_rng, &igraph_rngtype_pcg64));
+      break;
   }
 
   if (generator == MXIGRAPH_GENERATOR_MATLAB) {

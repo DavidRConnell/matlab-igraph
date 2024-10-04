@@ -28,9 +28,7 @@ void mrRandi(double* arr, size_t len, double l, double h);
 void mrRandn(double* arr, size_t len);
 
 static igraph_rng_t mxIgraph_rng_instance = {
-  .type = 0,
-  .state = 0,
-  .is_seeded = 1
+  .type = 0, .state = 0, .is_seeded = 1
 };
 
 static igraph_error_t mxIgraph_rng_init(void** state)
@@ -46,8 +44,8 @@ static void mxIgraph_rng_destroy(void* state)
 
 static igraph_error_t mxIgraph_rng_seed(void* state, igraph_uint_t seed)
 {
-  IGRAPH_ERROR("MATLAB RNG error, unsupported function called",
-               IGRAPH_EINTERNAL);
+  IGRAPH_ERROR(
+    "MATLAB RNG error, unsupported function called", IGRAPH_EINTERNAL);
   return IGRAPH_SUCCESS;
 }
 
@@ -62,10 +60,11 @@ void mrRandu(double* arr, mwSize len)
   mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
 
   double* in_data = mxGetDoubles(in);
-  in_data[0] = 1; in_data[1] = len;
+  in_data[0] = 1;
+  in_data[1] = len;
 
   mexCallMATLAB(1, &out, 1, &in, "rand");
-  double *tmp = mxGetDoubles(out);
+  double* tmp = mxGetDoubles(out);
   for (mwSize i = 0; i < len; i++) {
     arr[i] = tmp[i];
   }
@@ -73,20 +72,20 @@ void mrRandu(double* arr, mwSize len)
 
 void mrRandi(double* arr, mwSize len, double l, double h)
 {
-  mxArray* in[2] = {
-    mxCreateDoubleMatrix(1, 2, mxREAL),
-    mxCreateDoubleMatrix(1, 2, mxREAL)
-  };
+  mxArray* in[2] = { mxCreateDoubleMatrix(1, 2, mxREAL),
+    mxCreateDoubleMatrix(1, 2, mxREAL) };
   mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
 
   double* in_data = mxGetDoubles(in[0]);
-  in_data[0] = l; in_data[1] = h;
+  in_data[0] = l;
+  in_data[1] = h;
 
   in_data = mxGetDoubles(in[1]);
-  in_data[0] = 1; in_data[1] = len;
+  in_data[0] = 1;
+  in_data[1] = len;
 
   mexCallMATLAB(1, &out, 1, in, "randi");
-  double *tmp = mxGetDoubles(out);
+  double* tmp = mxGetDoubles(out);
   for (mwSize i = 0; i < len; i++) {
     arr[i] = tmp[i];
   }
@@ -98,10 +97,11 @@ void mrRandn(double* arr, mwSize len)
   mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
 
   double* in_data = mxGetDoubles(in);
-  in_data[0] = 1; in_data[1] = len;
+  in_data[0] = 1;
+  in_data[1] = len;
 
   mexCallMATLAB(1, &out, 1, &in, "randn");
-  double *tmp = mxGetDoubles(out);
+  double* tmp = mxGetDoubles(out);
   for (mwSize i = 0; i < len; i++) {
     arr[i] = tmp[i];
   }
@@ -121,9 +121,8 @@ static igraph_uint_t mxIgraph_rng_get(void* state)
   return (mxIgraph_rng_get_real(state) * 0x40000000UL);
 }
 
-static igraph_integer_t mxIgraph_rng_get_integer(void* state,
-						 igraph_integer_t l,
-						 igraph_integer_t h)
+static igraph_integer_t mxIgraph_rng_get_integer(
+  void* state, igraph_integer_t l, igraph_integer_t h)
 {
   double x = 0;
   mrRandi(&x, 1, l, h);
@@ -134,26 +133,26 @@ static igraph_integer_t mxIgraph_rng_get_integer(void* state,
 static igraph_real_t mxIgraph_rng_get_normal(void* state)
 {
   double x = 0;
-  mrRandn( & x, 1);
+  mrRandn(&x, 1);
 
   return x;
 }
 
 static igraph_rng_type_t mxIgraph_rng_type = {
-  /* name= */      "MATLAB",
-  /* bits = */     32,
-  /* init= */      mxIgraph_rng_init,
-  /* destroy= */   mxIgraph_rng_destroy,
-  /* seed= */      mxIgraph_rng_seed,
-  /* get= */       mxIgraph_rng_get,
-  /* get_int= */   mxIgraph_rng_get_integer,
-  /* get_real= */  mxIgraph_rng_get_real,
-  /* get_norm= */  NULL,
-  /* get_geom= */  NULL,
+  /* name= */ "MATLAB",
+  /* bits = */ 32,
+  /* init= */ mxIgraph_rng_init,
+  /* destroy= */ mxIgraph_rng_destroy,
+  /* seed= */ mxIgraph_rng_seed,
+  /* get= */ mxIgraph_rng_get,
+  /* get_int= */ mxIgraph_rng_get_integer,
+  /* get_real= */ mxIgraph_rng_get_real,
+  /* get_norm= */ NULL,
+  /* get_geom= */ NULL,
   /* get_binom= */ NULL,
-  /* get_exp= */   NULL,
+  /* get_exp= */ NULL,
   /* get_gamma= */ NULL,
-  /* get_pois= */  NULL,
+  /* get_pois= */ NULL,
 };
 
 void mxIgraphSetRNG(void)
@@ -161,6 +160,6 @@ void mxIgraphSetRNG(void)
   /* For some reason it seems the MATLAB rng function needs to be touched if it
   hasn't been otherwise MATLAB crashes. This does not modify the RNG. */
   mexCallMATLAB(0, NULL, 0, NULL, "rng");
-  igraph_rng_init( & mxIgraph_rng_instance, & mxIgraph_rng_type);
-  igraph_rng_set_default( & mxIgraph_rng_instance);
+  igraph_rng_init(&mxIgraph_rng_instance, &mxIgraph_rng_type);
+  igraph_rng_set_default(&mxIgraph_rng_instance);
 }

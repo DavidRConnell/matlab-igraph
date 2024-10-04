@@ -17,10 +17,11 @@
  */
 
 #include "mxIterators.h"
+
 #include <mxIgraph.h>
 
 /* Return the number of nodes in the adjacency matrix pointed to by p. */
-igraph_integer_t mxIgraphVCount(const mxArray *p)
+igraph_integer_t mxIgraphVCount(mxArray const* p)
 {
   return (igraph_integer_t)mxGetM(p);
 }
@@ -29,8 +30,8 @@ igraph_integer_t mxIgraphVCount(const mxArray *p)
 
  If the adj is undirected, pairs of symmetric edges are counted as a single
  edge. */
-igraph_integer_t mxIgraphECount(const mxArray *p,
-                                const igraph_bool_t is_directed)
+igraph_integer_t mxIgraphECount(
+  mxArray const* p, igraph_bool_t const is_directed)
 {
   mxIgraph_eit eit;
   mxIgraph_eit_create(p, &eit, is_directed);
@@ -56,32 +57,30 @@ igraph_integer_t mxIgraphECount(const mxArray *p,
  with structure based type.
 
  This also makes it much easier to create a MATLAB graph type. */
-static inline mxArray const *mxGraph2struct_i(mxArray const *p)
+static inline mxArray const* mxGraph2struct_i(mxArray const* p)
 {
   mxArray *ret, *in;
-  in = (mxArray *)p;
+  in = (mxArray*)p;
 
   mexCallMATLAB(1, &ret, 1, &in, "igutils.graph2struct");
 
   return ret;
 }
 
-static igraph_error_t get_graph_i(mxArray const *p, igraph_t *graph,
-                                  igraph_vector_t *weights,
-                                  igraph_bool_t const is_weighted,
-                                  igraph_bool_t const is_directed,
-                                  char const *weight_att)
+static igraph_error_t get_graph_i(mxArray const* p, igraph_t* graph,
+  igraph_vector_t* weights, igraph_bool_t const is_weighted,
+  igraph_bool_t const is_directed, char const* weight_att)
 {
-  mxArray const *mxGraph = mxGraph2struct_i(p);
+  mxArray const* mxGraph = mxGraph2struct_i(p);
 
-  mxArray const *nodeTable = mxGetField(mxGraph, 0, "Nodes");
-  mxArray const *edgeTable = mxGetField(mxGraph, 0, "Edges");
+  mxArray const* nodeTable = mxGetField(mxGraph, 0, "Nodes");
+  mxArray const* edgeTable = mxGetField(mxGraph, 0, "Edges");
   igraph_integer_t const n_nodes = mxIgraphIntegerFromOptions(nodeTable, "n");
   igraph_integer_t const n_edges = mxIgraphIntegerFromOptions(edgeTable, "n");
   MXIGRAPH_CHECK_STATUS();
 
-  double *mxEdges = mxGetDoubles(mxGetField(edgeTable, 0, "EndNodes"));
-  double *mxWeights;
+  double* mxEdges = mxGetDoubles(mxGetField(edgeTable, 0, "EndNodes"));
+  double* mxWeights;
   igraph_vector_int_t edges;
 
   IGRAPH_CHECK(igraph_empty(graph, n_nodes, is_directed));
@@ -112,10 +111,9 @@ static igraph_error_t get_graph_i(mxArray const *p, igraph_t *graph,
   return IGRAPH_SUCCESS;
 }
 
-static igraph_error_t get_adj_i(mxArray const *p, igraph_t *graph,
-                                igraph_vector_t *weights,
-                                igraph_bool_t const is_weighted,
-                                igraph_bool_t const is_directed)
+static igraph_error_t get_adj_i(mxArray const* p, igraph_t* graph,
+  igraph_vector_t* weights, igraph_bool_t const is_weighted,
+  igraph_bool_t const is_directed)
 {
   if (!mxIgraphIsSquare(p)) {
     return IGRAPH_NONSQUARE;
@@ -165,16 +163,15 @@ static igraph_error_t get_adj_i(mxArray const *p, igraph_t *graph,
 
    Both the graph and weight vector should be uninitialized but it's the
    callers responsibility to destroy them when done. */
-igraph_error_t mxIgraphFromArray(mxArray const *p, igraph_t *graph,
-                                 igraph_vector_t *weights,
-                                 mxArray const *graph_options)
+igraph_error_t mxIgraphFromArray(mxArray const* p, igraph_t* graph,
+  igraph_vector_t* weights, mxArray const* graph_options)
 {
   igraph_bool_t const is_directed =
     mxIgraphBoolFromOptions(graph_options, "isdirected");
   MXIGRAPH_CHECK_STATUS();
 
   igraph_bool_t is_weighted;
-  char *weight_att;
+  char* weight_att;
 
   if (mxGetField(graph_options, 0, "isweighted")) {
     is_weighted = mxIgraphBoolFromOptions(graph_options, "isweighted");
@@ -202,12 +199,12 @@ igraph_error_t mxIgraphFromArray(mxArray const *p, igraph_t *graph,
   return IGRAPH_SUCCESS;
 }
 
-static mxArray *create_adj_full_double_i(igraph_t const *graph,
-    igraph_vector_t const *weights)
+static mxArray* create_adj_full_double_i(
+  igraph_t const* graph, igraph_vector_t const* weights)
 {
   mwSize n_nodes = igraph_vcount(graph);
-  mxArray *p = mxCreateDoubleMatrix(n_nodes, n_nodes, mxREAL);
-  double *adj = mxGetDoubles(p);
+  mxArray* p = mxCreateDoubleMatrix(n_nodes, n_nodes, mxREAL);
+  double* adj = mxGetDoubles(p);
   igraph_eit_t eit;
   igraph_integer_t eid;
   mwIndex idx;
@@ -222,7 +219,7 @@ static mxArray *create_adj_full_double_i(igraph_t const *graph,
 
   while (!IGRAPH_EIT_END(eit)) {
     eid = IGRAPH_EIT_GET(eit);
-    idx = IGRAPH_FROM(graph, eid) + (n_nodes *IGRAPH_TO(graph, eid));
+    idx = IGRAPH_FROM(graph, eid) + (n_nodes * IGRAPH_TO(graph, eid));
     adj[idx] = weights ? VECTOR(*weights)[eid] : 1;
 
     IGRAPH_EIT_NEXT(eit);
@@ -232,11 +229,11 @@ static mxArray *create_adj_full_double_i(igraph_t const *graph,
   return p;
 }
 
-static mxArray *create_adj_full_logical_i(igraph_t const *graph)
+static mxArray* create_adj_full_logical_i(igraph_t const* graph)
 {
   mwSize n_nodes = igraph_vcount(graph);
-  mxArray *p = mxCreateLogicalMatrix(n_nodes, n_nodes);
-  bool *adj = mxGetLogicals(p);
+  mxArray* p = mxCreateLogicalMatrix(n_nodes, n_nodes);
+  bool* adj = mxGetLogicals(p);
   igraph_eit_t eit;
   igraph_integer_t eid;
   mwIndex idx;
@@ -251,7 +248,7 @@ static mxArray *create_adj_full_logical_i(igraph_t const *graph)
 
   while (!IGRAPH_EIT_END(eit)) {
     eid = IGRAPH_EIT_GET(eit);
-    idx = IGRAPH_FROM(graph, eid) + (n_nodes *IGRAPH_TO(graph, eid));
+    idx = IGRAPH_FROM(graph, eid) + (n_nodes * IGRAPH_TO(graph, eid));
     adj[idx] = true;
 
     IGRAPH_EIT_NEXT(eit);
@@ -262,15 +259,15 @@ static mxArray *create_adj_full_logical_i(igraph_t const *graph)
   return p;
 }
 
-static mxArray *create_adj_sparse_double_i(igraph_t const *graph,
-    igraph_vector_t const *weights)
+static mxArray* create_adj_sparse_double_i(
+  igraph_t const* graph, igraph_vector_t const* weights)
 {
   mwSize n_edges = igraph_ecount(graph);
   mwSize n_nodes = igraph_vcount(graph);
-  mxArray *p = mxCreateSparse(n_nodes, n_nodes, n_edges, mxREAL);
-  double *adj = mxGetDoubles(p);
-  mwIndex *jc = mxGetJc(p);
-  mwIndex *ir = mxGetIr(p);
+  mxArray* p = mxCreateSparse(n_nodes, n_nodes, n_edges, mxREAL);
+  double* adj = mxGetDoubles(p);
+  mwIndex* jc = mxGetJc(p);
+  mwIndex* ir = mxGetIr(p);
   igraph_eit_t eit;
   igraph_integer_t eid;
   igraph_error_t rs;
@@ -312,14 +309,14 @@ static mxArray *create_adj_sparse_double_i(igraph_t const *graph,
   return p;
 }
 
-static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
+static mxArray* create_adj_sparse_logical_i(igraph_t const* graph)
 {
   mwSize n_edges = igraph_ecount(graph);
   mwSize n_nodes = igraph_vcount(graph);
-  mxArray *p = mxCreateSparseLogicalMatrix(n_nodes, n_nodes, n_edges);
-  bool *adj = mxGetLogicals(p);
-  mwIndex *jc = mxGetJc(p);
-  mwIndex *ir = mxGetIr(p);
+  mxArray* p = mxCreateSparseLogicalMatrix(n_nodes, n_nodes, n_edges);
+  bool* adj = mxGetLogicals(p);
+  mwIndex* jc = mxGetJc(p);
+  mwIndex* ir = mxGetIr(p);
   igraph_eit_t eit;
   igraph_integer_t eid;
   igraph_error_t rs;
@@ -361,34 +358,33 @@ static mxArray *create_adj_sparse_logical_i(igraph_t const *graph)
   return p;
 }
 
-static mxArray *create_graph_i(igraph_t const *graph,
-                               igraph_vector_t const *weights,
-                               char const *weight_att)
+static mxArray* create_graph_i(igraph_t const* graph,
+  igraph_vector_t const* weights, char const* weight_att)
 {
-  mxArray *ret;
-  mxArray *in[2];
+  mxArray* ret;
+  mxArray* in[2];
   igraph_integer_t const n_edges = igraph_ecount(graph);
 
-  char const *top_fields[] = {"Nodes", "Edges"};
+  char const* top_fields[] = { "Nodes", "Edges" };
   mwSize nfields = sizeof(top_fields) / sizeof(top_fields[0]);
   in[0] = mxCreateStructMatrix(1, 1, nfields, top_fields);
   in[1] = mxCreateLogicalScalar(igraph_is_directed(graph));
 
   mxArray *mxNodes, *mxEdges;
-  char const *node_fields[] = {"n"};
+  char const* node_fields[] = { "n" };
   nfields = sizeof(node_fields) / sizeof(node_fields[0]);
   mxNodes = mxCreateStructMatrix(1, 1, nfields, node_fields);
   mxSetField(mxNodes, 0, "n", mxCreateDoubleScalar(igraph_vcount(graph)));
 
-  char const *edge_fields[weights ? 3 : 2];
+  char const* edge_fields[weights ? 3 : 2];
   edge_fields[0] = "n";
   edge_fields[1] = "EndNodes";
   if (weights) {
     edge_fields[2] = weight_att;
   }
 
-  mxArray *edge_array = mxCreateDoubleMatrix(n_edges, 2, mxREAL);
-  double *mxEndNodes = mxGetDoubles(edge_array);
+  mxArray* edge_array = mxCreateDoubleMatrix(n_edges, 2, mxREAL);
+  double* mxEndNodes = mxGetDoubles(edge_array);
   for (igraph_integer_t i = 0; i < n_edges; i++) {
     mxEndNodes[i] = IGRAPH_FROM(graph, i) + 1;
     mxEndNodes[i + n_edges] = IGRAPH_TO(graph, i) + 1;
@@ -400,8 +396,8 @@ static mxArray *create_graph_i(igraph_t const *graph,
   mxSetField(mxEdges, 0, "EndNodes", edge_array);
 
   if (weights) {
-    mxArray *weight_array = mxCreateDoubleMatrix(n_edges, 1, mxREAL);
-    double *mxWeights = mxGetDoubles(weight_array);
+    mxArray* weight_array = mxCreateDoubleMatrix(n_edges, 1, mxREAL);
+    double* mxWeights = mxGetDoubles(weight_array);
     for (igraph_integer_t i = 0; i < n_edges; i++) {
       mxWeights[i] = VECTOR(*weights)[i];
     }
@@ -418,22 +414,22 @@ static mxArray *create_graph_i(igraph_t const *graph,
 /* Create a matlab adjacency matrix using an igraph graph and weight vector.
 
    See `mxIgraphFromArray` to convert an matlab adj into an igraph graph. */
-mxArray *mxIgraphToArray(igraph_t const *graph,
-                         igraph_vector_t const *weights,
-                         mxArray const *graphOpts)
+mxArray* mxIgraphToArray(igraph_t const* graph, igraph_vector_t const* weights,
+  mxArray const* graphOpts)
 {
-  mxArray *p = NULL;
+  mxArray* p = NULL;
   mxIgraphRepr_t repr = mxIgraphReprFromOptions(graphOpts);
   mxIgraphDType_t dtype = mxIgraphDTypeFromOptions(graphOpts);
-  char const *weight_attr = mxGetField(graphOpts, 0, "weight")
-                            ? mxIgraphStringFromOptions(graphOpts, "weight")
-                            : "Weight";
+  char const* weight_attr =
+    mxGetField(graphOpts, 0, "weight") ?
+      mxIgraphStringFromOptions(graphOpts, "weight") :
+      "Weight";
 
   MXIGRAPH_CHECK_STATUS_RETURN(p);
 
-  igraph_bool_t const is_weighted =
-    !(!weights || igraph_vector_empty(weights) ||
-      dtype == MXIGRAPH_DTYPE_LOGICAL);
+  igraph_bool_t const is_weighted = !(
+    !weights || igraph_vector_empty(weights) ||
+    dtype == MXIGRAPH_DTYPE_LOGICAL);
 
   if (repr == MXIGRAPH_REPR_GRAPH) {
     p = create_graph_i(graph, is_weighted ? weights : NULL, weight_attr);
@@ -446,7 +442,8 @@ mxArray *mxIgraphToArray(igraph_t const *graph,
   } else if ((repr == MXIGRAPH_REPR_FULL) &&
              (dtype == MXIGRAPH_DTYPE_LOGICAL)) {
     p = create_adj_full_logical_i(graph);
-  } else if ((repr == MXIGRAPH_REPR_FULL) && (dtype == MXIGRAPH_DTYPE_DOUBLE)) {
+  } else if ((repr == MXIGRAPH_REPR_FULL) &&
+             (dtype == MXIGRAPH_DTYPE_DOUBLE)) {
     p = create_adj_full_double_i(graph, is_weighted ? weights : NULL);
   } else {
     IGRAPH_FATAL("Received unexpected data type or representation.");
