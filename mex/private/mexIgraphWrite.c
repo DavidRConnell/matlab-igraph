@@ -16,6 +16,7 @@
  * with matlab-igraph. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "igraph_foreign.h"
 #include "utils.h"
 
 #include <mxIgraph.h>
@@ -86,6 +87,9 @@ igraph_error_t mexIgraphWrite(
     case MXIGRAPH_FORMAT_GML:
       IGRAPH_CHECK(igraph_write_graph_gml(
         &graph, fptr, IGRAPH_WRITE_GML_DEFAULT_SW, 0, NULL));
+      break;
+    case MXIGRAPH_FORMAT_PAJEK:
+      IGRAPH_CHECK(igraph_write_graph_pajek(&graph, fptr));
       break;
     case MXIGRAPH_FORMAT_DOT:
       IGRAPH_CHECK(igraph_write_graph_dot(&graph, fptr));

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add default handler setting function to set all the mxIgraph handlers at once.
 - Reintroduce leading eigenvector community detection algorithm (no longer causing a crash).
+- Pajek file format to save.
 
 ### Changed
 
