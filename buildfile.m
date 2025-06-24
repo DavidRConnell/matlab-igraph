@@ -51,7 +51,7 @@ function exportLivescriptsTask(~)
 end
 
 function mlx2hugo(input, output)
-    export(input, output, EmbedImages=true);
+    export(input, output, EmbedImages=true, AcceptHTML=true);
     content = strip(fileread(output));
 
     content = title2frontmatter(content);
