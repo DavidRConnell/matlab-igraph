@@ -52,6 +52,6 @@ Multithreading allows memory to be shared across threads, enabling efficient par
 
 The `igutils` namespace within the toolbox complements the `mxIgraph` by standardizing parsing of common arguments, ensuring consistency across functions.
 For example, `igutils` provides argument parser classes for functions that accept graphs and a second for those that return a graph, these classes organize common arguments and define acceptable values in a single location.
-If `mxIgraph` is extended to handle other types in the future, all MATLAB functions using the `igutils` classes and predicates for argument parsing will automatically be updated as well. Together, these components lower the barrier to implemented efficient graph code for MATLAB.
+If `mxIgraph` is extended to handle other types in the future, all MATLAB functions using the `igutils` classes and predicates for argument parsing will automatically be updated as well. Together, these components lower the barrier to implement efficient graph code for MATLAB.
 
 # References
