@@ -5,8 +5,8 @@ tags:
   - graph algorithms
 authors:
   - name: David R. Connell
-  - orcid: 0000-0002-4841-6756
-  - affiliation: 1
+    orcid: 0000-0002-4841-6756
+    affiliation: 1
 affiliations:
   - name: Rush University Medical College, United States
     index: 1
