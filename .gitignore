@@ -13,4 +13,5 @@ docs/content/examples
 docs/content/changelog
 docs/content/docs/contributing.org
 docs/.hugo_build.lock
+paper/*.pdf
 future/
