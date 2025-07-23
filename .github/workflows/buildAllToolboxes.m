@@ -8,6 +8,11 @@ function buildAllToolboxes(artifactsDir, outDir, version)
                                "matlab-igraph_" + version + "*"));
         arch = regexp(zipFile.name, version + '_(.*)-toolbox', "tokens");
 
+        % For any non-toolbox artifacts that may have been generated.
+        if isempty(arch)
+            continue
+        end
+
         if ~exist(tmpDir, 'dir')
             mkdir(tmpDir);
             copyfile(toolboxDir, fullfile(tmpDir, "toolbox"));
