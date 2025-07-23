@@ -32,20 +32,6 @@ jobs:
           cmake --build build
           cmake --install build
 
-      - name: Run tests
-        uses: matlab-actions/run-tests@v2
-        with:
-          source-folder: dist/matlab-igraph/toolbox;build/tests
-          select-by-folder: tests
-          test-results-junit: test-results/results.xml
-
-      - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action/linux@v2
-        if: always()
-        with:
-          check_name: Linux Test Results
-          files: test-results/results.xml
-
       - name: Package dist
         run: |
           cmake --build build --target package
@@ -100,20 +86,6 @@ jobs:
           cmake --build build --config Release
           cmake --install build --config Release
 
-      - name: Run tests
-        uses: matlab-actions/run-tests@v2
-        with:
-          source-folder: dist/matlab-igraph/toolbox;build/tests
-          select-by-folder: tests
-          test-results-junit: test-results/results.xml
-
-      - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action/windows@v2
-        if: always()
-        with:
-          check_name: Windows Test Results
-          files: test-results/results.xml
-
       - name: Package dist
         run: cmake --build build --target package
 
@@ -149,20 +121,6 @@ jobs:
           cmake --build build
           cmake --install build
 
-      - name: Run tests
-        uses: matlab-actions/run-tests@v2
-        with:
-          source-folder: dist/matlab-igraph/toolbox;build/tests
-          select-by-folder: tests
-          test-results-junit: test-results/results.xml
-
-      - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
-        if: always()
-        with:
-          check_name: macOS Arm Test Results
-          files: test-results/results.xml
-
       - name: Package dist
         run: cmake --build build --target package
 
@@ -197,20 +155,6 @@ jobs:
             -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
           cmake --build build
           cmake --install build
-
-      - name: Run tests
-        uses: matlab-actions/run-tests@v2
-        with:
-          source-folder: dist/matlab-igraph/toolbox;build/tests
-          select-by-folder: tests
-          test-results-junit: test-results/results.xml
-
-      - name: Upload test results
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
-        if: always()
-        with:
-          check_name: macOS Intel Test Results
-          files: test-results/results.xml
 
       - name: Package dist
         run: cmake --build build --target package

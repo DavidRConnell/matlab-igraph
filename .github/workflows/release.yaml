@@ -18,6 +18,10 @@ jobs:
   build-toolbox:
     uses: ./.github/workflows/build.yaml
 
+  test-toolbox:
+    needs: build-toolbox
+    uses: ./.github/workflows/test.yaml
+
   publish-docs:
     if: ${{ github.ref_type == 'tag' }}
     uses: ./.github/workflows/publish.yaml

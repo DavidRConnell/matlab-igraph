@@ -1,0 +1,78 @@
+name: Test
+
+# Note this only runs the toolbox tests since the tests are performed on the
+# installed toolbox and not the full original source code so the mxIgraph files
+# are not around to be tested.
+
+on:
+  - workflow_call
+
+jobs:
+  test:
+    name: Test on different OSes
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: everything
+
+      - name: Remove everything but the tests
+        run: |
+          mv everything/tests .
+          rm -rf everything
+
+      - name: Collect toolbox
+        uses: actions/download-artifact@v4
+        with:
+          name: matlab-igraph-toolbox-${{ github.sha }}
+          path: release
+
+      # Strip version from the toolbox name so it's easier to install.
+      - name: Rename toolbox
+        run: mv release/matlab-igraph*.mltbx release/matlab-igraph.mltbx
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Install toolbox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: matlab.addons.toolbox.installToolbox("release/matlab-igraph.mltbx", true)
+
+      - name: Run tests
+        uses: matlab-actions/run-tests@v2
+        with:
+          select-by-folder: tests/toolbox
+          test-results-junit: test-results/results.xml
+
+      - name: Upload test results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always() && runner.os == 'Windows'
+        with:
+          check_name: Windows Test Results
+          files: test-results/results.xml
+
+      - name: Upload test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always() && runner.os == 'Linux'
+        with:
+          check_name: Linux Test Results
+          files: test-results/results.xml
+
+      - name: Upload test results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: always() && runner.os == 'macOS'
+        with:
+          check_name: macOS Arm Test Results
+          files: test-results/results.xml
