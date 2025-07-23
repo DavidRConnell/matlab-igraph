@@ -28,7 +28,7 @@ jobs:
 
   deploy-site:
     if: ${{ github.ref_type == 'tag' }}
-    needs: publish-docs
+    needs: [publish-docs, test-toolbox]
     uses: ./.github/workflows/hugo.yaml
 
   # Automated releases fail on File-Exchange side since they don't wait for
