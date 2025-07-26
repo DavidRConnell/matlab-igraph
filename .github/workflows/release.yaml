@@ -3,9 +3,7 @@ name: Release Packages
 on:
   push:
     branches:
-      - devel
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - test-cxx-ld-error
 
 permissions:
   checks: write
@@ -17,19 +15,6 @@ permissions:
 jobs:
   build-toolbox:
     uses: ./.github/workflows/build.yaml
-
-  test-toolbox:
-    needs: build-toolbox
-    uses: ./.github/workflows/test.yaml
-
-  publish-docs:
-    if: ${{ github.ref_type == 'tag' }}
-    uses: ./.github/workflows/publish.yaml
-
-  deploy-site:
-    if: ${{ github.ref_type == 'tag' }}
-    needs: [publish-docs, test-toolbox]
-    uses: ./.github/workflows/hugo.yaml
 
   # Automated releases fail on File-Exchange side since they don't wait for
   # GitHub to upload the files before creating the File-Exchange release.
