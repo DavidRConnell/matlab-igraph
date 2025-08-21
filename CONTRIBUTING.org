@@ -5,6 +5,8 @@ For any issues, contributions, or discussions, use the [[https://github.com/Davi
 Contributions are welcome in any form, whether submitting issues, discussing changes, requesting features, or submitting pull requests.
 Before working on any major task, please open an issue first to prevent overlapping efforts and to help with organization.
 
+This project is licensed under GPL 3. Any contributions made will be licensed under the same terms and it is up to the contributor to ensure they have the right to do so (see [[https://github.com/github/site-policy/blob/2018-08-13/Policies/github-terms-of-service.md#6-contributions-under-repository-license][GitHub's terms of service]]). Contributors maintain the rights to their contributions.
+
 * Submitting issues
 Please submit an issue to the tracker if you find anything that does not behave as expected or if there is anything missing.
 There is a ~igraph.version~ function that will print the version of the toolbox which should be included in issues.
