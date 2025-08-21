@@ -19,8 +19,8 @@ bibliography: paper.bib
 
 High-throughput lab techniques have enabled systems biology to view medicine through networks rather than individual genes or gene pairs [@goh07_human_diseas_networ].
 Using graph approaches, we can learn generic patterns that apply to many sets of genes, proteins, diseases, etc simultaneously, vastly improving the rate we can find disease genes and enables transferring knowledge between disorders.
-We created `matlab-igraph`, a toolbox that integrates the efficient graph algorithms and tools of the igraph C library [@csardi06_igrap_softw] into MATLAB's environment to aid in graph based research.
-By representing graphs using MATLAB's builtin types, we maintain a simple syntax while leveraging compiled C code to simplify graph analysis without sacrificing efficiency, enabling users to focus on their experiments.
+I created `matlab-igraph`, a toolbox that integrates the efficient graph algorithms and tools of the igraph C library [@csardi06_igrap_softw] into MATLAB's environment to aid in graph based research.
+By representing graphs using MATLAB's builtin types, I maintain a simple syntax while leveraging compiled C code to simplify graph analysis without sacrificing efficiency, enabling users to focus on their experiments.
 
 # Statement of need
 
@@ -32,14 +32,14 @@ This package has two goals, bring igraph functions into MATLAB for end users and
 
 ## Use in MATLAB
 
-To take advantage of MATLAB's strong matrix support, we designed the toolbox to support representing graphs as adjacency matrices, allowing cooperation between MATLAB builtins and igraph functions.
+To take advantage of MATLAB's strong matrix support, I designed the toolbox to support representing graphs as adjacency matrices, allowing cooperation between MATLAB builtins and igraph functions.
 For graphs that require more metadata, MATLAB's own `graph` and `digraph` classes can be used as well, which explicitly track directedness and can store igraph's node and edge attributes.
 All functions that accept a graph can read `graph` classes or matrices and functions that return a graph accept the `repr` keyword to choose between a full matrix, sparse matrix, or graph class.
 This design choice streamlines workflows, allowing researchers to combine MATLAB’s native functions with igraph’s algorithms without the need for a new igraph specific data type, converting between representations, or redundant coding.
 
 ## mxIgraph
 
-In addition to the igraph functions, we provide a standard for creating new graph functions using MATLAB's mex engine and the igraph C library to compile code for use in MATLAB.
+In addition to the igraph functions, I provide a standard for creating new graph functions using MATLAB's mex engine and the igraph C library to compile code for use in MATLAB.
 To aid with this, the toolbox includes the bridge C library `mxIgraph` for communicating between MATLAB's C API and igraph and the `igutils` namespace for consistent argument handling throughout the toolbox.
 The `mxIgraph` library exposes functions for converting between MATLAB and igraph data types, predicates for working with graphs, and a set of methods for parsing argument structures created by MATLAB's argument blocks in C.
 When large graphs are involved, C can reduce the memory demand over writing in MATLAB.
