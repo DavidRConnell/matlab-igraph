@@ -7,10 +7,6 @@ authors:
   - name: David R. Connell
     orcid: 0000-0002-4841-6756
     affiliation: 1
-affiliations:
-  - name: Rush University Medical College, United States
-    index: 1
-    ror: 01j7c0b24
 date: 18 June 2025
 bibliography: paper.bib
 ---
