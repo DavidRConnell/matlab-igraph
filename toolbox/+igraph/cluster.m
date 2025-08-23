@@ -121,19 +121,23 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
 %
 %         Name      Description
 %       --------------------------------------------------------------------
-%        'mode'    Which direction labels should travel. Does not impact
-%                  undirected graphs. For directed graphs, upstream igraph
-%                  suggests leaving as 'all' (default, treat as undirected)
-%                  unless you understand the consequences of using a directed
-%                  network. Can also be 'out' for labels traveling in the
-%                  direction of edges or 'in' for labels going in the opposite
-%                  direction.
-%        'initial' The initial labels for each node (defaults to each node
-%                  being the sole member of it's own label). Labels start at 1.
-%        'fixed'   A mask defining which members should be fixed in their in
-%                  their original community. Should be a logical of length
-%                  equal to the number of nodes in the graph. Defaults to all
-%                  false (all nodes can be relabeled freely).
+%        'mode'     Which direction labels should travel. Does not impact
+%                   undirected graphs. For directed graphs, upstream igraph
+%                   suggests leaving as 'all' (default, treat as undirected)
+%                   unless you understand the consequences of using a directed
+%                   network. Can also be 'out' for labels traveling in the
+%                   direction of edges or 'in' for labels going in the opposite
+%                   direction.
+%        'initial'  The initial labels for each node (defaults to each node
+%                   being the sole member of it's own label). Labels start at
+%                   1.
+%        'fixed'    A mask defining which members should be fixed in their in
+%                   their original community. Should be a logical of length
+%                   equal to the number of nodes in the graph. Defaults to all
+%                   false (all nodes can be relabeled freely).
+%         'variant' Which LPA variant to use. "DOMINANCE", "RETENTION", or
+%                   "FAST" (default). Variants alter how dominant labels are
+%                   tracked.
 %
 %   MEMBERSHIP = CLUSTER(GRAPH, 'infomap') The infomap community detection
 %   algorithm.
@@ -176,6 +180,7 @@ function membership = cluster(graph, method, graphOpts, methodOpts, attribute)
         methodOpts.fixed;
         methodOpts.mode;
         methodOpts.nTrials;
+        methodOptions.variant;
         methodOpts.nodeWeights;
         attribute.results (1, :) char ...
             {igutils.mustHoldNodeAttr(graph, attribute.results)} = '';
@@ -311,6 +316,9 @@ function opts = parseLabelPropagationOptions(graph, opts)
         opts.initial (1, :) ...
             {igutils.mustBePartition} = 1:igraph.numnodes(graph);
         opts.fixed (1, :) logical = false(1, igraph.numnodes(graph));
+        opts.variant (1, :) char ...
+        {mustBeMemberi(opts.variant, ...
+                       {'fast', 'dominance', 'retention'})} = 'fast';
     end
 
     if length(opts.fixed) ~= length(opts.initial)

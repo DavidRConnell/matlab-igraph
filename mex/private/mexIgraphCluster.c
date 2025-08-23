@@ -120,7 +120,7 @@ static igraph_error_t mxIgraph_edge_betweenness_i(igraph_t const* graph,
   MXIGRAPH_CHECK_STATUS();
 
   IGRAPH_CHECK(igraph_community_edge_betweenness(graph, NULL, NULL, NULL, NULL,
-    NULL, membership, igraph_is_directed(graph), weights));
+    NULL, membership, igraph_is_directed(graph), weights, NULL));
 
   return IGRAPH_SUCCESS;
 }
@@ -211,6 +211,15 @@ static igraph_error_t mxIgraph_label_propagation_i(igraph_t const* graph,
   igraph_neimode_t mode = mxIgraphModeFromOptions(opts);
   MXIGRAPH_CHECK_STATUS();
   igraph_vector_bool_t fixed;
+  igraph_integer_t const LPA_VARIANT_N = 3;
+
+  char const* lpa_variant_methods[] = { [IGRAPH_LPA_FAST] = "fast",
+    [IGRAPH_LPA_DOMINANCE] = "dominance",
+    [IGRAPH_LPA_RETENTION] = "retention" };
+
+  igraph_lpa_variant_t variant =
+    mxIgraphSelectMethod(opts, lpa_variant_methods, LPA_VARIANT_N);
+  igraph_error_t errcode;
 
   IGRAPH_CHECK(mxIgraphVectorIntFromOptions(opts, "initial", &initial, true));
   IGRAPH_FINALLY(igraph_vector_int_destroy, &initial);
@@ -218,8 +227,7 @@ static igraph_error_t mxIgraph_label_propagation_i(igraph_t const* graph,
   IGRAPH_FINALLY(igraph_vector_bool_destroy, &fixed);
 
   IGRAPH_CHECK(igraph_community_label_propagation(
-    graph, membership, mode, weights, &initial, &fixed));
-
+    graph, membership, mode, weights, &initial, &fixed, variant));
   igraph_vector_int_destroy(&initial);
   igraph_vector_bool_destroy(&fixed);
   IGRAPH_FINALLY_CLEAN(2);

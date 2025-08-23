@@ -30,16 +30,12 @@ static char* const mxErrId[IGRAPH_ENOSOL + 1] = {
   [IGRAPH_PARSEERROR] = "parseError",
   [IGRAPH_EINVAL] = "invalidValue",
   [IGRAPH_EXISTS] = "attributeAlreadyExists",
-  [IGRAPH_EINVEVECTOR] = "invalidVertixVector",
   [IGRAPH_EINVVID] = "invalidVertixId",
-  [IGRAPH_NONSQUARE] = "notSquare",
   [IGRAPH_EINVMODE] = "invalidMode",
   [IGRAPH_EFILE] = "fileError",
   [IGRAPH_UNIMPLEMENTED] = "notImplemented",
   [IGRAPH_DIVERGED] = "failedToConverge",
-  [IGRAPH_EDIVZERO] = "divideByZero",
   [IGRAPH_EOVERFLOW] = "overflow",
-  [IGRAPH_CPUTIME] = "exceededMaxTime",
   [IGRAPH_EUNDERFLOW] = "underflow",
   [IGRAPH_ERANGE] = "outOfRange",
 };
@@ -152,10 +148,8 @@ igraph_error_t mxIgraphStatusHandlerIgnoreMex(char const* message, void* data)
 
 bool utIsInterruptPending(void); // From undocumented libut.
 
-igraph_error_t mxIgraphInterruptionHandlerMex(void* data)
+igraph_bool_t mxIgraphInterruptionHandlerMex(void)
 {
-  IGRAPH_UNUSED(data);
-
   if (utIsInterruptPending()) {
     return IGRAPH_INTERRUPTED;
   }

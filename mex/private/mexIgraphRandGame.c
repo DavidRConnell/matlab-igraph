@@ -143,8 +143,8 @@ static igraph_error_t mxIgraph_erdos_renyi_i(
   if (edge_method) {
     igraph_integer_t n_edges = mxIgraphIntegerFromOptions(opts, "nEdges");
     MXIGRAPH_CHECK_STATUS();
-    IGRAPH_CHECK(
-      igraph_erdos_renyi_game_gnm(graph, n_nodes, n_edges, directed, loops));
+    IGRAPH_CHECK(igraph_erdos_renyi_game_gnm(
+      graph, n_nodes, n_edges, directed, loops, false));
   } else {
     igraph_real_t probability = mxIgraphRealFromOptions(opts, "probability");
     MXIGRAPH_CHECK_STATUS();

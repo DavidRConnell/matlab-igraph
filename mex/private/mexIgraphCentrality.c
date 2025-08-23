@@ -107,8 +107,8 @@ igraph_error_t mexIgraphCentrality(
         igraph_constraint(&graph, &res, vids, MXIGRAPH_WEIGHTS(&weights)));
       break;
     case MXIGRAPH_CENTRALITY_EIGENVECTOR:
-      IGRAPH_CHECK(igraph_eigenvector_centrality(&graph, &res, NULL, directed,
-        normalized, MXIGRAPH_WEIGHTS(&weights), NULL));
+      IGRAPH_CHECK(igraph_eigenvector_centrality(
+        &graph, &res, NULL, directed, MXIGRAPH_WEIGHTS(&weights), NULL));
       break;
     default:
       IGRAPH_FATAL("Got unexpected method name.");

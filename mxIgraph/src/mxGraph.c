@@ -116,7 +116,7 @@ static igraph_error_t get_adj_i(mxArray const* p, igraph_t* graph,
   igraph_bool_t const is_directed)
 {
   if (!mxIgraphIsSquare(p)) {
-    return IGRAPH_NONSQUARE;
+    IGRAPH_ERROR("Adjacency matrix not square.", IGRAPH_EINVAL);
   }
 
   igraph_integer_t n_nodes = mxIgraphVCount(p);
