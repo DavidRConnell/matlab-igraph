@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Bump igraph version to 0.10.16.
+
 ### Fixed
 
 - Turn off OpenMP support for now. Prevents issues with macOS users compiling if cmake finds an incompatible copy of OpenMP (#7).
