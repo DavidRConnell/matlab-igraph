@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Turn off OpenMP support for now. Prevents issues with macOS users compiling if cmake finds an incompatible copy of OpenMP (#7).
+- RNG example uses more complex graph so label propagation doesn't produce the same solution under different RNG states.
 
 ## [0.2.1] 2025-07-23
 
