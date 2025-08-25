@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Add
+
+- Tests to confirm identical results for stochastic methods across environments.
+
 ### Changed
 
 - Bump igraph version to 0.10.16.
