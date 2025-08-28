@@ -6,7 +6,7 @@ See [[../../start][Getting Started]] for a quick overview.
 This gives a glance at the common functions the matlab-igraph toolbox and explains the common API that functions within the toolbox adhere to.
 
 * Primary functions
-While igraph provides a large number of routines, I find there is a common workflow involved in most my work with graphs: obtaining a graph, modifying graphs. characterizing graphs, plotting graphs, and saving graphs to file.
+While igraph provides a large number of routines, I find there is a common workflow involved in most my work with graphs: obtaining a graph, modifying graphs, characterizing graphs, plotting graphs, and saving graphs to file.
 
 Most the functions include different methods and options, make sure to view their help in MATLAB to get the most out of them.
 
