@@ -26,6 +26,7 @@ Go to the location you want to store the toolbox and run:
 
 #+begin_src bash
   git clone "https://github.com/davidrconnell/matlab-igraph"
+  cd matlab-igraph
   git submodule update --init --recursive
 #+end_src
 
