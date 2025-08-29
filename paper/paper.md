@@ -33,6 +33,13 @@ For graphs that require more metadata, MATLAB's own `graph` and `digraph` classe
 All functions that accept a graph can read `graph` classes or matrices and functions that return a graph accept the `repr` keyword to choose between a full matrix, sparse matrix, or graph class.
 This design choice streamlines workflows, allowing researchers to combine MATLAB’s native functions with igraph’s algorithms without the need for a new igraph specific data type, converting between representations, or redundant coding.
 
+## Comparison to builtin graph algorithms
+
+While MATLAB provides graph datatypes and a few algorithms for those graphs, the set of available graph algorithms is limited and does not provide recently published methods.
+The igraph library provides many missing algorithms made accessible to MATLAB through this toolbox, including those pertaining to generating graphs (such as through `generate` or `randgame` for stochastic graphs), reading and writing common graph file types, community detection, comparing community structure, and rewiring graphs.
+All methods supplied by `matlab-igraph` work on the graph datatypes but they can also be applied directly to matrices, in contrast to the builtin graph algorithms which can only be used with graphs types, allowing users to continue working with the matrix syntax experienced MATLAB programmers have become familiar with.
+For this reason, `matlab-igraph` provides replacements for several builtin functions like `numnodes` and `numedges`, `isisomorphic`, `degree`, etc that will work equivalently on both adjacency matrices and graphs, making it simple to create higher level graph functions that can be used with either datatype.
+
 ## mxIgraph
 
 In addition to the igraph functions, I provide a standard for creating new graph functions using MATLAB's mex engine and the igraph C library to compile code for use in MATLAB.
