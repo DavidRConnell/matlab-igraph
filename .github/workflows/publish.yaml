@@ -6,7 +6,7 @@ on:
 jobs:
   publish:
     name: Publish docs
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Start virtual display
@@ -14,15 +14,34 @@ jobs:
           sudo apt-get install xvfb
           Xvfb :99 & echo "DISPLAY=:99" >> $GITHUB_ENV
 
-      - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v2
-        with:
-          release: R2025a
-
       - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
+
+      - name: Clean current directory
+        run: |
+          rm -rf toolbox/+igraph
+          rm -rf toolbox/+igutils
+          rm toolbox/igraph.m
+
+      - name: Collect toolbox
+        uses: actions/download-artifact@v4
+        with:
+          name: matlab-igraph-toolbox-${{ github.sha }}
+          path: release
+
+      # Strip version from the toolbox name so it's easier to install.
+      - name: Rename toolbox
+        run: mv release/matlab-igraph*.mltbx release/matlab-igraph.mltbx
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Install toolbox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: matlab.addons.toolbox.installToolbox("release/matlab-igraph.mltbx", true)
 
       - name: Run make docs task
         uses: matlab-actions/run-build@v2
