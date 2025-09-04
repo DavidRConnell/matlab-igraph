@@ -24,6 +24,7 @@ jobs:
 
   publish-docs:
     if: ${{ github.ref_type == 'tag' }}
+    needs: build-toolbox
     uses: ./.github/workflows/publish.yaml
 
   deploy-site:

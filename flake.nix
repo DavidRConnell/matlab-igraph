@@ -2,7 +2,7 @@
   description = "The matlab-igraph toolbox";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-matlab = {
       url = "gitlab:doronbehar/nix-matlab";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,7 +15,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       devShells.${system}.default =
-        (pkgs.mkShell.override { stdenv = pkgs.gcc10Stdenv; }) {
+        (pkgs.mkShell.override { stdenv = pkgs.gcc13Stdenv; }) {
           packages = (with nix-matlab.packages.${system}; [
             matlab
             matlab-mlint
