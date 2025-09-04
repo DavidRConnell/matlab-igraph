@@ -6,10 +6,10 @@ on:
 jobs:
   build-linux:
     name: Build Linux toolbox
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
-      CC: gcc-10
-      CXX: g++-10
+      CC: gcc-13
+      CXX: g++-13
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update && sudo apt upgrade
-          sudo apt install cmake ninja-build gcc-10 g++-10 libxml2-dev libbison-dev libfl-dev
+          sudo apt install cmake ninja-build gcc-13 g++-13 libxml2-dev libbison-dev libfl-dev
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
