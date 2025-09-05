@@ -1,5 +1,6 @@
 [![](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/fileexchange/v1?id=159001)
 [![](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/159001-matlab-igraph)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.08622/status.svg)](https://doi.org/10.21105/joss.08622)
 
 # matlab-igraph <a href="https://davidrconnell.github.io/matlab-igraph"><img src="./images/matlab_igraph_logo.svg" align="right" height="128" /></a>
 
