@@ -1,5 +1,5 @@
 ---
-title: '`matlab-igraph`: bringing igraph to MATLAB'
+title: 'matlab-igraph: bringing igraph to MATLAB'
 tags:
   - matlab
   - graph algorithms
@@ -16,8 +16,8 @@ bibliography: paper.bib
 
 # Summary
 
-High-throughput lab techniques have enabled systems biology to view medicine through networks rather than individual genes or gene pairs [@goh07_human_diseas_networ].
-Using graph approaches, we can learn generic patterns that apply to many sets of genes, proteins, diseases, etc simultaneously, vastly improving the rate we can find disease genes and enables transferring knowledge between disorders.
+High-throughput lab techniques have enabled systems biology to view medicine through networks rather than through individual genes or gene pairs [@goh07_human_diseas_networ].
+Using graph approaches, we can learn generic patterns that apply to many sets of genes, proteins, diseases, etc. simultaneously, vastly improving the rate we can find disease genes and enabling the transfer of knowledge between disorders.
 I created `matlab-igraph`, a toolbox that integrates the efficient graph algorithms and tools of the igraph C library [@csardi06_igrap_softw] into MATLAB's environment to aid in graph based research.
 By representing graphs using MATLAB's builtin types, I maintain a simple syntax while leveraging compiled C code to simplify graph analysis without sacrificing efficiency, enabling users to focus on their experiments.
 
@@ -27,7 +27,7 @@ MATLAB is a powerful tool for numerical analysis that is widely used in academia
 Without `matlab-igraph`, researchers would need to rewrite algorithms specifically for MATLAB, which not only takes time but also risks errors.
 Development of `matlab-igraph` begun with work on the SpeakEasy2 community detection algorithm [@gaiteri23_robus_scalab_infor_clust_diver_biolog_networ], which needed to score partitions, using methods like modularity and normalized mutual information, and compare results to current community detection algorithms such as Leiden and InfoMAP.
 By making graph algorithms available to MATLAB, the `matlab-igraph` toolbox allows easy comparisons against state-of-the-art methods.
-This package has two goals, bring igraph functions into MATLAB for end users and ease development of new graph methods in C using the `mxIgraph` interface library and the `igutils` namespace.
+This package has two goals: to bring igraph functions into MATLAB for end users, and to ease development of new graph methods in C using the `mxIgraph` interface library and the `igutils` namespace.
 
 ## Use in MATLAB
 
@@ -41,7 +41,7 @@ This design choice streamlines workflows, allowing researchers to combine MATLAB
 While MATLAB provides graph datatypes and a few algorithms for those graphs, the set of available graph algorithms is limited and does not provide recently published methods.
 The igraph library provides many missing algorithms made accessible to MATLAB through this toolbox, including those pertaining to generating graphs (such as through `generate` or `randgame` for stochastic graphs), reading and writing common graph file types, community detection, comparing community structure, and rewiring graphs.
 All methods supplied by `matlab-igraph` work on the graph datatypes but they can also be applied directly to matrices, in contrast to the builtin graph algorithms which can only be used with graphs types, allowing users to continue working with the matrix syntax experienced MATLAB programmers have become familiar with.
-For this reason, `matlab-igraph` provides replacements for several builtin functions like `numnodes` and `numedges`, `isisomorphic`, `degree`, etc that will work equivalently on both adjacency matrices and graphs, making it simple to create higher level graph functions that can be used with either datatype.
+For this reason, `matlab-igraph` provides replacements for several builtin functions like `numnodes` and `numedges`, `isisomorphic`, `degree`, etc. that will work equivalently on both adjacency matrices and graphs, making it simple to create higher level graph functions that can be used with either datatype.
 
 ## mxIgraph
 
@@ -53,7 +53,7 @@ Specifically, memory usage can be an issue in MATLAB when using "outer--reduce" 
 For computation using matrix algebra, a common pattern is computing an outer-product like function on two vectors and then reducing over an axis.
 For an $m \times{} 1$ and an $n \times{} 1$ vector, this leads to an $m \times n$ intermediary matrix that is then reduced back down to a vector with a sum along the rows or similar operation.
 By using for-loops in C instead of high-level linear algebra packages, the final vector can be created directly.
-This removes the need to store an intermediary matrix and for large values of $n$ and $m$ this may be the difference between running out of memory or not.
+This removes the need to store an intermediary matrix and for large values of $n$ and $m$, this may be the difference between running out of memory or not.
 If the code can be written to run in parallel, C supports multithreading, in contrast to MATLAB's parallel toolbox which is based on multiprocessing, a technique that requires cloning data across each worker, potentially exhausting memory when used with large graphs, while high overhead can cause performance to be worse than serial processing for smaller graphs.
 Multithreading allows memory to be shared across threads, enabling efficient parallel processing on graphs of all sizes and does not require the MATLAB parallel toolbox.
 
