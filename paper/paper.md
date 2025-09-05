@@ -49,11 +49,11 @@ In addition to the igraph functions, I provide a standard for creating new graph
 To aid with this, the toolbox includes the bridge C library `mxIgraph` for communicating between MATLAB's C API and igraph and the `igutils` namespace for consistent argument handling throughout the toolbox.
 The `mxIgraph` library exposes functions for converting between MATLAB and igraph data types, predicates for working with graphs, and a set of methods for parsing argument structures created by MATLAB's argument blocks in C.
 When large graphs are involved, C can reduce the memory demand over writing in MATLAB.
-Specifically, memory usage can be an issue in MATLAB when using "outer--reduce" patterns or parallel computation.
-For computation using matrix algebra, a common pattern is computing an outer-product like function on two vectors and then reducing over an axis.
+Specifically, memory usage can be an issue in MATLAB when using "pairwise--reduce" patterns or parallel computation.
+For computation on vectors, a common pattern is performing a pairwise function (like an outer-product) on two vectors and then reducing over an axis.
 For an $m \times{} 1$ and an $n \times{} 1$ vector, this leads to an $m \times n$ intermediary matrix that is then reduced back down to a vector with a sum along the rows or similar operation.
 By using for-loops in C instead of high-level linear algebra packages, the final vector can be created directly.
-This removes the need to store an intermediary matrix and for large values of $n$ and $m$, this may be the difference between running out of memory or not.
+This reduces the $\mathcal{O}(mn)$ memory requirements to $\mathcal{O}(m)$.
 If the code can be written to run in parallel, C supports multithreading, in contrast to MATLAB's parallel toolbox which is based on multiprocessing, a technique that requires cloning data across each worker, potentially exhausting memory when used with large graphs, while high overhead can cause performance to be worse than serial processing for smaller graphs.
 Multithreading allows memory to be shared across threads, enabling efficient parallel processing on graphs of all sizes and does not require the MATLAB parallel toolbox.
 
