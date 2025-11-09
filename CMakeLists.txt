@@ -27,6 +27,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS OFF)
 
 set(IGRAPH_OPENMP_SUPPORT OFF)
+set(IGRAPH_ENABLE_LTO AUTO)
 set(IGRAPH_USE_INTERNAL_BLAS ON)
 set(IGRAPH_USE_INTERNAL_LAPACK ON)
 set(IGRAPH_USE_INTERNAL_ARPACK ON)
@@ -96,10 +97,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     RUNTIME_DEPENDENCY_SET
     toolbox_deps
     DIRECTORIES
-    "C:\\msys64\\mingw64\\bin"
-    "C:\\msys64\\ucrt64\\bin"
-    "D:\\msys64\\mingw64\\bin"
-    "D:\\msys64\\ucrt64\\bin"
+    "C:\\vcpkgs\\installed"
     "${Matlab_ROOT_DIR}\\bin\\win64"
     PRE_EXCLUDE_REGEXES
     "api-ms-"
