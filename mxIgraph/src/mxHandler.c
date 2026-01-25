@@ -60,8 +60,9 @@ void mxIgraphErrorHandlerMex(
   char const* fname = file + mxIgraphBaseName_i(file);
   char const* id = mxErrId[igraph_errno] ? mxErrId[igraph_errno] : "internal";
   char fullid[512] = "igraph:\0";
+  int const strmax = sizeof(fullid) / sizeof(fullid[0]);
 
-  strncat(fullid, id, sizeof(fullid) - 1);
+  strncat(fullid, id, strmax - 1);
 
   mxIgraphSetError(IGRAPH_SUCCESS);
   mxIgraphSetErrorMsg("");
@@ -83,8 +84,8 @@ void mxIgraphFatalHandlerMex(char const* reason, char const* file, int line)
 
 void mxIgraphWarningHandlerMex(char const* reason, char const* file, int line)
 {
-  int strmax = 512;
-  char msg[strmax];
+  char msg[512];
+  int const strmax = sizeof(msg) / sizeof(msg[0]);
   char const* fname = file + mxIgraphBaseName_i(file);
 
   snprintf(msg, strmax - 1, "%s\n\nIn %s (line %d)", reason, fname, line);

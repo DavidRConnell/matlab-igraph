@@ -14,12 +14,7 @@ jobs:
             cc: gcc-13
             cxx: g++-13
             pkg_ext: tar.gz
-            name: Linux-intel
-          - os: ubuntu-24.04-arm
-            cc: gcc-13
-            cxx: g++-13
-            pkg_ext: tar.gz
-            name: Linux-arm
+            name: Linux
           - os: macos-latest
             llvm_version: "14.0.5"
             pkg_ext: tar.gz
@@ -27,12 +22,12 @@ jobs:
           - os: macos-15-intel
             llvm_version: "14.0.5"
             pkg_ext: tar.gz
-            name: macos-intel
+            name: macOS-intel
           - os: windows-latest
             vcpkg_arch: x64
             cmake_arch: x64
             pkg_ext: zip
-            name: Windows-intel
+            name: Windows
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -77,8 +72,9 @@ jobs:
       - name: Build toolbox
         shell: bash
         run: |
-          cmake -B build . -G Ninja --install-prefix ${GITHUB_WORKSPACE}/dist \
-            -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}"
+          cmake -B build . --install-prefix ${GITHUB_WORKSPACE}/dist \
+            -DCMAKE_PACKAGE_VERSION="${{ github.ref_name }}" \
+            ${IGRAPH_CMAKE_EXTRA_ARGS}
           cmake --build build --config Release
           cmake --install build --config Release
 
@@ -87,7 +83,7 @@ jobs:
         run: cmake --build build --target package
 
       - name: Package source
-        if: ${{ matrix.os }} == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: cmake --build build --target package_source
 
       - name: Upload package
@@ -114,11 +110,10 @@ jobs:
           mkdir release
           mv artifacts/matlab-igraph-Linux-${{ github.sha }}/*_source.tar.gz release
           cd artifacts
-          tar xf matlab-igraph-Linux-intel-${{ github.sha }}/* --directory matlab-igraph-Linux-intel-${{ github.sha }}
-          tar xf matlab-igraph-Linux-arm-${{ github.sha }}/* --directory matlab-igraph-Linux-arm-${{ github.sha }}
+          tar xf matlab-igraph-Linux-${{ github.sha }}/* --directory matlab-igraph-Linux-${{ github.sha }}
           tar xf matlab-igraph-macOS-arm-${{ github.sha }}/* --directory matlab-igraph-macOS-arm-${{ github.sha }}
           tar xf matlab-igraph-macOS-intel-${{ github.sha }}/* --directory matlab-igraph-macOS-intel-${{ github.sha }}
-          unzip matlab-igraph-Windows-intel-${{ github.sha }}/* -d matlab-igraph-Windows-intel-${{ github.sha }}
+          unzip matlab-igraph-Windows-${{ github.sha }}/* -d matlab-igraph-Windows-${{ github.sha }}
           cd ..
 
       - name: Set up MATLAB

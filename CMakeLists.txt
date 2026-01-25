@@ -97,13 +97,15 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     RUNTIME_DEPENDENCY_SET
     toolbox_deps
     DIRECTORIES
-    "C:\\vcpkgs\\installed"
+    "C:\\vcpkg\\installed\\.*-windows-static-.*\\lib"
     "${Matlab_ROOT_DIR}\\bin\\win64"
     PRE_EXCLUDE_REGEXES
     "api-ms-"
     "ext-ms-"
     "libmx"
     "libmex"
+    "libmw"
+    "libut"
     POST_EXCLUDE_REGEXES
     ".*system32/.*\\.dll"
     DESTINATION

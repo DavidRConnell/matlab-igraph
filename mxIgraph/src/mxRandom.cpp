@@ -23,9 +23,29 @@ could break in future versions of MATLAB if the exported functions change. */
 
 #include <mxIgraph.h>
 
-void mrRandu(double* arr, size_t len);
-void mrRandi(double* arr, size_t len, double l, double h);
-void mrRandn(double* arr, size_t len);
+/* On all OSes this library is linked against the libmwmathrng C++ library.
+   This library is private so there is no header file for it so we must define
+   the internal function headers here. On Windows, there is expected to be a
+   .lib import library with symbol information in addition to the actual .dll
+   library with the definitions. But since the library is not public, the
+   import is not provided so we must create a stub import library with the
+   headers we need (generated in the CMakeLists.txt). For simplicity, we define
+   the headers with plain names and therefore need the extern "C" to tell the
+   C++ linker these functions are used by C (they aren't they are only used in
+   this C++ file), do not mangle them. On Linux and macOS only the one dynamic
+   library is needed, and this is compiled by C++ with mangled names. Because
+   of that we need the C++ compiler to mangle the names here as well. */
+#if defined(_WIN32) && defined(__cplusplus)
+extern "C" {
+#endif // defined(_WIN32) && defined(__cplusplus)
+
+  void mrRandu(double* arr, size_t len);
+  void mrRandi(double* arr, size_t len, double l, double h);
+  void mrRandn(double* arr, size_t len);
+
+#if defined(_WIN32) && defined(__cplusplus)
+}
+#endif // defined(_WIN32) && defined(__cplusplus)
 
 static igraph_rng_t mxIgraph_rng_instance = {
   .type = 0, .state = 0, .is_seeded = 1
@@ -48,65 +68,6 @@ static igraph_error_t mxIgraph_rng_seed(void* state, igraph_uint_t seed)
     "MATLAB RNG error, unsupported function called", IGRAPH_EINTERNAL);
   return IGRAPH_SUCCESS;
 }
-
-/* Cannot get the libmwmathrng dll to link correctly on Windows. For now
-calling into MATLAB will return the same values as calling mrRandu directly but
-it's slower. */
-
-#ifdef _WIN32
-void mrRandu(double* arr, mwSize len)
-{
-  mxArray* in = mxCreateDoubleMatrix(1, 2, mxREAL);
-  mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
-
-  double* in_data = mxGetDoubles(in);
-  in_data[0] = 1;
-  in_data[1] = len;
-
-  mexCallMATLAB(1, &out, 1, &in, "rand");
-  double* tmp = mxGetDoubles(out);
-  for (mwSize i = 0; i < len; i++) {
-    arr[i] = tmp[i];
-  }
-}
-
-void mrRandi(double* arr, mwSize len, double l, double h)
-{
-  mxArray* in[2] = { mxCreateDoubleMatrix(1, 2, mxREAL),
-    mxCreateDoubleMatrix(1, 2, mxREAL) };
-  mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
-
-  double* in_data = mxGetDoubles(in[0]);
-  in_data[0] = l;
-  in_data[1] = h;
-
-  in_data = mxGetDoubles(in[1]);
-  in_data[0] = 1;
-  in_data[1] = len;
-
-  mexCallMATLAB(1, &out, 1, in, "randi");
-  double* tmp = mxGetDoubles(out);
-  for (mwSize i = 0; i < len; i++) {
-    arr[i] = tmp[i];
-  }
-}
-
-void mrRandn(double* arr, mwSize len)
-{
-  mxArray* in = mxCreateDoubleMatrix(1, 2, mxREAL);
-  mxArray* out = mxCreateDoubleMatrix(len, 1, mxREAL);
-
-  double* in_data = mxGetDoubles(in);
-  in_data[0] = 1;
-  in_data[1] = len;
-
-  mexCallMATLAB(1, &out, 1, &in, "randn");
-  double* tmp = mxGetDoubles(out);
-  for (mwSize i = 0; i < len; i++) {
-    arr[i] = tmp[i];
-  }
-}
-#endif
 
 igraph_real_t mxIgraph_rng_get_real(void* state)
 {

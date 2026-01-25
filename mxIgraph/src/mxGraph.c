@@ -376,7 +376,9 @@ static mxArray* create_graph_i(igraph_t const* graph,
   mxNodes = mxCreateStructMatrix(1, 1, nfields, node_fields);
   mxSetField(mxNodes, 0, "n", mxCreateDoubleScalar(igraph_vcount(graph)));
 
-  char const* edge_fields[weights ? 3 : 2];
+  char const** edge_fields =
+    mxMalloc(sizeof(*edge_fields) * (weights ? 3 : 2));
+
   edge_fields[0] = "n";
   edge_fields[1] = "EndNodes";
   if (weights) {
@@ -394,6 +396,7 @@ static mxArray* create_graph_i(igraph_t const* graph,
   mxEdges = mxCreateStructMatrix(1, 1, nfields, edge_fields);
   mxSetField(mxEdges, 0, "n", mxCreateDoubleScalar(n_edges));
   mxSetField(mxEdges, 0, "EndNodes", edge_array);
+  mxFree(edge_fields);
 
   if (weights) {
     mxArray* weight_array = mxCreateDoubleMatrix(n_edges, 1, mxREAL);
